@@ -15,7 +15,8 @@ class ListTagihans extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Tagihan Baru')
-                ->icon('heroicon-o-plus'),
+                ->icon('heroicon-o-plus')
+                ->color('info'),
         ];
     }
 }
