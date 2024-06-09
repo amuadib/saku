@@ -40,7 +40,7 @@ php artisan filament:install --panels
 php artisan make:queue-batches-table
 php artisan make:notifications-table
 php artisan vendor:publish --tag=filament-actions-migrations
-php artisan migrate
+php artisan migrate:fresh --seed
 npm install
 npm run dev
 php artisan storage:link
@@ -52,7 +52,8 @@ Jalankan Aplikasi dengan perintah
 php artisan serve --host 0.0.0.0  --port=8008
 ```
 
-Aplikasi bisa diakses di http://localhost:8008
+Aplikasi bisa diakses di http://localhost:8008. <br/>
+Gunakan Username `default.admin` dan Password `default.admin`.
 
 ## Teknologi
 
