@@ -47,11 +47,21 @@ class KasResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->isAdmin()) {
+                    return $query
+                        ->where('lembaga_id', auth()->user()->authable->lembaga_id);
+                }
+            })
             ->defaultSort('nama')
             ->columns([
                 TextColumn::make('no')
                     ->rowIndex(),
                 TextColumn::make('nama'),
+                TextColumn::make('saldo')
+                    ->numeric(0)
+                    ->prefix('Rp '),
                 TextColumn::make('lembaga_id')
                     ->label('Lembaga')
                     ->formatStateUsing(fn (string $state): string => config('custom.lembaga')[$state]),
