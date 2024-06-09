@@ -37,7 +37,7 @@ class SiswaPolicy
      */
     public function update(User $user, Siswa $siswa): bool
     {
-        return $user->isPetugas();
+        return $user->isAdmin();
     }
 
     /**
@@ -45,7 +45,7 @@ class SiswaPolicy
      */
     public function delete(User $user, Siswa $siswa): bool
     {
-        return $user->isPetugas();
+        return $user->isAdmin();
     }
 
     /**
