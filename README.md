@@ -54,6 +54,16 @@ php artisan serve --host 0.0.0.0  --port=8008
 
 Aplikasi bisa diakses di http://localhost:8008. <br/>
 Gunakan Username `default.admin` dan Password `default.admin`.
+<br/>
+<br/>
+
+Untuk menjalankan Queue (digunakan untuk Fungsi Impor) gunakan perintah
+
+```bash
+php artisan queue:listen
+```
+
+atau juga bisa menggunakan [Supervisor](https://laravel.com/docs/11.x/queues#supervisor-configuration)
 
 ## Teknologi
 
