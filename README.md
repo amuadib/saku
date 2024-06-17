@@ -81,4 +81,4 @@ Silahkan dipakai dan dimodifikasi sesuai dengan lisensi diatas.
 -   Pembuat tidak berkewajiban untuk memperbaiki segala bentuk Kesalahan atau Bug yang mungkin terjadi.
 -   Segala bentuk kerugian berupa apapun yang terjadi akibat penggunaan Aplikasi menjadi tanggung-jawab sepenuhnya dari Pengguna (Anda).
 -   Dengan menggunakan Aplikasi ini, berarti anda setuju dan tidak akan menuntut tanggung-jawab berupa apapun dari pembuat.
--   Kritik, saran atau request penambahan fitur dapat disampaikan ke [a.muadib](https://github.com/amuadib). Penerapan dan penambahan fitur menjadi hak sepenuhnya dari pembuat.
+-   Kritik, saran atau request penambahan fitur dapat disampaikan ke a.muadib(at)gmail.com. Penerapan dan penambahan fitur menjadi hak sepenuhnya dari pembuat.
