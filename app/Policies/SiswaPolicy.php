@@ -21,7 +21,7 @@ class SiswaPolicy
      */
     public function view(User $user, Siswa $siswa): bool
     {
-        return $user->isPetugas();
+        return $user->isAdmin() or ($user->isPetugas() and $user->authable->lembaga_id == $siswa->lembaga_id);
     }
 
     /**
@@ -37,7 +37,7 @@ class SiswaPolicy
      */
     public function update(User $user, Siswa $siswa): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or $user->authable->lembaga_id == $siswa->lembaga_id;
     }
 
     /**
