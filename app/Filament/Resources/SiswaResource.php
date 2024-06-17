@@ -7,7 +7,9 @@ use App\Filament\Resources\SiswaResource\RelationManagers;
 use App\Models\Kelas;
 use App\Models\Periode;
 use App\Models\Siswa;
+use Faker\Core\Color;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
@@ -27,7 +29,7 @@ use Filament\Forms\Get;
 class SiswaResource extends Resource
 {
     protected static ?string $model = Siswa::class;
-    protected static ?string $recordTitleAttribute = 'nama';
+    protected static ?string $recordTitleAttribute = 'nama_siswa';
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
     public static function form(Form $form): Form
@@ -94,11 +96,10 @@ class SiswaResource extends Resource
                     ->inline()
                     ->inlineLabel(false)
                     ->default(99),
-                Radio::make('yatim_piatu')
-                    ->options(['y' => 'Ya', 'n' => 'Tidak'])
-                    ->inline()
-                    ->inlineLabel(false)
-                    ->default('n'),
+                Forms\Components\CheckboxList::make('label')
+                    ->options(config('custom.siswa.label'))
+                    ->columns(2)
+                    ->gridDirection('row'),
             ]);
     }
 
@@ -136,21 +137,34 @@ class SiswaResource extends Resource
                     }),
             ])
             ->filters([
-                Tables\Filters\Filter::make('yatim_piatu')
-                    ->label('Yatim/Piatu/Yatim Piatu')
-                    ->query(fn (Builder $query): Builder => $query->where('yatim_piatu', 'y')),
+                Tables\Filters\Filter::make('label_filter')
+                    ->form([
+                        Forms\Components\CheckboxList::make('label')
+                            ->columns(2)
+                            ->gridDirection('row')
+                            ->options(config('custom.siswa.label'))
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label'])),
                 SelectFilter::make('lembaga_id')
                     ->label('Lembaga')
                     ->options(Arr::except(config('custom.lembaga'), [99])),
-                SelectFilter::make('kelas')
-                    ->relationship('kelas', 'nama')
+                SelectFilter::make('kelas_id')
+                    ->label('Kelas')
+                    ->multiple()
+                    ->preload()
                     ->options(
                         function (): array {
                             $data = [];
-                            $periode = Periode::where('aktif', 'y')->first();
+                            $lembaga = Arr::except(config('custom.lembaga'), [99]);
+                            $periode = Periode::where('aktif', 1)->first();
+                            $lembaga_id = auth()->user()->isAdmin() ? null : auth()->user()->authable->lembaga_id;
+
                             if ($periode and $periode->kelas->count() > 0) {
                                 foreach ($periode->kelas as $k) {
-                                    $data[$k->id] = $k->nama . ' - ' . $periode->nama;
+                                    if ($lembaga_id !== null and $lembaga_id != $k->lembaga_id) {
+                                        continue;
+                                    }
+                                    $data[$k->id] = $k->nama . ' - ' . $periode->nama . ' - ' . explode(' ', $lembaga[$k->lembaga_id])[0];
                                 }
                             }
                             return $data;
@@ -160,18 +174,29 @@ class SiswaResource extends Resource
                     ->options(config('custom.siswa.status')),
             ])
             ->actions([
-                Tables\Actions\Action::make('Bayar')
-                    ->form([
-                        // Forms\Components\Select::make('kas_id')
-                        //     ->relationship('kas', 'id')
-                        //     ->required(),
-                        TextInput::make('jumlah')
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\Textarea::make('keterangan'),
-                    ]),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('tabungan')
+                    ->icon('heroicon-m-credit-card')
+                    ->iconButton()
+                    ->url(fn (Siswa $record): string => "siswas/{$record->id}/tabungan"),
+                // Tables\Actions\Action::make('tagihan')
+                //     ->icon('heroicon-m-shopping-cart')
+                //     ->color('danger')
+                //     ->iconButton()
+                //     ->form([
+                //         // Forms\Components\Select::make('kas_id')
+                //         //     ->relationship('kas', 'id')
+                //         //     ->required(),
+                //         TextInput::make('jumlah')
+                //             ->required()
+                //             ->numeric(),
+                //         Forms\Components\Textarea::make('keterangan'),
+                //     ]),
+                Tables\Actions\ViewAction::make()
+                    ->iconButton()
+                    ->color('info'),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->color('warning'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -205,7 +230,8 @@ class SiswaResource extends Resource
                 TextEntry::make('nama_ayah'),
                 TextEntry::make('nama_ibu'),
                 TextEntry::make('telepon'),
-                TextEntry::make('email'),
+                TextEntry::make('email')
+                    ->placeholder('Email belum diisi'),
                 TextEntry::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])
@@ -215,12 +241,16 @@ class SiswaResource extends Resource
                         '3' => 'info',
                         default => 'gray',
                     }),
-                TextEntry::make('yatim_piatu')
+                TextEntry::make('label')
+                    ->placeholder('Belum ada Label')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => ['y' => 'Ya', 'n' => 'Tidak'][$state])
+                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.label')[$state])
                     ->color(fn (string $state): string => match ($state) {
-                        'y' => 'warning',
-                        'n' => 'gray',
+                        '1' => 'warning',
+                        '2' => 'warning',
+                        '3' => 'danger',
+                        '11' => 'info',
+                        default => 'gray'
                     }),
             ]);
     }
@@ -239,6 +269,7 @@ class SiswaResource extends Resource
             'create' => Pages\CreateSiswa::route('/create'),
             'view' => Pages\ViewSiswa::route('/{record}'),
             'edit' => Pages\EditSiswa::route('/{record}/edit'),
+            'tabungan' => Pages\TabunganSiswa::route('/{record}/tabungan'),
         ];
     }
 }

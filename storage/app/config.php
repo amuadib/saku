@@ -20,6 +20,12 @@ $config = [
             2 => 'Mutasi',
             3 => 'Lulus',
             99 => 'Non Aktif',
+        ],
+        'label' => [
+            1 => 'Yatim',
+            2 => 'Piatu',
+            11 => 'Ikut Tahfid',
+            12 => 'Pondok',
         ]
     ]
 ];
