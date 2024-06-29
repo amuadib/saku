@@ -4,12 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SiswaResource\Pages;
 use App\Filament\Resources\SiswaResource\RelationManagers;
+use App\Models\Kas;
 use App\Models\Kelas;
 use App\Models\Periode;
 use App\Models\Siswa;
-use Faker\Core\Color;
+use App\Models\Tabungan;
 use Filament\Forms;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
@@ -25,6 +25,12 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Illuminate\Support\Arr;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Actions\Action;
+use Illuminate\Support\Str;
+use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontWeight;
 
 class SiswaResource extends Resource
 {
@@ -174,23 +180,6 @@ class SiswaResource extends Resource
                     ->options(config('custom.siswa.status')),
             ])
             ->actions([
-                Tables\Actions\Action::make('tabungan')
-                    ->icon('heroicon-m-credit-card')
-                    ->iconButton()
-                    ->url(fn (Siswa $record): string => "siswas/{$record->id}/tabungan"),
-                // Tables\Actions\Action::make('tagihan')
-                //     ->icon('heroicon-m-shopping-cart')
-                //     ->color('danger')
-                //     ->iconButton()
-                //     ->form([
-                //         // Forms\Components\Select::make('kas_id')
-                //         //     ->relationship('kas', 'id')
-                //         //     ->required(),
-                //         TextInput::make('jumlah')
-                //             ->required()
-                //             ->numeric(),
-                //         Forms\Components\Textarea::make('keterangan'),
-                //     ]),
                 Tables\Actions\ViewAction::make()
                     ->iconButton()
                     ->color('info'),
@@ -209,49 +198,96 @@ class SiswaResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\ImageEntry::make('foto')
-                    ->width(170)
-                    ->height(230)
-                    ->defaultImageUrl(url('/storage/no_photo.jpg'))
-                    ->columnSpanFull(),
-                TextEntry::make('kelas.nama')
-                    ->label('Kelas')
-                    ->state(fn (Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id]),
-                TextEntry::make('nama'),
-                TextEntry::make('jenis_kelamin')
-                    ->formatStateUsing(fn (string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state]),
-                TextEntry::make('nik')
-                    ->label('NIK'),
-                TextEntry::make('tempat_lahir'),
-                TextEntry::make('tanggal_lahir')
-                    ->date('d F Y'),
-                TextEntry::make('alamat')
-                    ->columnSpanFull(),
-                TextEntry::make('nama_ayah'),
-                TextEntry::make('nama_ibu'),
-                TextEntry::make('telepon'),
-                TextEntry::make('email')
-                    ->placeholder('Email belum diisi'),
-                TextEntry::make('status')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])
-                    ->color(fn (string $state): string => match ($state) {
-                        '1' => 'success',
-                        '2' => 'warning',
-                        '3' => 'info',
-                        default => 'gray',
-                    }),
-                TextEntry::make('label')
-                    ->placeholder('Belum ada Label')
-                    ->badge()
-                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.label')[$state])
-                    ->color(fn (string $state): string => match ($state) {
-                        '1' => 'warning',
-                        '2' => 'warning',
-                        '3' => 'danger',
-                        '11' => 'info',
-                        default => 'gray'
-                    }),
+
+                Grid::make(4)
+                    ->schema([
+                        Grid::make()
+                            ->schema([
+                                Infolists\Components\ImageEntry::make('foto')
+                                    ->label('')
+                                    ->width(170)
+                                    // ->circular()
+                                    ->height(230)
+                                    ->defaultImageUrl(url('/storage/no_photo.jpg')),
+                            ])->columnSpan([
+                                'sm' => 4,
+                                'md' => 1
+                            ]),
+                        Section::make()
+                            ->schema([
+                                TextEntry::make('nama')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('kelas.nama')
+                                    ->label('Kelas')
+                                    ->state(fn (Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id])
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('jenis_kelamin')
+                                    ->formatStateUsing(fn (string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state])
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('nik')
+                                    ->label('NIK')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('tempat_lahir')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('tanggal_lahir')
+                                    ->date('d F Y')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('alamat')
+                                    ->columnSpanFull()
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('nama_ayah')
+                                    ->placeholder('Nama Ayah belum diisi')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('nama_ibu')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('telepon')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('email')
+                                    ->placeholder('Email belum diisi')
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('status')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])
+                                    ->color(fn (string $state): string => match ($state) {
+                                        '1' => 'success',
+                                        '2' => 'warning',
+                                        '3' => 'info',
+                                        default => 'gray',
+                                    }),
+                                TextEntry::make('label')
+                                    ->placeholder('Belum ada Label')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.label')[$state])
+                                    ->color(fn (string $state): string => match ($state) {
+                                        '1' => 'warning',
+                                        '2' => 'warning',
+                                        '3' => 'danger',
+                                        '11' => 'info',
+                                        default => 'gray'
+                                    }),
+                            ])
+                            ->columns(2)
+                            ->columnSpan([
+                                'sm' => 4,
+                                'md' => 3
+                            ]),
+                    ]),
+                Grid::make(2)
+                    ->schema([
+                        Section::make('Tagihan')
+                            ->schema([
+                                Infolists\Components\ViewEntry::make('tagihan')
+                                    ->view('infolists.components.tabel-tagihan')
+                            ])
+                            ->columnSpan(1),
+                        Section::make('Tabungan')
+                            ->schema([
+                                Infolists\Components\ViewEntry::make('tabungan')
+                                    ->label('')
+                                    ->view('infolists.components.tabel-tabungan')
+                            ])
+                            ->columnSpan(1),
+                    ])
             ]);
     }
 

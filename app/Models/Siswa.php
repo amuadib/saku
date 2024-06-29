@@ -11,6 +11,9 @@ class Siswa extends Model
 {
     use HasUuids;
     protected $table = 'siswa';
+    protected $casts = [
+        'label' => 'array',
+    ];
 
     public function getNamaSiswaAttribute()
     {
@@ -33,5 +36,9 @@ class Siswa extends Model
     public function tagihan(): HasMany
     {
         return $this->hasMany(Tagihan::class);
+    }
+    public function tabungan(): HasMany
+    {
+        return $this->hasMany(Tabungan::class);
     }
 }

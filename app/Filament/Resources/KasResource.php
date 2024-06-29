@@ -80,6 +80,7 @@ class KasResource extends Resource
                 //     ->bulleted(),
                 Tables\Columns\ToggleColumn::make('ada_tagihan')
                     ->label('Ada tagihan ?'),
+                Tables\Columns\ToggleColumn::make('tabungan'),
                 TextColumn::make('keterangan'),
             ])
             ->filters([

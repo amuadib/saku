@@ -8,6 +8,7 @@ use App\Models\Kas;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Tagihan;
+use App\Models\Transaksi;
 use Filament\Forms;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -24,12 +25,13 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\Arr;
+use Filament\Infolists\Components\Fieldset;
 
 class TagihanResource extends Resource
 {
     protected static ?string $model = Tagihan::class;
     // protected static ?string $recordTitleAttribute = 'siswa.nama';
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +42,7 @@ class TagihanResource extends Resource
                     ->label('Lembaga')
                     ->inline()
                     ->inlineLabel(false)
-                    ->options(Arr::except(config('custom.lembaga'), [99]))
+                    ->options(Arr::except($lembaga, [99]))
                     ->live()
                     ->visible(fn (): bool => (auth()->user()->isAdmin())),
                 Select::make('kas_id')
@@ -49,7 +51,7 @@ class TagihanResource extends Resource
                         function (Get $get) use ($lembaga) {
                             $data = [];
                             $lembaga_id = auth()->user()->isAdmin() ? $get('lembaga_id') : auth()->user()->authable->lembaga_id;
-                            foreach (Kas::getDaftarKas($lembaga_id)->get() as $k) {
+                            foreach (Kas::getDaftarTagihan($lembaga_id)->get() as $k) {
                                 $data[$k->id] = $k->nama . ' - ' . $lembaga[$k->lembaga_id];
                                 if (is_array($k->jenis_transaksi)) {
                                     foreach ($k->jenis_transaksi as $j) {
@@ -63,6 +65,7 @@ class TagihanResource extends Resource
                     ->required()
                     ->live(),
                 Forms\Components\TextInput::make('jumlah')
+                    ->prefix('Rp ')
                     ->required()
                     ->currencyMask('.', ',', 0),
                 Forms\Components\Textarea::make('keterangan'),
@@ -167,42 +170,102 @@ class TagihanResource extends Resource
     {
         return $infolist
             ->schema([
-                TextEntry::make('siswa.nama')
-                    ->label('Nama'),
-                TextEntry::make('kelas')
-                    ->state(fn (Tagihan $record): string => "{$record->siswa->kelas->nama} " . config('custom.lembaga')[$record->siswa->lembaga_id]),
-                TextEntry::make('created_at')
-                    ->label('Tanggal')
-                    ->date('d/m/Y'),
-                TextEntry::make('kas.nama')
-                    ->label('Tagihan'),
-                TextEntry::make('keterangan'),
-                TextEntry::make('jumlah')
-                    ->money('IDR'),
-                TextEntry::make('status')
-                    ->badge()
-                    ->state(function (Tagihan $record): string {
-                        if ($record->bayar > 0 and $record->bayar == $record->jumlah) {
-                            return 'Lunas';
-                        }
-                        return 'Belum dibayar';
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'Lunas' => 'success',
-                        'Belum dibayar' => 'danger',
-                    }),
-                Actions::make([
-                    Action::make('bayar_tagihan')
-                        ->icon('heroicon-o-banknotes')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function (Tagihan $record) {
-                            $jumlah = $record->jumlah;
-                            $record->update(['bayar' => $jumlah]);
-                            $record->kas->increment('saldo', $jumlah);
-                        })
-                ])
-                    ->hidden(fn (Tagihan $record): bool => $record->bayar > 0 and $record->bayar == $record->jumlah)
+                Fieldset::make('Detail Tagihan')
+                    ->schema([
+                        TextEntry::make('siswa.nama')
+                            ->label('Nama'),
+                        TextEntry::make('kelas')
+                            ->state(fn (Tagihan $record): string => "{$record->siswa->kelas->nama} " . config('custom.lembaga')[$record->siswa->lembaga_id]),
+                        TextEntry::make('created_at')
+                            ->label('Tanggal')
+                            ->date('d/m/Y'),
+                        TextEntry::make('kas.nama')
+                            ->label('Tagihan'),
+                        TextEntry::make('keterangan'),
+                        TextEntry::make('jumlah')
+                            ->money('IDR'),
+                    ]),
+                Fieldset::make('Pembayaran')
+                    ->schema([
+                        TextEntry::make('status')
+                            ->badge()
+                            ->state(function (Tagihan $record): string {
+                                if ($record->isLunas()) {
+                                    return 'Lunas';
+                                }
+                                return 'Belum dibayar';
+                            })
+                            ->color(fn (string $state): string => match ($state) {
+                                'Lunas' => 'success',
+                                'Belum dibayar' => 'danger',
+                            }),
+                        TextEntry::make('transaksi.id')
+                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                        TextEntry::make('transaksi.created_at')
+                            ->label('Tanggal Bayar')
+                            ->date('d/m/Y')
+                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                        TextEntry::make('transaksi.petugas.authable.nama')
+                            ->label('Petugas')
+                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                        Actions::make([
+                            Action::make('bayar_tagihan')
+                                ->icon('heroicon-o-banknotes')
+                                ->color('success')
+                                // ->requiresConfirmation()
+                                ->form([
+                                    Radio::make('pembayaran')
+                                        ->options(function (Tagihan $record) {
+                                            $data = ['tun' => 'Tunai'];
+                                            if ($record->siswa->tabungan) {
+                                                foreach ($record->siswa->tabungan as $t) {
+                                                    $data[$t->id] = $t->kas->nama;
+                                                }
+                                            }
+                                            return $data;
+                                        })
+                                        ->inline()
+                                        ->inlineLabel(false)
+                                        ->required(),
+                                ])
+                                ->action(function (Tagihan $record) {
+                                    $jumlah = $record->jumlah;
+                                    $record->update(['bayar' => $jumlah]);
+
+                                    //update Kas
+                                    $record->kas->increment('saldo', $jumlah);
+
+                                    //Input Transaksi
+                                    \App\Traits\TransaksiTrait::inputTransaksi(
+                                        mutasi: 'm',
+                                        jenis: 'TG',
+                                        id: $record->id,
+                                        jumlah: $jumlah,
+                                        keterangan: $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : ''
+                                    );
+                                    // Transaksi::insert([
+                                    //     // 'id' => Str::orderedUuid(),
+                                    //     'id' => \App\Traits\TransaksiTrait::getIdTransaksi('MTG'),
+                                    //     'mutasi' => 'm',
+                                    //     'jumlah' => $jumlah,
+                                    //     'transable_type' => 'App\\Models\\Tagihan',
+                                    //     'transable_id' => $record->id,
+                                    //     'keterangan' => ,
+                                    //     'user_id' => \Auth::user()->id,
+                                    //     'created_at' => \Carbon\Carbon::now(),
+                                    //     'updated_at' => \Carbon\Carbon::now(),
+                                    // ]);
+                                })
+                                ->before(function (Action $action, Tagihan $tagihan, array $data) {
+                                    if ($data['pembayaran'] == 'tab') {
+                                        dd($tagihan->siswa->tabungan);
+                                    }
+                                })
+                                ->successNotificationTitle('Pembayaran berhasil!')
+                        ])
+                            ->hidden(fn (Tagihan $record): bool => $record->isLunas())
+                    ])
+                    ->columns(3),
             ]);
     }
 

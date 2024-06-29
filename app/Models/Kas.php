@@ -13,8 +13,9 @@ class Kas extends Model
     protected $casts = [
         'jenis_transaksi' => 'array',
         'ada_tagihan' => 'boolean',
+        'tabungan' => 'boolean',
     ];
-    public function scopeGetDaftarKas($query, $lembaga_id = null)
+    public function scopeGetDaftarTagihan($query, $lembaga_id = null)
     {
         $lembaga_id == null ? auth()->user()->authable->lembaga_id : $lembaga_id;
         $query
@@ -23,5 +24,15 @@ class Kas extends Model
             })
             ->where('ada_tagihan', true)
             ->select('id', 'nama', 'lembaga_id', 'jenis_transaksi');
+    }
+    public function scopeGetDaftarTabungan($query, $lembaga_id = null)
+    {
+        $lembaga_id == null ? auth()->user()->authable->lembaga_id : $lembaga_id;
+        $query
+            ->when($lembaga_id != 99, function ($w) use ($lembaga_id) {
+                $w->where('lembaga_id', $lembaga_id);
+            })
+            ->where('tabungan', true)
+            ->select('id', 'nama', 'lembaga_id');
     }
 }

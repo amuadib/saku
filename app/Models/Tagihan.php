@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Tagihan extends Model
 {
@@ -13,6 +13,10 @@ class Tagihan extends Model
     use HasUuids;
     protected $table = 'tagihan';
 
+    public function transaksi(): MorphOne
+    {
+        return $this->morphOne(Transaksi::class, 'transable');
+    }
     public function siswa(): BelongsTo
     {
         return $this->belongsTo(Siswa::class);
@@ -24,5 +28,10 @@ class Tagihan extends Model
     public function petugas(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function isLunas(): bool
+    {
+        return $this->bayar > 0 and $this->bayar == $this->jumlah;
     }
 }
