@@ -14,6 +14,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Query\JoinClause;
 
 class KelasResource extends Resource
 {
@@ -44,15 +46,29 @@ class KelasResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('no')
-                    ->rowIndex(),
-                TextColumn::make('periode.nama'),
+                // TextColumn::make('no')
+                //     ->rowIndex(),
+                TextColumn::make('nama')
+                    ->sortable()
+                    ->label('Kelas'),
+                TextColumn::make('periode.nama')
+                    ->sortable(),
                 TextColumn::make('lembaga_id')
+                    ->sortable()
                     ->formatStateUsing(fn (string $state): string => config('custom.lembaga')[$state]),
-                TextColumn::make('nama'),
             ])
             ->filters([
-                //
+                Filter::make('aktif')
+                    ->label('Periode Aktif')
+                    ->default()
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->whereHas('periode', fn ($query) => $query->where('aktif', true)))
+                // ->query(fn (Builder $query): Builder => $query->where('periode.aktif', true))
+                // ->query(function ($query) {
+                //     $query->join('periode', function (JoinClause $join) {
+                //         $join->on('periode.id', '=', 'periode_id');
+                //     })->where('periode.aktif', true);
+                // })
             ])
             ->actions([
                 // Tables\Actions\ViewAction::make(),
