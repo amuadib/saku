@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -65,22 +66,15 @@ class KasResource extends Resource
                 TextColumn::make('lembaga_id')
                     ->label('Lembaga')
                     ->formatStateUsing(fn (string $state): string => config('custom.lembaga')[$state]),
-                // TextColumn::make('jenis_transaksi')
-                //     ->label('Transaksi')
-                //     ->state(function (Kas $record) {
-                //         $data = [];
-                //         if (is_array($record->jenis_transaksi)) {
-                //             foreach ($record->jenis_transaksi as $j) {
-                //                 $data[] = $j['nama'];
-                //             }
-                //         }
-                //         return $data;
-                //     })
-                //     ->listWithLineBreaks()
-                //     ->bulleted(),
-                Tables\Columns\ToggleColumn::make('ada_tagihan')
+                ToggleColumn::make('ada_tagihan')
                     ->label('Ada tagihan ?'),
-                Tables\Columns\ToggleColumn::make('tabungan'),
+                ToggleColumn::make('tabungan'),
+                ToggleColumn::make('penjualan')
+                    ->beforeStateUpdated(function ($record, $state) {
+                        Kas::where('lembaga_id', $record->lembaga_id)
+                            ->where('id', '<>', $record->id)
+                            ->update(['penjualan' => false]);
+                    }),
                 TextColumn::make('keterangan'),
             ])
             ->filters([
