@@ -27,5 +27,20 @@ $config = [
             11 => 'Ikut Tahfid',
             12 => 'Pondok',
         ]
+    ],
+    'barang' => [
+        'jenis' => [
+            'SRG' => 'Seragam',
+            'AKS' => 'Aksesoris',
+            'LKS' => 'Lembar Kerja Siswa',
+            'USM' => 'Buku Usmani',
+            'BKU' => 'Buku lain',
+            'LLN' => 'Lain-lain'
+        ],
+        'satuan' => [
+            'PCS' => 'Pcs',
+            'PKT' => 'Paket',
+            'BKS' => 'Bungkus',
+        ]
     ]
 ];
