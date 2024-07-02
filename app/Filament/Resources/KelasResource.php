@@ -21,6 +21,7 @@ class KelasResource extends Resource
 {
     protected static ?string $model = Kelas::class;
     protected static ?string $navigationGroup = 'Master';
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     public static function form(Form $form): Form

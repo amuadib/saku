@@ -20,6 +20,7 @@ class BarangResource extends Resource
     protected static ?string $recordTitleAttribute = 'nama';
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationIcon = 'heroicon-o-truck';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
