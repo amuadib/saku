@@ -23,16 +23,13 @@ class SiswaImporter extends Importer
     }
     public static function getColumns(): array
     {
-        $gender = rand(1, 999) % 2 == 0 ? ['l', 'male'] : ['p', 'female'];
         return [
             ImportColumn::make('nama')
                 ->requiredMapping()
                 ->castStateUsing(function (string $state): string {
                     return strtoupper($state);
                 })
-                ->rules(['required', 'max:255'])
-                ->example(fake('id_ID')->name($gender[1]))
-                ->exampleHeader('Nama'),
+                ->rules(['required', 'max:255']),
             ImportColumn::make('kelas')
                 ->requiredMapping()
                 ->relationship(resolveUsing: function (string $state): ?Kelas {
@@ -42,55 +39,37 @@ class SiswaImporter extends Importer
                         ->where('kelas.nama', $state)
                         ->first('kelas.id');
                 })
-                ->rules(['required'])
-                ->example(rand(1, 6))
-                ->exampleHeader('Kelas'),
+                ->rules(['required']),
             ImportColumn::make('nik')
                 ->label('NIK')
                 ->requiredMapping()
-                ->rules(['required'])
-                ->example("'" . fake('id_ID')->nik())
-                ->exampleHeader('NIK'),
+                ->rules(['required']),
             ImportColumn::make('tempat_lahir')
                 ->castStateUsing(function (string $state): string {
                     return strtoupper($state);
-                })
-                ->example(fake('id_ID')->city())
-                ->exampleHeader('Tempat Lahir'),
+                }),
             ImportColumn::make('tanggal_lahir')
-                ->rules(['date'])
-                ->example(fake('id_ID')->date(max: '6 years ago'))
-                ->exampleHeader('Tanggal Lahir'),
+                ->rules(['date']),
             ImportColumn::make('jenis_kelamin')
                 ->castStateUsing(function (string $state): string {
                     return strtolower($state);
                 })
                 ->requiredMapping()
-                ->example($gender[0])
-                ->exampleHeader('Jenis Kelamin')
                 ->rules(['required']),
             ImportColumn::make('alamat')
                 ->requiredMapping()
-                ->rules(['required'])
-                ->example(fake('id_ID')->address())
-                ->exampleHeader('Alamat'),
+                ->rules(['required']),
             ImportColumn::make('nama_ayah')
                 ->castStateUsing(function (string $state): string {
                     return strtoupper($state);
-                })
-                ->example(fake('id_ID')->name('male'))
-                ->exampleHeader('Nama Ayah'),
+                }),
             ImportColumn::make('nama_ibu')
                 ->castStateUsing(function (string $state): string {
                     return strtoupper($state);
                 })
                 ->requiredMapping()
-                ->rules(['required'])
-                ->example(fake('id_ID')->name('female'))
-                ->exampleHeader('Nama Ibu'),
-            ImportColumn::make('telepon')
-                ->example(fake('id_ID')->phoneNumber())
-                ->exampleHeader('Telepon'),
+                ->rules(['required']),
+            ImportColumn::make('telepon'),
         ];
     }
 
@@ -99,7 +78,6 @@ class SiswaImporter extends Importer
         return Siswa::firstOrNew(
             [
                 'nik' => $this->data['nik'],
-                // 'lembaga_id' => $this->data['lembaga_id'],
             ],
             [
                 'lembaga_id' => $this->options['lembaga'],
