@@ -46,9 +46,13 @@ class CreateTagihan extends CreateRecord
 
                 $this->halt();
             }
+            $kode = \App\Traits\TagihanTrait::getKodeTagihan('MTG');
+            $prefix = substr($kode, 0, 11);
+            $urut = intval(substr($kode, -4));
             foreach ($siswa as $s) {
                 $insert[] = [
                     'id' => Str::orderedUuid(),
+                    'kode' => $prefix . str_pad($urut, 4, '0', STR_PAD_LEFT),
                     'siswa_id' => $s->id,
                     'kas_id' => $data['kas_id'],
                     'jumlah' => $data['jumlah'],
@@ -56,10 +60,12 @@ class CreateTagihan extends CreateRecord
                     'user_id' => $data['user_id'],
                     'created_at' => \Carbon\Carbon::now()
                 ];
+                $urut++;
             }
 
             $siswa_first = Arr::pull($insert, 0);
             $data['siswa_id'] = $siswa_first['siswa_id'];
+            $data['kode'] = $prefix . str_pad($urut++, 4, '0', STR_PAD_LEFT);
 
             if (count($insert) > 0) {
                 Tagihan::insert($insert);

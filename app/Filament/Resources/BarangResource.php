@@ -13,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 
 class BarangResource extends Resource
 {
@@ -53,6 +55,28 @@ class BarangResource extends Resource
                     ->inlineLabel(false)
                     ->required()
                     ->columnSpan(3),
+                // TableRepeater::make('varian')
+                //     ->headers([
+                //         Header::make('nama'),
+                //         Header::make('harga'),
+                //         Header::make('stok'),
+                //     ])
+                //     ->schema([
+                //         TextInput::make('nama')
+                //             ->required()
+                //             ->columnSpan(6),
+                //         TextInput::make('harga')
+                //             ->required()
+                //             ->prefix('Rp ')
+                //             ->currencyMask('.', ',', 0)
+                //             ->columnSpan(6),
+                //         TextInput::make('stok')
+                //             ->required()
+                //             ->numeric()
+                //             ->minValue(0)
+                //             ->columnSpan(3)
+                //     ])
+                //     ->columnSpanFull(),
                 Forms\Components\Textarea::make('keterangan')
                     ->columnSpanFull(),
                 TextInput::make('stok_minimal')
@@ -72,7 +96,14 @@ class BarangResource extends Resource
                 TextColumn::make('jenis')
                     ->formatStateUsing(fn (string $state): string => config('custom.barang.jenis')[$state]),
                 TextColumn::make('nama')
-                    ->searchable(),
+                    ->searchable()
+                    ->description(
+                        function (Barang $b): string {
+                            if ($b->varian == null) {
+                                return '';
+                            }
+                        }
+                    ),
                 TextColumn::make('harga')
                     ->prefix('Rp ')
                     ->numeric(thousandsSeparator: '.'),

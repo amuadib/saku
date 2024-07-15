@@ -14,6 +14,7 @@ class Kas extends Model
         'jenis_transaksi' => 'array',
         'ada_tagihan' => 'boolean',
         'tabungan' => 'boolean',
+        'penjualan' => 'boolean',
     ];
     public function scopeGetDaftarTagihan($query, $lembaga_id = null)
     {

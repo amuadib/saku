@@ -199,7 +199,7 @@ class TagihanResource extends Resource
                                 'Lunas' => 'success',
                                 'Belum dibayar' => 'danger',
                             }),
-                        TextEntry::make('transaksi.id')
+                        TextEntry::make('transaksi.kode')
                             ->visible(fn (Tagihan $record): bool => $record->isLunas()),
                         TextEntry::make('transaksi.created_at')
                             ->label('Tanggal Bayar')
@@ -239,22 +239,10 @@ class TagihanResource extends Resource
                                     \App\Traits\TransaksiTrait::inputTransaksi(
                                         mutasi: 'm',
                                         jenis: 'TG',
-                                        id: $record->id,
+                                        transable_id: $record->id,
                                         jumlah: $jumlah,
                                         keterangan: $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : ''
                                     );
-                                    // Transaksi::insert([
-                                    //     // 'id' => Str::orderedUuid(),
-                                    //     'id' => \App\Traits\TransaksiTrait::getIdTransaksi('MTG'),
-                                    //     'mutasi' => 'm',
-                                    //     'jumlah' => $jumlah,
-                                    //     'transable_type' => 'App\\Models\\Tagihan',
-                                    //     'transable_id' => $record->id,
-                                    //     'keterangan' => ,
-                                    //     'user_id' => \Auth::user()->id,
-                                    //     'created_at' => \Carbon\Carbon::now(),
-                                    //     'updated_at' => \Carbon\Carbon::now(),
-                                    // ]);
                                 })
                                 ->before(function (Action $action, Tagihan $tagihan, array $data) {
                                     if ($data['pembayaran'] == 'tab') {

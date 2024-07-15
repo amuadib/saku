@@ -74,17 +74,17 @@ class TransaksiResource extends Resource
             ->columns([
                 TextColumn::make('created_at')
                     ->label('Tanggal')
-                    ->date('d/m/Y'),
-                TextColumn::make('id')
+                    ->date('d/m/Y H:i'),
+                TextColumn::make('kode')
                     ->label('Kode Transaksi'),
                 TextColumn::make('keterangan')
                     ->lineClamp(2),
                 TextColumn::make('jumlah')
                     ->color(function (Transaksi $record): string {
-                        return $record->mutasi == 'm' ? 'success' : 'danger';
+                        return $record->kode[0] == 'M' ? 'success' : 'danger';
                     })
                     ->icon(function (Transaksi $record): string {
-                        return $record->mutasi == 'm' ? 'heroicon-o-arrow-trending-up' : 'heroicon-o-arrow-trending-down';
+                        return $record->kode[0] == 'M' ? 'heroicon-o-arrow-trending-up' : 'heroicon-o-arrow-trending-down';
                     })
                     ->prefix('Rp ')
                     ->numeric(0),
@@ -93,7 +93,7 @@ class TransaksiResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
                 // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (Transaksi $record) {
@@ -105,7 +105,7 @@ class TransaksiResource extends Resource
                         } elseif ($record->jenis() == 'Tabungan') { //TB
                             $tabungan = $record->transable;
                             $kas = $tabungan->kas;
-                            if ($record->mutasi == 'k') {
+                            if ($record->kode[0] == 'K') {
                                 $tabungan->increment('saldo', $record->jumlah);
                             } else {
                                 $tabungan->decrement('saldo', $record->jumlah);
@@ -116,7 +116,7 @@ class TransaksiResource extends Resource
 
                         //Kas
 
-                        if ($record->mutasi == 'k') {
+                        if ($record->kode[0] == 'K') {
                             $kas->increment('saldo', $record->jumlah);
                         } else {
                             $kas->decrement('saldo', $record->jumlah);

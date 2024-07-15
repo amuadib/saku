@@ -14,6 +14,18 @@ $config = [
         2 => 'SMPI Miftahul Ulum',
         99 => 'Default',
     ],
+    'identitas' => [
+        1 => [
+            'nama' => 'SDI Miftahul Ulum Klemunan',
+            'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
+            'telp' => '089697110580',
+        ],
+        2 => [
+            'nama' => 'SMPI Miftahul Ulum',
+            'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
+            'telp' => '-',
+        ]
+    ],
     'siswa' => [
         'status' => [
             1 => 'Aktif',
@@ -39,8 +51,14 @@ $config = [
         ],
         'satuan' => [
             'PCS' => 'Pcs',
+            'STL' => 'Setel',
             'PKT' => 'Paket',
             'BKS' => 'Bungkus',
         ]
+    ],
+    'pembayaran' => [
+        'tun' => 'Tunai',
+        'tag' => 'Tagihan',
+        'tab' => 'Tabungan',
     ]
 ];

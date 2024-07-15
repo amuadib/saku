@@ -24,16 +24,4 @@ class Transaksi extends Model
     {
         return substr($this->transable_type, 11);
     }
-    // public function kas(): BelongsTo
-    // {
-    //     return $this->belongsTo(Kas::class);
-    // }
-    // public function tagihan(): BelongsTo
-    // {
-    //     return $this->belongsTo(Tagihan::class);
-    // }
-    // public function tabungan(): BelongsTo
-    // {
-    //     return $this->belongsTo(Tabungan::class);
-    // }
 }

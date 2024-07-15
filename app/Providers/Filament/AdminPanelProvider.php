@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->brandLogo(asset('logo_full_v.png'))
             ->brandLogoHeight('3rem')
-            ->globalSearch(false);
+            ->globalSearch(false)
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }

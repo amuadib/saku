@@ -1,5 +1,3 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    <div>
-        {{ $getState() }}
-    </div>
+    @livewire('tabel-tagihan-siswa', ['tagihan' => $getState(), 'siswa' => $getRecord()])
 </x-dynamic-component>

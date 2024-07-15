@@ -16,9 +16,7 @@ class CreateTransaksi extends CreateRecord
     }
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['id'] = \App\Traits\TransaksiTrait::getIdTransaksi(
-            $data['mutasi'] == 'm' ? 'MTX' : 'KTX'
-        );
+        $data['kode'] = \App\Traits\TransaksiTrait::getKodeTransaksi($data['mutasi'] == 'm' ? 'MTX' : 'KTX');
         $data['transable_type'] = 'App\\Models\\Kas';
         $data['transable_id'] = $data['kas_id'];
         $data['user_id'] = \Auth::user()->id;
@@ -31,7 +29,7 @@ class CreateTransaksi extends CreateRecord
         }
 
 
-        unset($data['lembaga_id'], $data['kas_id']);
+        unset($data['lembaga_id'], $data['kas_id'], $data['mutasi']);
         return $data;
     }
 }

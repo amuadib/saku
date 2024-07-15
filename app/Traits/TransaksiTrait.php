@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Transaksi;
+use Illuminate\Support\Str;
 
 trait TransaksiTrait
 {
@@ -13,7 +14,7 @@ trait TransaksiTrait
         string $transable_id,
         int $jumlah,
         string|null $keterangan = null,
-    ) {
+    ): string {
         // Update Kas
         \App\Traits\KasTrait::updateSaldoKas(
             id: $kas_id,
@@ -21,43 +22,47 @@ trait TransaksiTrait
         );
 
         // Input transaksi
-        \App\Traits\TransaksiTrait::inputTransaksi(
+        return \App\Traits\TransaksiTrait::inputTransaksi(
             mutasi: $mutasi,
             jenis: $jenis,
-            id: $transable_id,
+            transable_id: $transable_id,
             jumlah: $jumlah,
             keterangan: $keterangan
         );
     }
 
-    public static function getIdTransaksi($kode)
+    public static function getKodeTransaksi($prefix)
     {
         $jml = Transaksi::where('created_at', 'like', date('Y-m-d') . '%')->count() ?? 0;
-        return strtoupper($kode) . date('Ymd') . str_pad(($jml + 1), 4, '0', STR_PAD_LEFT);
+        return $prefix . date('Ymd') . str_pad(($jml + 1), 4, '0', STR_PAD_LEFT);
     }
 
     public static function inputTransaksi(
         string $mutasi,
         string $jenis,
-        string $id,
+        string $transable_id,
         int $jumlah,
         string|null $keterangan = null,
-    ): void {
+    ): string {
         $transaksi = [
             'TG' => 'Tagihan',
             'TB' => 'Tabungan',
-            'TX' => 'Transaksi'
+            'TX' => 'Transaksi',
+            'PJ' => 'Penjualan',
         ];
+        $kode = \App\Traits\TransaksiTrait::getKodeTransaksi(prefix: strtoupper($mutasi . $jenis));
         Transaksi::insert([
-            'id' => \App\Traits\TransaksiTrait::getIdTransaksi(strtoupper($mutasi . $jenis)),
-            'mutasi' => $mutasi,
+            'id' => Str::orderedUuid(),
+            'kode' => $kode,
+            // 'mutasi' => $mutasi,
             'jumlah' => $jumlah,
             'transable_type' => 'App\\Models\\' . $transaksi[$jenis],
-            'transable_id' => $id,
+            'transable_id' => $transable_id,
             'keterangan' => $keterangan,
-            'user_id' => \Auth::user()->id,
+            'user_id' => auth()->user()->id,
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
         ]);
+        return $kode;
     }
 }

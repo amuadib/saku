@@ -6,14 +6,27 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Siswa extends Model
 {
-    use HasUuids;
+    use HasUuids, LogsActivity;
+
     protected $table = 'siswa';
     protected $casts = [
         'label' => 'array',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logExcept([
+                'id',
+                'created_at',
+                'updated_at',
+            ]);
+    }
 
     public function getNamaSiswaAttribute()
     {
@@ -40,5 +53,9 @@ class Siswa extends Model
     public function tabungan(): HasMany
     {
         return $this->hasMany(Tabungan::class);
+    }
+    public function keranjang(): HasMany
+    {
+        return $this->hasMany(Keranjang::class);
     }
 }

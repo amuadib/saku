@@ -2,25 +2,20 @@
 
 namespace App\Livewire;
 
-use App\Models\Kas;
 use App\Models\Tabungan;
 use Livewire\Component;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as Qb;
-use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Str;
 
 class TabelTabunganSiswa extends Component implements HasTable, HasForms
 {

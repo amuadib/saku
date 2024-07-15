@@ -182,11 +182,16 @@ class SiswaResource extends Resource
                     ->options(config('custom.siswa.status')),
             ])
             ->actions([
+                Tables\Actions\Action::make('belanja')
+                    ->label('')
+                    ->url(fn (Siswa $s): string => SiswaResource::getUrl('belanja', ['record' => $s]))
+                    ->color('success')
+                    ->icon('heroicon-o-shopping-cart'),
                 Tables\Actions\ViewAction::make()
-                    ->iconButton()
+                    ->label('')
                     ->color('info'),
                 Tables\Actions\EditAction::make()
-                    ->iconButton()
+                    ->label('')
                     ->color('warning'),
             ])
             ->bulkActions([
@@ -200,7 +205,6 @@ class SiswaResource extends Resource
     {
         return $infolist
             ->schema([
-
                 Grid::make(4)
                     ->schema([
                         Grid::make()
@@ -208,7 +212,6 @@ class SiswaResource extends Resource
                                 Infolists\Components\ImageEntry::make('foto')
                                     ->label('')
                                     ->width(170)
-                                    // ->circular()
                                     ->height(230)
                                     ->defaultImageUrl(url('/storage/no_photo.jpg')),
                             ])->columnSpan([
@@ -279,6 +282,7 @@ class SiswaResource extends Resource
                         Section::make('Tagihan')
                             ->schema([
                                 Infolists\Components\ViewEntry::make('tagihan')
+                                    ->label('')
                                     ->view('infolists.components.tabel-tagihan')
                             ])
                             ->columnSpan(1),
@@ -367,7 +371,7 @@ class SiswaResource extends Resource
             'create' => Pages\CreateSiswa::route('/create'),
             'view' => Pages\ViewSiswa::route('/{record}'),
             'edit' => Pages\EditSiswa::route('/{record}/edit'),
-            'tabungan' => Pages\TabunganSiswa::route('/{record}/tabungan'),
+            'belanja' => Pages\Belanja::route('/{record}/belanja'),
         ];
     }
 }
