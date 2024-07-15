@@ -13,7 +13,7 @@ class KasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTataUsaha();
+        return $user->isAdmin();
     }
 
     /**
@@ -21,11 +21,7 @@ class KasPolicy
      */
     public function view(User $user, Kas $kas): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return $user->isTataUsaha() and $kas->lembaga_id == $user->authable->lembaga_id;
+        return $user->isAdmin();
     }
 
     /**
@@ -33,7 +29,7 @@ class KasPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isTataUsaha();
+        return $user->isAdmin();
     }
 
     /**
@@ -41,11 +37,7 @@ class KasPolicy
      */
     public function update(User $user, Kas $kas): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return $user->isTataUsaha() and $kas->lembaga_id == $user->authable->lembaga_id;
+        return $user->isAdmin();
     }
 
     /**
