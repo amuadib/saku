@@ -54,21 +54,18 @@
 
         <table style=" margin-top:15px;">
             @foreach ($data['tagihan'] as $b)
-                <tr style="border-top: 1px solid #999">
+                {{-- <tr style="border-top: 1px solid #999">
                     <td>
                         {{ $b['tanggal'] }}
                     </td>
                     <td class="text-right">
                         {{ $b['petugas'] }}
                     </td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td>
                         {{ $b['keterangan'] ?? '-' }}
                     </td>
-                    {{-- <td>
-                        {{ format_angka($b['jumlah']) }} - {{ format_angka($b['bayar']) }}
-                    </td> --}}
                     <td class="text-right">
                         Rp {{ format_angka($b['sisa']) }}
                     </td>
