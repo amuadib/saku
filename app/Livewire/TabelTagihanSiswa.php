@@ -37,7 +37,8 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                     ->where('siswa_id', $this->siswa->id)
                     ->whereNull('bayar')
             )
-            ->emptyStateHeading('Siswa tidak Tagihan.')
+            ->emptyStateHeading('Siswa tidak mempunyai Tagihan.')
+            ->paginated(false)
             ->columns([
                 TextColumn::make('created_at')
                     ->date('d/m/Y')
