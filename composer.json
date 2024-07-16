@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.9",
         "noxoua/filament-activity-log": "^2.2",
         "spatie/laravel-activitylog": "^4.8",
+        "spatie/laravel-backup": "^9.0",
         "stechstudio/filament-impersonate": "^3.8"
     },
     "require-dev": {
