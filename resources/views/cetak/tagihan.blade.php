@@ -95,7 +95,7 @@
             <spsn class="font-bold">Terima Kasih</spsn>
         </div>
         <script>
-            // window.print();
+            window.print();
         </script>
     </body>
 
