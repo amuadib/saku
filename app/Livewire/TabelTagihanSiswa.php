@@ -32,7 +32,11 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
     public function table(Table $table): Table
     {
         return $table->query(Tagihan::query())
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('siswa_id', $this->siswa->id))
+            ->modifyQueryUsing(
+                fn (Builder $query) => $query
+                    ->where('siswa_id', $this->siswa->id)
+                    ->whereNull('bayar')
+            )
             ->emptyStateHeading('Siswa tidak Tagihan.')
             ->columns([
                 TextColumn::make('created_at')

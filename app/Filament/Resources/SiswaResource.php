@@ -31,7 +31,6 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
@@ -225,35 +224,35 @@ class SiswaResource extends Resource
                         Section::make()
                             ->schema([
                                 TextEntry::make('nama')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('kelas.nama')
                                     ->label('Kelas')
                                     ->state(fn (Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id])
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('jenis_kelamin')
                                     ->formatStateUsing(fn (string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state])
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('nik')
                                     ->label('NIK')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('tempat_lahir')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('tanggal_lahir')
                                     ->date('d F Y')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('alamat')
                                     ->columnSpanFull()
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('nama_ayah')
                                     ->placeholder('Nama Ayah belum diisi')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('nama_ibu')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('telepon')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('email')
                                     ->placeholder('Email belum diisi')
-                                    ->weight(FontWeight::Bold),
+                                    ->weight('bold'),
                                 TextEntry::make('status')
                                     ->badge()
                                     ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])

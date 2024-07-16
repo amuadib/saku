@@ -26,6 +26,8 @@ use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\Arr;
 use Filament\Infolists\Components\Fieldset;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class TagihanResource extends Resource
 {
@@ -209,9 +211,34 @@ class TagihanResource extends Resource
                             ->label('Petugas')
                             ->visible(fn (Tagihan $record): bool => $record->isLunas()),
                         Actions::make([
+                            Action::make('cetak_struk')
+                                ->icon('heroicon-o-printer')
+                                ->color('success')
+                                ->action(
+                                    function (Tagihan $record) {
+                                        Cache::put(
+                                            $record->id,
+                                            [
+                                                'lembaga_id' => $record->siswa->lembaga_id,
+                                                'transaksi_id' => $record->kode,
+                                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                                'waktu' => Carbon::now()->format('H:i:s'),
+                                                'petugas' => auth()->user()->authable->nama,
+                                                'siswa' => $record->siswa->nama,
+                                                'keterangan' => $record->transaksi->keterangan,
+                                                'jumlah' => $record->transaksi->jumlah,
+                                            ],
+                                            now()->addMinutes(150)
+                                        );
+                                        redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->id));
+                                    }
+                                )
+                        ])
+                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                        Actions::make([
                             Action::make('bayar_tagihan')
                                 ->icon('heroicon-o-banknotes')
-                                ->color('success')
+                                ->color('info')
                                 // ->requiresConfirmation()
                                 ->form([
                                     Radio::make('pembayaran')
