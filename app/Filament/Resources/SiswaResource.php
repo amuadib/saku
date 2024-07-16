@@ -57,6 +57,7 @@ class SiswaResource extends Resource
                     ->inlineLabel(false)
                     ->options(Arr::except(config('custom.lembaga'), [99]))
                     ->required()
+                    ->live()
                     ->visible(fn (): bool => (auth()->user()->isAdmin())),
 
                 Forms\Components\ViewField::make('lembaga_id')
