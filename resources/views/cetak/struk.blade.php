@@ -11,42 +11,8 @@
     <html>
 
     <head>
-        <title></title>
-        <style>
-            body {
-                margin: 0;
-                padding: 5px;
-                width: 302.3622047244094px;
-                font-family: 'Calibri';
-                font-stretch: condensed;
-            }
-
-            .text-center {
-                text-align: center;
-            }
-
-            .text-right {
-                text-align: right;
-            }
-
-            .font-bold {
-                font-weight: bold;
-            }
-
-            table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            table td {
-                vertical-align: top;
-            }
-
-            .divider::before {
-                text-align: center;
-                content: "-------------------------------------------------------------";
-            }
-        </style>
+        <title>Cetak Struk Belanja</title>
+        <link href="{{ asset('/css/cetak.css') }}" rel="stylesheet" />
     </head>
 
     <body>
@@ -152,7 +118,7 @@
             <spsn class="font-bold">Terima Kasih</spsn>
         </div>
         <script>
-            // window.print();
+            window.print();
         </script>
     </body>
 
