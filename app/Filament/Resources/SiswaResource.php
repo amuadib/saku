@@ -125,17 +125,19 @@ class SiswaResource extends Resource
             })
             ->defaultSort('nama')
             ->columns([
-                TextColumn::make('no')
-                    ->rowIndex(),
-                TextColumn::make('nik')
-                    ->label('NIK')
-                    ->searchable(),
+                // TextColumn::make('no')
+                //     ->rowIndex(),
+                // TextColumn::make('nik')
+                //     ->label('NIK')
+                //     ->searchable(),
                 TextColumn::make('kelas.nama')
                     ->label('Kelas'),
                 TextColumn::make('nama')
                     ->searchable(),
                 TextColumn::make('nama_ibu')
                     ->label('Ibu'),
+                TextColumn::make('alamat')
+                    ->wrap(),
                 TextColumn::make('telepon'),
                 TextColumn::make('status')
                     ->badge()
