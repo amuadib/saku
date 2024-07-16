@@ -9,6 +9,7 @@ use App\Models\Kelas;
 use App\Models\Periode;
 use App\Models\Siswa;
 use App\Models\Tabungan;
+use App\Models\Tagihan;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
@@ -31,6 +32,8 @@ use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class SiswaResource extends Resource
 {
@@ -203,6 +206,7 @@ class SiswaResource extends Resource
 
     public static function infolist(Infolist $infolist): Infolist
     {
+        $lembaga = config('custom.lembaga');
         return $infolist
             ->schema([
                 Grid::make(4)
@@ -285,6 +289,106 @@ class SiswaResource extends Resource
                                     ->label('')
                                     ->view('infolists.components.tabel-tagihan')
                             ])
+                            ->headerActions([
+                                Action::make('input_tagihan')
+                                    ->label('Input Tagihan')
+                                    ->color('info')
+                                    ->icon('heroicon-o-plus')
+                                    ->size('xs')
+                                    ->form([
+                                        Radio::make('kas_id')
+                                            ->label('Kas')
+                                            ->options(
+                                                function (Siswa $siswa) use ($lembaga) {
+                                                    $data = [];
+                                                    foreach (Kas::getDaftarTagihan($siswa->lembaga_id)->get() as $k) {
+                                                        $data[$k->id] = $k->nama . ' - ' . $lembaga[$k->lembaga_id];
+                                                    }
+                                                    return $data;
+                                                }
+                                            )
+                                            ->inline()
+                                            ->inlineLabel(false)
+                                            ->required(),
+                                        TextInput::make('jumlah')
+                                            ->prefix('Rp')
+                                            ->required()
+                                            ->currencyMask('.', ',', 0),
+                                        Forms\Components\Textarea::make('keterangan'),
+                                    ])
+                                    ->action(function (Siswa $siswa, array $data) {
+
+                                        $kode = \App\Traits\TagihanTrait::getKodeTagihan('MTG');
+                                        $prefix = substr($kode, 0, 11);
+                                        $urut = intval(substr($kode, -4));
+                                        Tagihan::insert([
+                                            'id' => Str::orderedUuid(),
+                                            'kode' => $prefix . str_pad($urut, 4, '0', STR_PAD_LEFT),
+                                            'siswa_id' => $siswa->id,
+                                            'kas_id' => $data['kas_id'],
+                                            'jumlah' => $data['jumlah'],
+                                            'keterangan' => $data['keterangan'],
+                                            'user_id' => auth()->user()->id,
+                                            'created_at' => \Carbon\Carbon::now(),
+                                            'updated_at' => \Carbon\Carbon::now(),
+                                        ]);
+
+                                        Notification::make()
+                                            ->title('Tagihan  berhasil dimasukkan')
+                                            ->icon('heroicon-o-check-circle')
+                                            ->iconColor('success')
+                                            ->send();
+
+                                        redirect(url('/siswas/' . $siswa->id));
+                                    }),
+
+                                Action::make('cetak_tagihan')
+                                    ->label('Cetak Tagihan')
+                                    ->color('success')
+                                    ->icon('heroicon-o-printer')
+                                    ->size('xs')
+                                    ->action(
+                                        function (Siswa $siswa) {
+                                            $total_tagihan = 0;
+                                            foreach ($siswa->tagihan as $t) {
+                                                $sisa = $t->jumlah - intval($t->bayar);
+                                                if ($sisa > 0) {
+                                                    $tagihan[] = [
+                                                        'keterangan' => $t->keterangan,
+                                                        'tanggal' => substr($t->created_at, 0, 10),
+                                                        'jumlah' => $t->jumlah,
+                                                        'bayar' => intval($t->bayar),
+                                                        'sisa' => $sisa,
+                                                        'petugas' => $t->petugas->authable->nama,
+                                                    ];
+                                                    $total_tagihan += $sisa;
+                                                }
+                                            }
+
+                                            if ($total_tagihan == 0) {
+                                                Notification::make()
+                                                    ->title('Siswa tidak mempunyai Tagihan')->success()
+                                                    ->send();
+                                                return;
+                                            }
+                                            Cache::put(
+                                                $siswa->id,
+                                                [
+                                                    'lembaga_id' => $siswa->lembaga_id,
+                                                    'transaksi_id' => 'TG' . Carbon::now()->format('Ymd'),
+                                                    'tanggal' => Carbon::now()->format('d-m-Y'),
+                                                    'waktu' => Carbon::now()->format('H:i:s'),
+                                                    'petugas' => auth()->user()->authable->nama,
+                                                    'siswa' => $siswa->nama,
+                                                    'tagihan' => $tagihan,
+                                                    'total' => $total_tagihan,
+                                                ],
+                                                now()->addMinutes(150)
+                                            );
+                                            redirect()->to(url('/cetak/tagihan/' . $siswa->id));
+                                        }
+                                    ),
+                            ])
                             ->columnSpan(1),
                         Section::make('Tabungan')
                             ->schema([
@@ -295,6 +399,7 @@ class SiswaResource extends Resource
                             ->headerActions([
                                 Action::make('input')
                                     ->label('Setor Tabungan')
+                                    ->color('info')
                                     ->icon('heroicon-o-plus')
                                     ->size('xs')
                                     ->form([
