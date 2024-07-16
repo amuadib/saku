@@ -444,16 +444,30 @@ class SiswaResource extends Resource
                                             ->send();
 
                                         //Proses transaksi
-                                        \App\Traits\TransaksiTrait::prosesTransaksi(
+                                        $keterangan = 'Setoran ' . Kas::find($data['kas_id'])->nama . ' ' . $siswa->nama;
+                                        $transaksi_id = \App\Traits\TransaksiTrait::prosesTransaksi(
                                             kas_id: $data['kas_id'],
                                             mutasi: 'm',
                                             jenis: 'TB',
                                             transable_id: $id,
                                             jumlah: $data['jumlah'],
-                                            keterangan: 'Setoran ' . Kas::find($data['kas_id'])->nama . ' ' . $siswa->nama
+                                            keterangan: $keterangan
                                         );
-
-                                        redirect(url('/siswas/' . $siswa->id));
+                                        Cache::put(
+                                            $transaksi_id,
+                                            [
+                                                'lembaga_id' => $siswa->lembaga_id,
+                                                'transaksi_id' => $transaksi_id,
+                                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                                'waktu' => Carbon::now()->format('H:i:s'),
+                                                'petugas' => auth()->user()->authable->nama,
+                                                'siswa' => $siswa->nama,
+                                                'keterangan' => $keterangan,
+                                                'jumlah' => $data['jumlah'],
+                                            ],
+                                            now()->addMinutes(150)
+                                        );
+                                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id));
                                     }),
                             ])
                             ->columnSpan(1),
