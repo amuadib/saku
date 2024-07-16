@@ -96,6 +96,7 @@ class BarangResource extends Resource
                 TextColumn::make('jenis')
                     ->formatStateUsing(fn (string $state): string => config('custom.barang.jenis')[$state]),
                 TextColumn::make('nama')
+                    ->sortable()
                     ->searchable()
                     ->description(
                         function (Barang $b): string {
@@ -105,9 +106,11 @@ class BarangResource extends Resource
                         }
                     ),
                 TextColumn::make('harga')
+                    ->sortable()
                     ->prefix('Rp ')
                     ->numeric(thousandsSeparator: '.'),
                 TextColumn::make('stok')
+                    ->sortable()
                     ->state(fn (Barang $b): string => $b->stok . ' ' . config('custom.barang.satuan')[$b->satuan])
                     ->color(fn (Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'danger' : null)
                     ->description(fn (Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'Stok kurang dari stok minimal' : null),
