@@ -7,8 +7,8 @@ use App\Filament\Resources\TagihanResource\RelationManagers;
 use App\Models\Kas;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use App\Models\Tabungan;
 use App\Models\Tagihan;
-use App\Models\Transaksi;
 use Filament\Forms;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -255,27 +255,46 @@ class TagihanResource extends Resource
                                         ->inlineLabel(false)
                                         ->required(),
                                 ])
-                                ->action(function (Tagihan $record) {
+                                ->action(function (Tagihan $record, array $data) {
                                     $jumlah = $record->jumlah;
+                                    //tabungan
+                                    if ($data['pembayaran'] != 'tun') {
+                                        Tabungan::find($data['pembayaran'])
+                                            ->decrement('saldo', $jumlah);
+                                    }
                                     $record->update(['bayar' => $jumlah]);
 
-                                    //update Kas
-                                    $record->kas->increment('saldo', $jumlah);
-
-                                    //Input Transaksi
-                                    \App\Traits\TransaksiTrait::inputTransaksi(
+                                    $keterangan = $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : '';
+                                    $transaksi_id = \App\Traits\TransaksiTrait::prosesTransaksi(
+                                        kas_id: $record->kas->id,
                                         mutasi: 'm',
                                         jenis: 'TG',
                                         transable_id: $record->id,
                                         jumlah: $jumlah,
-                                        keterangan: $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : ''
+                                        keterangan: $keterangan
                                     );
+                                    Cache::put(
+                                        $transaksi_id,
+                                        [
+                                            'lembaga_id' => $record->siswa->lembaga_id,
+                                            'transaksi_id' => $transaksi_id,
+                                            'tanggal' => Carbon::now()->format('d-m-Y'),
+                                            'waktu' => Carbon::now()->format('H:i:s'),
+                                            'petugas' => auth()->user()->authable->nama,
+                                            'siswa' => $record->siswa->nama,
+                                            'keterangan' => $keterangan,
+                                            'jumlah' => $jumlah,
+                                        ],
+                                        now()->addMinutes(150)
+                                    );
+
+                                    redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
                                 })
-                                ->before(function (Action $action, Tagihan $tagihan, array $data) {
-                                    if ($data['pembayaran'] == 'tab') {
-                                        dd($tagihan->siswa->tabungan);
-                                    }
-                                })
+                                // ->before(function (Action $action, Tagihan $tagihan, array $data) {
+                                //     if ($data['pembayaran'] == 'tab') {
+                                //         dd($tagihan->siswa->tabungan);
+                                //     }
+                                // })
                                 ->successNotificationTitle('Pembayaran berhasil!')
                         ])
                             ->hidden(fn (Tagihan $record): bool => $record->isLunas())
