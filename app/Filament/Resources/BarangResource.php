@@ -13,8 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
-use Awcodes\TableRepeater\Components\TableRepeater;
-use Awcodes\TableRepeater\Header;
+use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 
 class BarangResource extends Resource
 {
@@ -26,10 +26,18 @@ class BarangResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $lembaga = config('custom.lembaga');
         return $form
             ->schema([
                 Forms\Components\FileUpload::make('foto')
                     ->columnSpanFull(),
+                Forms\Components\Radio::make('lembaga_id')
+                    ->label('Lembaga')
+                    ->inline()
+                    ->inlineLabel(false)
+                    ->options(Arr::except($lembaga, [99]))
+                    ->columnSpan(6)
+                    ->visible(fn (): bool => (auth()->user()->isAdmin())),
                 Forms\Components\Radio::make('jenis')
                     ->label('Jenis')
                     ->options(config('custom.barang.jenis'))
@@ -48,13 +56,17 @@ class BarangResource extends Resource
                     ->required()
                     ->numeric()
                     ->minValue(0)
-                    ->columnSpan(3),
+                    ->columnSpan(4),
                 Forms\Components\Radio::make('satuan')
                     ->options(config('custom.barang.satuan'))
                     ->inline()
                     ->inlineLabel(false)
                     ->required()
-                    ->columnSpan(3),
+                    ->columnSpan(4),
+                TextInput::make('stok_minimal')
+                    ->numeric()
+                    ->default(0)
+                    ->columnSpan(4),
                 // TableRepeater::make('varian')
                 //     ->headers([
                 //         Header::make('nama'),
@@ -79,10 +91,6 @@ class BarangResource extends Resource
                 //     ->columnSpanFull(),
                 Forms\Components\Textarea::make('keterangan')
                     ->columnSpanFull(),
-                TextInput::make('stok_minimal')
-                    ->numeric()
-                    ->default(0)
-                    ->columnSpan(6),
             ])
             ->columns(12);
     }
@@ -91,6 +99,11 @@ class BarangResource extends Resource
     {
         return $table
             ->striped()
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->isAdmin()) {
+                    return $query->where('lembaga_id', auth()->user()->authable->lembaga_id);
+                }
+            })
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('jenis')

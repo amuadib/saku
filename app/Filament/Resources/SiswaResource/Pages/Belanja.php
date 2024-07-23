@@ -270,7 +270,8 @@ class Belanja extends Page implements
                         Select::make('barang_id')
                             ->label('Barang')
                             ->options(
-                                Barang::where('stok', '>', 0)
+                                Barang::where('lembaga_id', $this->record->lembaga_id)
+                                    ->where('stok', '>', 0)
                                     ->orderBy('nama')
                                     ->pluck('nama', 'id')
                                     ->toArray()

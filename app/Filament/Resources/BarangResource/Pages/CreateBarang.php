@@ -13,10 +13,12 @@ class CreateBarang extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-    // protected function mutateFormDataBeforeCreate(array $data): array
-    // {
-    //     $servis_barang = new \App\Services\BarangService;
-    //     $data['kode'] = $data['kode'] . rand(111, 999) . $servis_barang->getIdBarang();
-    //     return $data;
-    // }
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $user = auth()->user();
+        if (!$user->isAdmin()) {
+            $data['lembaga_id'] = $user->authable->lembaga_id;
+        }
+        return $data;
+    }
 }
