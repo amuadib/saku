@@ -19,6 +19,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Auth\Login;
 use Filament\Support\Enums\MaxWidth;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -61,6 +62,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('logo_full_v.png'))
             ->brandLogoHeight('3rem')
             ->globalSearch(false)
-            ->viteTheme('resources/css/filament/admin/theme.css');
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->plugins([
+                FilamentApexChartsPlugin::make()
+            ]);
     }
 }

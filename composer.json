@@ -13,6 +13,7 @@
         "filament/filament": "^3.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "leandrocfe/filament-apex-charts": "^3.1",
         "noxoua/filament-activity-log": "^2.2",
         "spatie/laravel-activitylog": "^4.8",
         "spatie/laravel-backup": "^9.0",
