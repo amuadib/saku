@@ -13,7 +13,7 @@ class BarangPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isPetugas();
     }
 
     /**
@@ -21,7 +21,7 @@ class BarangPolicy
      */
     public function view(User $user, Barang $barang): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or ($user->isPetugas() and $user->authable->lembaga_id == $barang->lembaga_id);
     }
 
     /**
@@ -29,7 +29,7 @@ class BarangPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isPetugas();
     }
 
     /**
@@ -37,7 +37,7 @@ class BarangPolicy
      */
     public function update(User $user, Barang $barang): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or ($user->isPetugas() and $user->authable->lembaga_id == $barang->lembaga_id);
     }
 
     /**
