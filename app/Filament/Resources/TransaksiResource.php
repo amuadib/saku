@@ -78,6 +78,7 @@ class TransaksiResource extends Resource
                 TextColumn::make('kode')
                     ->label('Kode Transaksi'),
                 TextColumn::make('keterangan')
+                    ->searchable()
                     ->lineClamp(2),
                 TextColumn::make('jumlah')
                     ->color(function (Transaksi $record): string {
