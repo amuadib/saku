@@ -6,7 +6,7 @@ use App\Models\Kas;
 
 trait KasTrait
 {
-    public static function updateSaldoKas(string $id, int $jumlah): void
+    public static function updateSaldoKas(string $id, int $jumlah): int
     {
         $kas = Kas::find($id);
         if ($kas) {
@@ -15,6 +15,8 @@ trait KasTrait
             } else {
                 $kas->decrement('saldo', abs($jumlah));
             };
+            return $kas->lembaga_id;
         }
+        return 99;
     }
 }
