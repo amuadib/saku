@@ -102,7 +102,7 @@ class TransaksiResource extends Resource
                         if ($record->jenis() == 'Tagihan') { //TG
                             $tagihan = $record->transable;
                             $kas = $tagihan->kas;
-                            $tagihan->update(['bayar', 0]);
+                            $tagihan->update(['bayar' => 0]);
                         } elseif ($record->jenis() == 'Tabungan') { //TB
                             $tabungan = $record->transable;
                             $kas = $tabungan->kas;
