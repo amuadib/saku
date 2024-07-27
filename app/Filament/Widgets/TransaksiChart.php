@@ -33,12 +33,19 @@ class TransaksiChart extends ApexChartWidget
     protected function getOptions(): array
     {
         $masuk = $keluar = $labels = [];
-        foreach (Transaksi::groupByRaw('substr(created_at,1,10)')
+        foreach (Transaksi::when(
+            !auth()->user()->isAdmin(),
+            function ($w) {
+                $w
+                    ->whereRaw('SUBSTR(`kode`,4,1) = ' . auth()->user()->authable->lembaga_id);
+            }
+        )
+            ->groupByRaw('substr(created_at,1,10)')
             ->orderBy('created_at')
-            ->selectRaw('
-    created_at as tanggal,
-    sum(if(substr(kode,1,1)=\'M\',jumlah,0)) as masuk,
-    sum(if(substr(kode,1,1)=\'K\',jumlah,0)) as keluar')
+            ->selectRaw("
+    `created_at` AS `tanggal`,
+    SUM(IF(SUBSTR(`kode`,1,1)='M',`jumlah`,0)) AS `masuk`,
+    SUM(IF(SUBSTR(`kode`,1,1)='K',`jumlah`,0)) AS `keluar`")
             ->get() as $t) {
             $masuk[] = $t->masuk;
             $keluar[] = $t->keluar;
