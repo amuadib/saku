@@ -21,6 +21,7 @@ class ListSiswas extends ListRecords
                 ->importer(SiswaImporter::class)
                 ->icon('heroicon-o-document-plus')
                 ->color('success')
+                ->visible(fn (): bool => (auth()->user()->isAdmin()))
         ];
     }
 }
