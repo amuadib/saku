@@ -343,7 +343,90 @@ class SiswaResource extends Resource
 
                                         redirect(url('/siswas/' . $siswa->id));
                                     }),
+                                Action::make('bayar_tagihan')
+                                    ->label('Bayar Semua Tagihan')
+                                    ->color('warning')
+                                    ->icon('heroicon-o-check')
+                                    ->size('xs')
+                                    ->requiresConfirmation()
+                                    ->form([
+                                        \Filament\Forms\Components\Radio::make('pembayaran')
+                                            ->options(function (Siswa $siswa) {
+                                                $total_tagihan = 0;
+                                                foreach ($siswa->tagihan as $t) {
+                                                    if (!$t->isLunas()) {
+                                                        $total_tagihan += $t->jumlah;
+                                                    }
+                                                }
+                                                $data = ['tun' => 'Tunai'];
 
+                                                if ($siswa->tabungan) {
+                                                    foreach ($siswa->tabungan as $t) {
+                                                        if ($t->saldo >= $total_tagihan) {
+                                                            $data[$t->id] = $t->kas->nama;
+                                                        }
+                                                    }
+                                                }
+                                                return $data;
+                                            })
+                                            ->inline()
+                                            ->inlineLabel(false)
+                                            ->required(),
+                                    ])
+                                    ->action(function (Siswa $siswa, array $data) {
+                                        $total_tagihan = 0;
+                                        $tagihan = [];
+                                        foreach ($siswa->tagihan as $t) {
+                                            if (!$t->isLunas()) {
+                                                $total_tagihan += $t->jumlah;
+                                                $tagihan[] = [
+                                                    'id' => $t->id,
+                                                    'kas_id' => $t->kas_id,
+                                                    'kas' => $t->kas->nama,
+                                                    'jumlah' => $t->jumlah,
+                                                    'keterangan' => $t->keterangan,
+                                                ];
+                                            }
+                                        }
+                                        //tabungan
+                                        if ($data['pembayaran'] != 'tun') {
+                                            Tabungan::find($data['pembayaran'])
+                                                ->decrement('saldo', $total_tagihan);
+                                        }
+
+                                        Tagihan::whereIn('id', Arr::pluck($tagihan, 'id'))
+                                            ->update([
+                                                'bayar' => \DB::raw('jumlah')
+                                            ]);
+
+                                        foreach ($tagihan as $t) {
+                                            \App\Traits\TransaksiTrait::prosesTransaksi(
+                                                kas_id: $t['kas_id'],
+                                                mutasi: 'm',
+                                                jenis: 'TG',
+                                                transable_id: $t['id'],
+                                                jumlah: $t['jumlah'],
+                                                keterangan: $t['keterangan'] != '' ? 'Pembayaran tagihan ' . $t['kas'] . ' '  . $t['keterangan'] . ' ' . $siswa->nama : ''
+                                            );
+                                        }
+                                        $transaksi_id = 'BMTG' . Carbon::now()->format('YmdHi');
+                                        Cache::put(
+                                            $transaksi_id,
+                                            [
+                                                'lembaga_id' => $siswa->lembaga_id,
+                                                'transaksi_id' => $transaksi_id,
+                                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                                'waktu' => Carbon::now()->format('H:i:s'),
+                                                'petugas' => auth()->user()->authable->nama,
+                                                'siswa' => $siswa->nama,
+                                                'tagihan' => $tagihan,
+                                                'total' => $total_tagihan,
+                                                'jumlah' => $total_tagihan,
+                                            ],
+                                            now()->addMinutes(150)
+                                        );
+                                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                                    }),
                                 Action::make('cetak_tagihan')
                                     ->label('Cetak Tagihan')
                                     ->color('success')

@@ -52,17 +52,43 @@
 
         <h3 class="text-center">Bukti Pembayaran Tagihan</h3>
         <table style="margin-top:15px;">
-            <tr>
-                <td>
-                    {{ $data['keterangan'] }}
-                </td>
-                <td class="text-right">
-                    {{ format_angka($data['jumlah']) }}
-                </td>
-            </tr>
+            @if (isset($data['tagihan']))
+                @foreach ($data['tagihan'] as $b)
+                    <tr>
+                        <td>
+                            {{ $b['keterangan'] }}
+                        </td>
+                        <td class="text-right">
+                            {{ format_angka($b['jumlah']) }}
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td>
+                        {{ $data['keterangan'] }}
+                    </td>
+                    <td class="text-right">
+                        {{ format_angka($data['jumlah']) }}
+                    </td>
+                </tr>
+            @endif
         </table>
         <div class="divider"></div>
         <table>
+            @if (isset($data['tagihan']))
+                <tr class="font-bold">
+                    <td width="65%">
+                        Total
+                    </td>
+                    <td class="text-right" width="20px">
+                        Rp
+                    </td>
+                    <td class="text-right">
+                        {{ format_angka($data['total']) }}
+                    </td>
+                </tr>
+            @endif
             <tr class="font-bold">
                 <td>
                     Bayar

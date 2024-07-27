@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Collection;
 
 class TabelTagihanSiswa extends Component implements HasTable, HasForms
 {
@@ -66,6 +68,34 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                     }),
                 TextColumn::make('keterangan'),
             ])
+            // ->bulkActions([
+            //     BulkAction::make('bayar_tagihan_terpilih')
+            //         ->requiresConfirmation()
+            //         ->color('warning')
+            //         ->size('xs')
+            //         ->form([
+            //             \Filament\Forms\Components\Radio::make('pembayaran')
+            //                 ->options(function (Collection $records) use ($table) {
+            //                     // $data = $table->getLivewire()->getMountedTableBulkActionForm()->getState();
+            //                     // dd($records);
+            //                     // $total_tagihan = $this->siswa->tagihan->sum('jumlah');
+            //                     // dd($total_tagihan);
+            //                     $data = ['tun' => 'Tunai'];
+
+            //                     // if ($siswa->tabungan) {
+            //                     //     foreach ($siswa->tabungan as $t) {
+            //                     //         if ($t->saldo >= $siswa->tagihan->sum('jumlah')) {
+            //                     //             $data[$t->id] = $t->kas->nama;
+            //                     //         }
+            //                     //     }
+            //                     // }
+            //                     return $data;
+            //                 })
+            //                 ->inline()
+            //                 ->inlineLabel(false)
+            //                 ->required(),
+            //         ])
+            // ])
             ->actions([
                 Action::make('bayar')
                     ->button()
