@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 
 class TabelTagihanSiswa extends Component implements HasTable, HasForms
 {
@@ -68,15 +69,59 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                     }),
                 TextColumn::make('keterangan'),
             ])
-            // ->bulkActions([
-            //     BulkAction::make('bayar_tagihan_terpilih')
-            //         ->requiresConfirmation()
-            //         ->color('warning')
-            //         ->size('xs')
-            //         ->action(function (Collection $records) {
-            //             dd($records);
-            //         })
-            // ])
+            ->bulkActions([
+                BulkAction::make('bayar_tagihan_terpilih')
+                    ->requiresConfirmation()
+                    ->color('warning')
+                    ->size('xs')
+                    ->action(function (Collection $records) {
+                        $total_tagihan = 0;
+                        $tagihan = [];
+                        foreach ($records as $t) {
+                            if (!$t->isLunas()) {
+                                $total_tagihan += $t->jumlah;
+                                $tagihan[] = [
+                                    'id' => $t->id,
+                                    'kas_id' => $t->kas_id,
+                                    'kas' => $t->kas->nama,
+                                    'jumlah' => $t->jumlah,
+                                    'keterangan' => $t->keterangan,
+                                ];
+                            }
+                        }
+                        Tagihan::whereIn('id', Arr::pluck($tagihan, 'id'))
+                            ->update([
+                                'bayar' => \DB::raw('jumlah')
+                            ]);
+                        foreach ($tagihan as $t) {
+                            \App\Traits\TransaksiTrait::prosesTransaksi(
+                                kas_id: $t['kas_id'],
+                                mutasi: 'm',
+                                jenis: 'TG',
+                                transable_id: $t['id'],
+                                jumlah: $t['jumlah'],
+                                keterangan: $t['keterangan'] != '' ? 'Pembayaran tagihan ' . $t['kas'] . ' '  . $t['keterangan'] . ' ' . $this->siswa->nama : ''
+                            );
+                        }
+                        $transaksi_id = 'BMTG' . Carbon::now()->format('YmdHi');
+                        Cache::put(
+                            $transaksi_id,
+                            [
+                                'lembaga_id' => $this->siswa->lembaga_id,
+                                'transaksi_id' => $transaksi_id,
+                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                'waktu' => Carbon::now()->format('H:i:s'),
+                                'petugas' => auth()->user()->authable->nama,
+                                'siswa' => $this->siswa->nama,
+                                'tagihan' => $tagihan,
+                                'total' => $total_tagihan,
+                                'jumlah' => $total_tagihan,
+                            ],
+                            now()->addMinutes(150)
+                        );
+                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                    })
+            ])
             ->actions([
                 Action::make('bayar')
                     ->button()
