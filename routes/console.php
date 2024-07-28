@@ -11,7 +11,7 @@ Schedule::command('backup:clean')->daily()->at('11:00')
         Log::info("Proses pembersihan Backup berhasil dijalankan");
     });
 
-Schedule::command('backup:run --only-db')->daily()->at('11:20')
+Schedule::command('backup:run --only-db')->twiceDailyAt(11, 15, 7)
     ->onFailure(function () {
         Log::alert("Proses Backup gagal dijalankan");
     })
