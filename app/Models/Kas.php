@@ -16,6 +16,15 @@ class Kas extends Model
         'tabungan' => 'boolean',
         'penjualan' => 'boolean',
     ];
+    public function scopeGetDaftarKas($query, $lembaga_id = null)
+    {
+        $lembaga_id == null ? auth()->user()->authable->lembaga_id : $lembaga_id;
+        $query
+            ->when($lembaga_id != 99, function ($w) use ($lembaga_id) {
+                $w->where('lembaga_id', $lembaga_id);
+            })
+            ->select('id', 'nama', 'lembaga_id', 'jenis_transaksi');
+    }
     public function scopeGetDaftarTagihan($query, $lembaga_id = null)
     {
         $lembaga_id == null ? auth()->user()->authable->lembaga_id : $lembaga_id;

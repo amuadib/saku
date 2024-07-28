@@ -41,7 +41,7 @@ class TransaksiResource extends Resource
                         function (Get $get) use ($lembaga) {
                             $data = [];
                             $lembaga_id = auth()->user()->isAdmin() ? $get('lembaga_id') : auth()->user()->authable->lembaga_id;
-                            foreach (Kas::getDaftarTagihan($lembaga_id)->get() as $k) {
+                            foreach (Kas::getDaftarKas($lembaga_id)->get() as $k) {
                                 $data[$k->id] = $k->nama . ' - ' . $lembaga[$k->lembaga_id];
                                 if (is_array($k->jenis_transaksi)) {
                                     foreach ($k->jenis_transaksi as $j) {
