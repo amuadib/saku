@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\KasResource\Pages;
-use App\Filament\Resources\KasResource\RelationManagers;
 use App\Models\Kas;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
 
 class KasResource extends Resource
 {
@@ -35,14 +34,7 @@ class KasResource extends Resource
                     ->options(config('custom.lembaga'))
                     ->required(),
                 Forms\Components\Textarea::make('keterangan')
-                    ->columnSpanFull(),
-                // Forms\Components\Toggle::make('ada_tagihan')
-                //     ->label('Ada tagihan ?'),
-                // Forms\Components\Repeater::make('jenis_transaksi')
-                //     ->schema([
-                //         TextInput::make('nama')
-                //     ])
-                //     ->columnSpanFull()
+                    ->columnSpanFull()
             ]);
     }
 
@@ -84,21 +76,39 @@ class KasResource extends Resource
                     ->options(config('custom.lembaga')),
             ])
             ->actions([
+                Tables\Actions\Action::make('setor')
+                    ->label('Setor Dana')
+                    ->icon('heroicon-o-receipt-refund')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->action(function (Kas $kas) {
+                        $saldo = $kas->saldo;
+                        \App\Traits\TransaksiTrait::prosesTransaksi(
+                            kas_id: $kas->id,
+                            mutasi: 'K',
+                            jenis: 'TX',
+                            transable_id: $kas->id,
+                            jumlah: $saldo,
+                            keterangan: 'Setoran dana ' . $kas->nama . ' ke Yayasan'
+                        );
+                        $kas->update([
+                            'saldo' => 0
+                        ]);
+                        Notification::make()
+                            ->title('Sukses')
+                            ->body('Dana Kas ' . $kas->nama . ' sebesar Rp ' . number_format($saldo, thousands_separator: '.') . ' berhasil disetorkan')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array
