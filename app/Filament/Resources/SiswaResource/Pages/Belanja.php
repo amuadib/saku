@@ -57,7 +57,7 @@ class Belanja extends Page implements
     public $jenis;
     public $tabungan;
     public $tabungan_id;
-    public $saldoCukup = false;
+    // public $saldoCukup = false;
     public $transaksi_selesai = false;
     public $id = null;
     public $views = ['tun' => 'struk', 'tab' => 'struk', 'tag' => 'invoice'];
@@ -88,16 +88,16 @@ class Belanja extends Page implements
             throw \Illuminate\Validation\ValidationException::withMessages(['kurang' => 'Bayare kurang cah ;)']);
         }
 
-        if ($this->pembayaran == 'tab') {
-            $tabungan_siswa = Tabungan::find($this->tabungan_id);
-            if (!$tabungan_siswa) {
-                throw \Illuminate\Validation\ValidationException::withMessages(['tabungan_id' => 'Data Tabungan tidak ditemukan']);
-            }
+        // if ($this->pembayaran == 'tab') {
+        //     $tabungan_siswa = Tabungan::find($this->tabungan_id);
+        //     if (!$tabungan_siswa) {
+        //         throw \Illuminate\Validation\ValidationException::withMessages(['tabungan_id' => 'Data Tabungan tidak ditemukan']);
+        //     }
 
-            if ($tabungan_siswa->saldo < $this->total) {
-                throw \Illuminate\Validation\ValidationException::withMessages(['tabungan_id' => 'Saldo Tabungan tidak mencukupi']);
-            }
-        }
+        //     if ($tabungan_siswa->saldo < $this->total) {
+        //         throw \Illuminate\Validation\ValidationException::withMessages(['tabungan_id' => 'Saldo Tabungan tidak mencukupi']);
+        //     }
+        // }
 
         $insert_detail = [];
         $daftar_barang = [];
@@ -146,21 +146,20 @@ class Belanja extends Page implements
             }
         }
 
+        // if ($this->pembayaran == 'tab') {
+        //     //kurangi saldo
+        //     $tabungan_siswa->decrement('saldo', $this->total);
 
-        if ($this->pembayaran == 'tab') {
-            //kurangi saldo
-            $tabungan_siswa->decrement('saldo', $this->total);
-
-            //Mutasi Tabungan
-            \App\Traits\TransaksiTrait::prosesTransaksi(
-                kas_id: $this->tabungan[$this->record->id][$this->tabungan_id]['kas_id'],
-                mutasi: 'k',
-                jenis: 'TB',
-                transable_id: $penjualan->id,
-                jumlah: $this->total,
-                keterangan: 'Pembelian barang ' . $this->record->nama . '.'
-            );
-        }
+        //     //Mutasi Tabungan
+        //     \App\Traits\TransaksiTrait::prosesTransaksi(
+        //         kas_id: $this->tabungan[$this->record->id][$this->tabungan_id]['kas_id'],
+        //         mutasi: 'k',
+        //         jenis: 'TB',
+        //         transable_id: $penjualan->id,
+        //         jumlah: $this->total,
+        //         keterangan: 'Pembelian barang ' . $this->record->nama . '.'
+        //     );
+        // }
 
         if ($this->pembayaran == 'tun' or $this->pembayaran == 'tab') {
             $id = \App\Traits\TransaksiTrait::prosesTransaksi(
@@ -213,7 +212,7 @@ class Belanja extends Page implements
         $this->reset([
             'total',
             'bayar',
-            'saldoCukup',
+            // 'saldoCukup',
         ]);
     }
 
@@ -244,20 +243,20 @@ class Belanja extends Page implements
     public function table(Table $table): Table
     {
         $this->total = $this->record->keranjang->sum('total');
-        $this->saldoCukup = false;
+        // $this->saldoCukup = false;
 
-        if ($this->record->tabungan) {
-            foreach ($this->record->tabungan as $t) {
-                if ($t->saldo >= $this->total) {
-                    $this->tabungan[$this->record->id][$t->id] = [
-                        'nama' => $t->kas->nama,
-                        'kas_id' => $t->kas_id,
-                        'saldo' => $t->saldo
-                    ];
-                    $this->saldoCukup = true;
-                }
-            }
-        }
+        // if ($this->record->tabungan) {
+        //     foreach ($this->record->tabungan as $t) {
+        //         if ($t->saldo >= $this->total) {
+        //             $this->tabungan[$this->record->id][$t->id] = [
+        //                 'nama' => $t->kas->nama,
+        //                 'kas_id' => $t->kas_id,
+        //                 'saldo' => $t->saldo
+        //             ];
+        //             $this->saldoCukup = true;
+        //         }
+        //     }
+        // }
         return $table
             ->query(Keranjang::query())
             ->modifyQueryUsing(fn (Builder $query) => $query->where('siswa_id', $this->record->id))

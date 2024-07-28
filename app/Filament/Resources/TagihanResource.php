@@ -3,11 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagihanResource\Pages;
-use App\Filament\Resources\TagihanResource\RelationManagers;
 use App\Models\Kas;
 use App\Models\Kelas;
 use App\Models\Siswa;
-use App\Models\Tabungan;
+// use App\Models\Tabungan;
 use App\Models\Tagihan;
 use Filament\Forms;
 use Filament\Forms\Components\Radio;
@@ -18,7 +17,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
@@ -32,7 +30,6 @@ use Carbon\Carbon;
 class TagihanResource extends Resource
 {
     protected static ?string $model = Tagihan::class;
-    // protected static ?string $recordTitleAttribute = 'siswa.nama';
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     public static function form(Form $form): Form
@@ -239,29 +236,29 @@ class TagihanResource extends Resource
                             Action::make('bayar_tagihan')
                                 ->icon('heroicon-o-banknotes')
                                 ->color('info')
-                                // ->requiresConfirmation()
-                                ->form([
-                                    Radio::make('pembayaran')
-                                        ->options(function (Tagihan $record) {
-                                            $data = ['tun' => 'Tunai'];
-                                            if ($record->siswa->tabungan) {
-                                                foreach ($record->siswa->tabungan as $t) {
-                                                    $data[$t->id] = $t->kas->nama;
-                                                }
-                                            }
-                                            return $data;
-                                        })
-                                        ->inline()
-                                        ->inlineLabel(false)
-                                        ->required(),
-                                ])
+                                ->requiresConfirmation()
+                                // ->form([
+                                //     Radio::make('pembayaran')
+                                //         ->options(function (Tagihan $record) {
+                                //             $data = ['tun' => 'Tunai'];
+                                //             if ($record->siswa->tabungan) {
+                                //                 foreach ($record->siswa->tabungan as $t) {
+                                //                     $data[$t->id] = $t->kas->nama;
+                                //                 }
+                                //             }
+                                //             return $data;
+                                //         })
+                                //         ->inline()
+                                //         ->inlineLabel(false)
+                                //         ->required(),
+                                // ])
                                 ->action(function (Tagihan $record, array $data) {
                                     $jumlah = $record->jumlah;
                                     //tabungan
-                                    if ($data['pembayaran'] != 'tun') {
-                                        Tabungan::find($data['pembayaran'])
-                                            ->decrement('saldo', $jumlah);
-                                    }
+                                    // if ($data['pembayaran'] != 'tun') {
+                                    //     Tabungan::find($data['pembayaran'])
+                                    //         ->decrement('saldo', $jumlah);
+                                    // }
                                     $record->update(['bayar' => $jumlah]);
 
                                     $keterangan = $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : '';
@@ -290,24 +287,12 @@ class TagihanResource extends Resource
 
                                     redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
                                 })
-                                // ->before(function (Action $action, Tagihan $tagihan, array $data) {
-                                //     if ($data['pembayaran'] == 'tab') {
-                                //         dd($tagihan->siswa->tabungan);
-                                //     }
-                                // })
                                 ->successNotificationTitle('Pembayaran berhasil!')
                         ])
                             ->hidden(fn (Tagihan $record): bool => $record->isLunas())
                     ])
                     ->columns(3),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

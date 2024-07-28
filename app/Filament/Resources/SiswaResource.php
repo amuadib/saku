@@ -349,30 +349,30 @@ class SiswaResource extends Resource
                                     ->icon('heroicon-o-check')
                                     ->size('xs')
                                     ->requiresConfirmation()
-                                    ->form([
-                                        \Filament\Forms\Components\Radio::make('pembayaran')
-                                            ->options(function (Siswa $siswa) {
-                                                $total_tagihan = 0;
-                                                foreach ($siswa->tagihan as $t) {
-                                                    if (!$t->isLunas()) {
-                                                        $total_tagihan += $t->jumlah;
-                                                    }
-                                                }
-                                                $data = ['tun' => 'Tunai'];
+                                    // ->form([
+                                    //     \Filament\Forms\Components\Radio::make('pembayaran')
+                                    //         ->options(function (Siswa $siswa) {
+                                    //             $total_tagihan = 0;
+                                    //             foreach ($siswa->tagihan as $t) {
+                                    //                 if (!$t->isLunas()) {
+                                    //                     $total_tagihan += $t->jumlah;
+                                    //                 }
+                                    //             }
+                                    //             $data = ['tun' => 'Tunai'];
 
-                                                if ($siswa->tabungan) {
-                                                    foreach ($siswa->tabungan as $t) {
-                                                        if ($t->saldo >= $total_tagihan) {
-                                                            $data[$t->id] = $t->kas->nama;
-                                                        }
-                                                    }
-                                                }
-                                                return $data;
-                                            })
-                                            ->inline()
-                                            ->inlineLabel(false)
-                                            ->required(),
-                                    ])
+                                    //             if ($siswa->tabungan) {
+                                    //                 foreach ($siswa->tabungan as $t) {
+                                    //                     if ($t->saldo >= $total_tagihan) {
+                                    //                         $data[$t->id] = $t->kas->nama;
+                                    //                     }
+                                    //                 }
+                                    //             }
+                                    //             return $data;
+                                    //         })
+                                    //         ->inline()
+                                    //         ->inlineLabel(false)
+                                    //         ->required(),
+                                    // ])
                                     ->action(function (Siswa $siswa, array $data) {
                                         $total_tagihan = 0;
                                         $tagihan = [];
@@ -389,10 +389,10 @@ class SiswaResource extends Resource
                                             }
                                         }
                                         //tabungan
-                                        if ($data['pembayaran'] != 'tun') {
-                                            Tabungan::find($data['pembayaran'])
-                                                ->decrement('saldo', $total_tagihan);
-                                        }
+                                        // if ($data['pembayaran'] != 'tun') {
+                                        //     Tabungan::find($data['pembayaran'])
+                                        //         ->decrement('saldo', $total_tagihan);
+                                        // }
 
                                         Tagihan::whereIn('id', Arr::pluck($tagihan, 'id'))
                                             ->update([

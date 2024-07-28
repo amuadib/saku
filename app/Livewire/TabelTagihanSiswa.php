@@ -73,58 +73,40 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
             //         ->requiresConfirmation()
             //         ->color('warning')
             //         ->size('xs')
-            //         ->form([
-            //             \Filament\Forms\Components\Radio::make('pembayaran')
-            //                 ->options(function (Collection $records) use ($table) {
-            //                     // $data = $table->getLivewire()->getMountedTableBulkActionForm()->getState();
-            //                     // dd($records);
-            //                     // $total_tagihan = $this->siswa->tagihan->sum('jumlah');
-            //                     // dd($total_tagihan);
-            //                     $data = ['tun' => 'Tunai'];
-
-            //                     // if ($siswa->tabungan) {
-            //                     //     foreach ($siswa->tabungan as $t) {
-            //                     //         if ($t->saldo >= $siswa->tagihan->sum('jumlah')) {
-            //                     //             $data[$t->id] = $t->kas->nama;
-            //                     //         }
-            //                     //     }
-            //                     // }
-            //                     return $data;
-            //                 })
-            //                 ->inline()
-            //                 ->inlineLabel(false)
-            //                 ->required(),
-            //         ])
+            //         ->action(function (Collection $records) {
+            //             dd($records);
+            //         })
             // ])
             ->actions([
                 Action::make('bayar')
                     ->button()
                     ->size('xs')
                     ->color('warning')
-                    ->form([
-                        \Filament\Forms\Components\Radio::make('pembayaran')
-                            ->options(function (Tagihan $record) {
-                                $data = ['tun' => 'Tunai'];
-                                if ($record->siswa->tabungan) {
-                                    foreach ($record->siswa->tabungan as $t) {
-                                        if ($t->saldo >= $record->jumlah) {
-                                            $data[$t->id] = $t->kas->nama;
-                                        }
-                                    }
-                                }
-                                return $data;
-                            })
-                            ->inline()
-                            ->inlineLabel(false)
-                            ->required(),
-                    ])
+                    ->requiresConfirmation()
+                    // ->form([
+                    //     \Filament\Forms\Components\Radio::make('pembayaran')
+                    //         ->options(function (Tagihan $record) {
+                    //             $data = ['tun' => 'Tunai'];
+                    //             if ($record->siswa->tabungan) {
+                    //                 foreach ($record->siswa->tabungan as $t) {
+                    //                     if ($t->saldo >= $record->jumlah) {
+                    //                         $data[$t->id] = $t->kas->nama;
+                    //                     }
+                    //                 }
+                    //             }
+                    //             return $data;
+                    //         })
+                    //         ->inline()
+                    //         ->inlineLabel(false)
+                    //         ->required(),
+                    // ])
                     ->action(function (Tagihan $record, array $data) {
                         $jumlah = $record->jumlah;
                         //tabungan
-                        if ($data['pembayaran'] != 'tun') {
-                            Tabungan::find($data['pembayaran'])
-                                ->decrement('saldo', $jumlah);
-                        }
+                        // if ($data['pembayaran'] != 'tun') {
+                        //     Tabungan::find($data['pembayaran'])
+                        //         ->decrement('saldo', $jumlah);
+                        // }
                         $record->update(['bayar' => $jumlah]);
 
                         $keterangan = $record->keterangan != '' ? 'Pembayaran tagihan ' . $record->kas->nama . ' '  . $record->keterangan . ' ' . $record->siswa->nama : '';
