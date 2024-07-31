@@ -49,7 +49,7 @@ trait TransaksiTrait
         $transaksi = [
             'TG' => 'Tagihan',
             'TB' => 'Tabungan',
-            'TX' => 'Transaksi',
+            'TX' => 'Kas',
             'PJ' => 'Penjualan',
         ];
         $kode = \App\Traits\TransaksiTrait::getKodeTransaksi(prefix: strtoupper($mutasi . $jenis), lembaga_id: $lembaga_id);
