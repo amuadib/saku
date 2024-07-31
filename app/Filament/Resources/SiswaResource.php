@@ -514,14 +514,12 @@ class SiswaResource extends Resource
                                             $id = $tabungan->first()->id;
                                             $tabungan->increment('saldo', $data['jumlah']);
                                         } else {
-                                            $id = Tabungan::insertGetId([
-                                                'id' => Str::orderedUuid(),
+                                            $tabungan = Tabungan::create([
                                                 'siswa_id' => $siswa->id,
                                                 'kas_id' => $data['kas_id'],
                                                 'saldo' => $data['jumlah'],
-                                                'created_at' => \Carbon\Carbon::now(),
-                                                'updated_at' => \Carbon\Carbon::now(),
                                             ]);
+                                            $id = $tabungan->id;
                                         }
                                         Notification::make()
                                             ->title('Setoran berhasil')
