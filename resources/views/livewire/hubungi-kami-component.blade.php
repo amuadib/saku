@@ -9,7 +9,7 @@
                     Hubungi Kami
                 </h2>
                 <p class="mx-auto mt-4 max-w-3xl text-xl text-gray-600">
-                    Dapatkan Informasi lebih lanjut
+                    Untuk Informasi lebih lanjut
                 </p>
             </div>
         </div>
@@ -22,7 +22,7 @@
                     </p>
                     <ul class="mb-6 md:mb-0">
                         <li class="flex">
-                            <div class="flex h-10 w-10 items-center justify-center rounded bg-blue-900 text-gray-50">
+                            <div class="flex h-10 w-10 items-center justify-center rounded bg-indigo-600 text-gray-50">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
@@ -40,7 +40,7 @@
                             </div>
                         </li>
                         <li class="flex">
-                            <div class="flex h-10 w-10 items-center justify-center rounded bg-blue-900 text-gray-50">
+                            <div class="flex h-10 w-10 items-center justify-center rounded bg-indigo-600 text-gray-50">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
@@ -62,7 +62,7 @@
                             </div>
                         </li>
                         <li class="flex">
-                            <div class="flex h-10 w-10 items-center justify-center rounded bg-blue-900 text-gray-50">
+                            <div class="flex h-10 w-10 items-center justify-center rounded bg-indigo-600 text-gray-50">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
@@ -91,24 +91,24 @@
                                     <label for="name" class="pb-1 text-xs uppercase tracking-wider"></label><input
                                         type="text" wire:model="nama" name="nama" autocomplete="nama-lengkap"
                                         placeholder="Nama Anda" required
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0">
+                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0">
                                 </div>
                                 <div class="mx-0 mb-1 sm:mb-4">
                                     <label for="hp" class="pb-1 text-xs uppercase tracking-wider"></label><input
                                         type="text" wire:model="hp" autocomplete="hp" placeholder="Nomor HP Anda"
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"
+                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"
                                         name="hp">
                                 </div>
                             </div>
                             <div class="mx-0 mb-1 sm:mb-4">
                                 <label for="textarea" class="pb-1 text-xs uppercase tracking-wider"></label>
                                 <textarea wire:model="pesan" name="textarea" cols="30" rows="5" placeholder="Pertanyaan Anda" required
-                                    class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 shadow-md dark:text-gray-300 sm:mb-0"></textarea>
+                                    class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"></textarea>
                             </div>
                         </div>
                         <div class="text-center">
                             <button type="submit"
-                                class="font-xl w-full rounded-md bg-blue-800 px-6 py-3 text-white sm:mb-0">
+                                class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
                                 Kirim
                             </button>
                         </div>

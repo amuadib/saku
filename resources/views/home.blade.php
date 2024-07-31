@@ -44,7 +44,7 @@
 
             <nav id="nav"
                 class="absolute left-0 top-0 z-50 mt-24 flex hidden h-64 w-full flex-col items-center justify-between border-t border-gray-200 bg-white pt-5 text-sm text-gray-800 md:relative md:mt-0 md:flex md:h-24 md:w-auto md:flex-row md:border-none md:bg-transparent md:py-0 lg:text-base">
-                <a href="{{ url('/home') }}"
+                <a href="{{ url('/') }}"
                     class="transition-color ml-0 mr-0 font-bold duration-100 hover:text-indigo-600 md:ml-12 md:mr-3 lg:mr-8">Beranda</a>
                 <a href="#fitur"
                     class="transition-color mr-0 font-bold duration-100 hover:text-indigo-600 md:mr-3 lg:mr-8">Fitur</a>
