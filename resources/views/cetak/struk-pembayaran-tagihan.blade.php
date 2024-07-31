@@ -1,6 +1,7 @@
 @if (count($data))
     @php
-        $identitas = config('custom.identitas')[$data['lembaga_id']];
+        $lembaga = config('custom.lembaga')[$data['lembaga_id']];
+        $kontak = config('custom.kontak_lembaga')[$data['lembaga_id']];
 
         function format_angka(int $num)
         {
@@ -24,11 +25,11 @@
         -moz-transform: scale(1, 2);
         -o-transform: scale(1, 2);
         transform-origin: 0% 70%;">
-                {{ strtoupper($identitas['nama']) }}
+                {{ strtoupper($lembaga) }}
             </span>
         </div>
         <div class="text-center">
-            {{ $identitas['alamat'] }}
+            {{ $kontak['alamat'] }}
         </div>
         <table style="width: 100%; margin-top:15px;">
             <tr>
