@@ -1,5 +1,10 @@
 <?php
 $config = [
+    'app' => [
+        'nama' => 'Sistem Administrasi Keuangan',
+        'singkatan' => 'SAKU',
+        'keterangan' => 'Aplikasi pengelolaan keuangan SDI & SMPI Miftahul Ulum Klemunan.'
+    ],
     'roles' => [
         1 => 'Admin',
         2 => 'Yayasan',
@@ -14,16 +19,18 @@ $config = [
         2 => 'SMPI Miftahul Ulum',
         99 => 'Default',
     ],
-    'identitas' => [
+    'kontak_lembaga' => [
         1 => [
-            'nama' => 'SDI Miftahul Ulum Klemunan',
+            'singkatan' => 'SDI',
             'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
-            'telp' => '089697110580',
+            'kontak' => 'B. Latif',
+            'telp' => '+62 857-0844-8279',
         ],
         2 => [
-            'nama' => 'SMPI Miftahul Ulum',
+            'singkatan' => 'SMPI',
             'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
-            'telp' => '-',
+            'kontak' => 'Bella',
+            'telp' => '+62 857-0681-4780',
         ]
     ],
     'siswa' => [
