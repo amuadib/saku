@@ -5,7 +5,14 @@ body {
     font-family: "Calibri";
     font-stretch: condensed;
 }
-
+#lembaga {
+    display: inline-block;
+    transform: scale(1, 2);
+    -webkit-transform: scale(1, 2);
+    -moz-transform: scale(1, 2);
+    -o-transform: scale(1, 2);
+    transform-origin: 0% 70%;
+}
 .text-center {
     text-align: center;
 }
