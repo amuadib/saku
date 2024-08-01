@@ -9,7 +9,8 @@ class CetakStrukController extends Controller
 {
     public function cetak(string $view, string $id)
     {
-        return view('cetak.' . $view, [
+        return view('cetak.template', [
+            'view' => $view,
             'data' => Cache::get($id, [])
         ]);
     }
