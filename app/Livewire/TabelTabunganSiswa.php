@@ -16,6 +16,8 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class TabelTabunganSiswa extends Component implements HasTable, HasForms
 {
@@ -70,16 +72,30 @@ class TabelTabunganSiswa extends Component implements HasTable, HasForms
                         }
 
                         //Proses transaksi
-                        \App\Traits\TransaksiTrait::prosesTransaksi(
+                        $keterangan = 'Setoran ' . $record->kas->nama . ' ' . $record->siswa->nama . '. ' . $data['keterangan'];
+                        $transaksi_id = \App\Traits\TransaksiTrait::prosesTransaksi(
                             kas_id: $record->kas->id,
                             mutasi: 'm',
                             jenis: 'TB',
                             transable_id: $record->id,
                             jumlah: $data['jumlah'],
-                            keterangan: 'Setoran ' . $record->kas->nama . ' ' . $record->siswa->nama . '. ' . $data['keterangan']
+                            keterangan: $keterangan
                         );
-
-                        redirect(url('/siswas/' . $this->siswa->id));
+                        Cache::put(
+                            $transaksi_id,
+                            [
+                                'lembaga_id' => $record->siswa->lembaga_id,
+                                'transaksi_id' => $transaksi_id,
+                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                'waktu' => Carbon::now()->format('H:i:s'),
+                                'petugas' => auth()->user()->authable->nama,
+                                'siswa' => $record->siswa->nama,
+                                'keterangan' => $keterangan,
+                                'jumlah' => $data['jumlah'],
+                            ],
+                            now()->addMinutes(150)
+                        );
+                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id));
                     }),
                 Action::make('tarik')
                     ->button()
@@ -109,16 +125,30 @@ class TabelTabunganSiswa extends Component implements HasTable, HasForms
                             }
 
                             //Proses transaksi
-                            \App\Traits\TransaksiTrait::prosesTransaksi(
+                            $keterangan = 'Penarikan ' . $record->kas->nama . ' ' . $record->siswa->nama . '. ' . $data['keterangan'];
+                            $transaksi_id = \App\Traits\TransaksiTrait::prosesTransaksi(
                                 kas_id: $record->kas->id,
                                 mutasi: 'k',
                                 jenis: 'TB',
                                 transable_id: $record->id,
                                 jumlah: $data['jumlah'],
-                                keterangan: 'Penarikan ' . $record->kas->nama . ' ' . $record->siswa->nama . '. ' . $data['keterangan']
+                                keterangan: $keterangan
                             );
-
-                            redirect(url('/siswas/' . $this->siswa->id));
+                            Cache::put(
+                                $transaksi_id,
+                                [
+                                    'lembaga_id' => $record->siswa->lembaga_id,
+                                    'transaksi_id' => $transaksi_id,
+                                    'tanggal' => Carbon::now()->format('d-m-Y'),
+                                    'waktu' => Carbon::now()->format('H:i:s'),
+                                    'petugas' => auth()->user()->authable->nama,
+                                    'siswa' => $record->siswa->nama,
+                                    'keterangan' => $keterangan,
+                                    'jumlah' => $data['jumlah'],
+                                ],
+                                now()->addMinutes(150)
+                            );
+                            redirect()->to(url('/cetak/struk-penarikan-tabungan/' . $transaksi_id));
                         }
                     }),
             ]);
