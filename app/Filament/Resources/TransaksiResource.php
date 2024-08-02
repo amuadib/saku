@@ -73,6 +73,11 @@ class TransaksiResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->isAdmin()) {
+                    return $query->whereRaw('substr(kode,4,1) =' . auth()->user()->authable->lembaga_id);
+                }
+            })
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
