@@ -20,6 +20,9 @@ use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Filament\Infolists;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 
 class TransaksiResource extends Resource
 {
@@ -70,6 +73,20 @@ class TransaksiResource extends Resource
             ->columns(1);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('created_at')
+                    ->label('Tanggal'),
+                TextEntry::make('petugas.authable.nama'),
+                TextEntry::make('kode'),
+                TextEntry::make('jumlah')
+                    ->prefix('Rp ')
+                    ->numeric(thousandsSeparator: '.'),
+                TextEntry::make('keterangan'),
+            ]);
+    }
     public static function table(Table $table): Table
     {
         return $table
