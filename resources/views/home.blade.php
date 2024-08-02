@@ -54,8 +54,12 @@
                 {{--   <a href="#cek_resi" class="transition-color font-bold duration-100 hover:text-indigo-600">Cek
                     Resi</a> --}}
                 <div class="block flex w-full flex-col border-t border-gray-200 font-medium md:hidden">
-                    <a href="{{ url('/admin/login') }}"
-                        class="w-full py-2 text-center font-bold text-pink-500">Login</a>
+                    @auth
+                        <a href="{{ url('/admin') }}" class="w-full py-2 text-center font-bold text-pink-500">Dasbor</a>
+                    @else
+                        <a href="{{ url('/admin/login') }}"
+                            class="w-full py-2 text-center font-bold text-pink-500">Login</a>
+                    @endauth
                     <a href="#kontak"
                         class="fold-bold relative inline-block w-full bg-indigo-700 px-5 py-3 text-center text-sm leading-none text-white">Hubungi
                         Kami</a>
@@ -64,8 +68,13 @@
 
             <div
                 class="absolute left-0 mt-48 hidden w-full flex-col items-center justify-center border-b border-gray-200 pb-8 md:relative md:mt-0 md:flex md:w-auto md:flex-row md:items-end md:justify-between md:border-none md:bg-transparent md:p-0">
-                <a href="{{ url('/admin/login') }}"
-                    class="relative z-40 mr-0 px-3 py-2 text-sm font-bold text-pink-500 sm:mr-3 md:mt-0 md:px-5 lg:text-white">Login</a>
+                @auth
+                    <a href="{{ url('/admin') }}"
+                        class="relative z-40 mr-0 px-3 py-2 text-sm font-bold text-pink-500 sm:mr-3 md:mt-0 md:px-5 lg:text-white">Dasbor</a>
+                @else
+                    <a href="{{ url('/admin/login') }}"
+                        class="relative z-40 mr-0 px-3 py-2 text-sm font-bold text-pink-500 sm:mr-3 md:mt-0 md:px-5 lg:text-white">Login</a>
+                @endauth
                 <a href="#kontak"
                     class="fold-bold relative z-40 inline-block h-full w-auto rounded bg-indigo-700 px-5 py-3 text-sm font-bold leading-none text-white shadow-md transition transition-all duration-100 duration-300 hover:shadow-xl sm:w-full lg:bg-white lg:text-indigo-700 lg:shadow-none">
                     Hubungi Kami

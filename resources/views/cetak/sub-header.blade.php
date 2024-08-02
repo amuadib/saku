@@ -11,9 +11,11 @@
         <td>{{ $data['petugas'] }}</td>
         <td class="text-right">{{ $data['waktu'] }}</td>
     </tr>
-    <tr>
-        <td>Siswa</td>
-        <td>:</td>
-        <td colspan="2">{{ $data['siswa'] }}</td>
-    </tr>
+    @if (isset($data['siswa']))
+        <tr>
+            <td>Siswa</td>
+            <td>:</td>
+            <td colspan="2">{{ $data['siswa'] }}</td>
+        </tr>
+    @endif
 </table>

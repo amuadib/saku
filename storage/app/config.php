@@ -17,7 +17,7 @@ $config = [
     'lembaga' => [
         1 => 'SDI Miftahul Ulum Klemunan',
         2 => 'SMPI Miftahul Ulum',
-        99 => 'Default',
+        99 => 'Yayasan Bastomiyah Rahman',
     ],
     'kontak_lembaga' => [
         1 => [
@@ -31,6 +31,12 @@ $config = [
             'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
             'kontak' => 'Bella',
             'telp' => '+62 857-0681-4780',
+        ],
+        99 => [
+            'singkatan' => 'YPIB',
+            'alamat' => 'Jl. Manggar Lingk. Jatikeplek RT 02 RW 06 Klemunan Wlingi Blitar',
+            'kontak' => '',
+            'telp' => '',
         ]
     ],
     'siswa' => [

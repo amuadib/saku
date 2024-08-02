@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class TransaksiResource extends Resource
 {
@@ -95,11 +98,10 @@ class TransaksiResource extends Resource
             ])
             ->actions([
                 // Tables\Actions\ViewAction::make(),
-                // Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (Transaksi $record) {
 
-                        if ($record->jenis() == 'Tagihan') { //TG
+                        if ($record->jenis() == 'Tagihan') {         //TG
                             $tagihan = $record->transable;
                             $kas = $tagihan->kas;
                             $tagihan->update(['bayar' => 0]);
@@ -111,10 +113,9 @@ class TransaksiResource extends Resource
                             } else {
                                 $tabungan->decrement('saldo', $record->jumlah);
                             }
-                        } else {
+                        } else {                                    //TX
                             $kas = $record->transable;
                         }
-
                         //Kas
 
                         if ($record->kode[0] == 'K') {
@@ -125,9 +126,35 @@ class TransaksiResource extends Resource
                     }),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkAction::make('cetak_data_terpilih')
+                    ->label('Cetak')
+                    ->icon('heroicon-o-printer')
+                    ->action(function (Collection $records) {
+                        $total = 0;
+                        $transaksi = [];
+                        foreach ($records as $t) {
+                            $transaksi[] = [
+                                'keterangan' => $t->keterangan,
+                                'jumlah' => $t->jumlah,
+                            ];
+                            $total += $t->jumlah;
+                        }
+                        $transaksi_id = 'TX' . Carbon::now()->format('YmdHi');
+                        Cache::put(
+                            $transaksi_id,
+                            [
+                                'lembaga_id' => auth()->user()->authable->lembaga_id,
+                                'transaksi_id' => $transaksi_id,
+                                'tanggal' => Carbon::now()->format('d-m-Y'),
+                                'waktu' => Carbon::now()->format('H:i:s'),
+                                'petugas' => auth()->user()->authable->nama,
+                                'transaksi' => $transaksi,
+                                'total' => $total,
+                            ],
+                            now()->addMinutes(150)
+                        );
+                        redirect(url('/cetak/struk-transaksi/' . $transaksi_id));
+                    }),
             ]);
     }
 
