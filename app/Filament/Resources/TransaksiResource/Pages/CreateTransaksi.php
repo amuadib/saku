@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TransaksiResource\Pages;
 
 use App\Filament\Resources\TransaksiResource;
 use App\Models\Kas;
+use App\Models\RekapTransaksiHarian;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -32,6 +33,12 @@ class CreateTransaksi extends CreateRecord
             Kas::find($data['kas_id'])->decrement('saldo', $data['jumlah']);
         }
 
+        // Input ke Rekap Transaksi
+        \App\Traits\RekapTransaksiTrait::updateRekapTransaksi(
+            $data['kas_id'],
+            $data['mutasi'],
+            $data['jumlah']
+        );
 
         unset($data['lembaga_id'], $data['kas_id'], $data['mutasi']);
         return $data;

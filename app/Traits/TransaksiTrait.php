@@ -21,6 +21,13 @@ trait TransaksiTrait
             jumlah: $mutasi == 'm' ? $jumlah : -1 * abs($jumlah)    //negatif jika mutasi keluar
         );
 
+        // Input ke Rekap Transaksi
+        \App\Traits\RekapTransaksiTrait::updateRekapTransaksi(
+            $kas_id,
+            $mutasi,
+            $jumlah
+        );
+
         // Input transaksi
         return \App\Traits\TransaksiTrait::inputTransaksi(
             lembaga_id: $lembaga_id,

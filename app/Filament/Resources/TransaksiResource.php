@@ -138,13 +138,20 @@ class TransaksiResource extends Resource
                         } else {                                    //TX
                             $kas = $record->transable;
                         }
-                        //Kas
 
+                        //Kas
                         if ($record->kode[0] == 'K') {
                             $kas->increment('saldo', $record->jumlah);
                         } else {
                             $kas->decrement('saldo', $record->jumlah);
                         }
+
+                        // Kurangi jumlah Rekap Transaksi
+                        \App\Traits\RekapTransaksiTrait::updateRekapTransaksi(
+                            $kas->id,
+                            strtolower($record->kode[0]),
+                            -1 * $record->jumlah                //Negatif
+                        );
                     }),
             ])
             ->bulkActions([
