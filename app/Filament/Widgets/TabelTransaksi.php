@@ -31,6 +31,7 @@ class TabelTransaksi extends BaseWidget
             ->columns([
                 TextColumn::make('tanggal')
                     ->date('d F Y'),
+                TextColumn::make('kas.nama'),
                 TextColumn::make('masuk')
                     ->prefix('Rp ')
                     ->numeric(thousandsSeparator: '.'),
