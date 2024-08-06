@@ -87,6 +87,12 @@ class SiswaResource extends Resource
                     ->inline()
                     ->inlineLabel(false)
                     ->required(),
+                TextInput::make('nis')
+                    ->label('NIS')
+                    ->placeholder('Nomor Induk Siswa'),
+                TextInput::make('nisn')
+                    ->label('NISN')
+                    ->placeholder('Nomor Induk Siswa Nasional'),
                 TextInput::make('nik')
                     ->label('NIK')
                     ->required(),
@@ -125,11 +131,6 @@ class SiswaResource extends Resource
             })
             ->defaultSort('nama')
             ->columns([
-                // TextColumn::make('no')
-                //     ->rowIndex(),
-                // TextColumn::make('nik')
-                //     ->label('NIK')
-                //     ->searchable(),
                 TextColumn::make('kelas.nama')
                     ->label('Kelas'),
                 TextColumn::make('nama')
@@ -232,6 +233,14 @@ class SiswaResource extends Resource
                                     ->label('Kelas')
                                     ->state(fn (Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id])
                                     ->weight('bold'),
+                                TextEntry::make('nis')
+                                    ->label('NIS')
+                                    ->weight('bold')
+                                    ->placeholder('NIS belum diisi'),
+                                TextEntry::make('nisn')
+                                    ->label('NISN')
+                                    ->weight('bold')
+                                    ->placeholder('NISN belum diisi'),
                                 TextEntry::make('jenis_kelamin')
                                     ->formatStateUsing(fn (string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state])
                                     ->weight('bold'),
