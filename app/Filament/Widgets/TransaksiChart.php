@@ -21,8 +21,7 @@ class TransaksiChart extends ApexChartWidget
      * @var string|null
      */
     protected static ?string $heading = 'Transaksi 7 hari terakhir';
-
-    protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = '30s';
     protected static ?int $sort = 3;
     /**
      * Chart options (series, labels, types, size, animations...)

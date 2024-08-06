@@ -22,9 +22,8 @@ class KasChart extends ApexChartWidget
      * @var string|null
      */
     protected static ?string $heading = 'Saldo Kas';
-
     protected static ?int $sort = 1;
-    protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = '30s';
 
     /**
      * Chart options (series, labels, types, size, animations...)

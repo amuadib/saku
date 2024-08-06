@@ -23,7 +23,7 @@ class TagihanChart extends ApexChartWidget
      */
     protected static ?string $heading = 'Tagihan';
     protected static ?int $sort = 2;
-    protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = '30s';
 
     /**
      * Chart options (series, labels, types, size, animations...)

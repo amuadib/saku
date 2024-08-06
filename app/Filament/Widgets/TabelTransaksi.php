@@ -10,7 +10,7 @@ use Filament\Tables\Columns\TextColumn;
 class TabelTransaksi extends BaseWidget
 {
     protected static ?string $heading = 'Rekap Transaksi Harian';
-    protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = '30s';
     protected static ?int $sort = 4;
 
     public function table(Table $table): Table
