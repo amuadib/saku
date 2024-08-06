@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class SiswaResource extends Resource
 {
@@ -201,9 +202,39 @@ class SiswaResource extends Resource
                     ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkAction::make('ubah_data_siswa')
+                    ->color('warning')
+                    ->icon('heroicon-o-pencil')
+                    ->form([
+                        Forms\Components\Select::make('kelas_id')
+                            ->label('Kelas')
+                            ->options(
+                                function (): array {
+                                    $data = [];
+                                    foreach (Kelas::getDaftarKelas(auth()->user()->authable->lembaga_id)->get() as $k) {
+                                        $data[$k->id] = $k->nama . ' - ' . $k->nama_periode;
+                                    }
+                                    return $data;
+                                }
+                            )
+                    ])
+                    ->action(function (Collection $records) use ($table) {
+                        $data = $table->getLivewire()->getMountedTableBulkActionForm()->getState();
+                        $siswa_ids = [];
+                        foreach ($records as $s) {
+                            $siswa_ids[] = $s->id;
+                        }
+                        Siswa::whereIn('id', $siswa_ids)
+                            ->update([
+                                'kelas_id' => $data['kelas_id']
+                            ]);
+                        Notification::make()
+                            ->title('Data siswa terpilih berhasil diperbarui')
+                            ->icon('heroicon-o-check-circle')
+                            ->iconColor('success')
+                            ->send();
+                    }),
             ]);
     }
 
