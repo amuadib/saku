@@ -147,8 +147,7 @@ class TagihanResource extends Resource
                         'Lunas' => 'success',
                         'Belum' => 'danger',
                     }),
-                TextColumn::make('keterangan')
-                    ->searchable(),
+                TextColumn::make('keterangan'),
                 TextColumn::make('petugas.authable.nama')
                     ->label('Petugas'),
             ])
