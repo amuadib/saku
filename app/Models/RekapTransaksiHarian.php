@@ -11,6 +11,23 @@ class RekapTransaksiHarian extends Model
     use HasUuids;
     protected $table = 'rekap_transaksi_harian';
 
+    public function scopeRekapMingguan($query)
+    {
+        $start = (date('D') != 'Sun') ? date('Y-m-d', strtotime('last Sunday')) : date('Y-m-d');
+        $finish = (date('D') != 'Sat') ? date('Y-m-d', strtotime('next Saturday')) : date('Y-m-d');
+        $query
+            ->join('kas', 'kas_id', '=', 'kas.id')
+            ->when(
+                !auth()->user()->isAdmin(),
+                function ($w) {
+                    $w
+                        ->where('kas.lembaga_id', auth()->user()->authable->lembaga_id);
+                }
+            )
+            ->whereBetween('tanggal', [$start, $finish])
+            ->orderBy('tanggal')
+            ->selectRaw('`kas_id`,`kas`.`nama` as `kas`, `tanggal`, `masuk`, `keluar`');
+    }
     public function kas(): BelongsTo
     {
         return $this->belongsTo(Kas::class);
