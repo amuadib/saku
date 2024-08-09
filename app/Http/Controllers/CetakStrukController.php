@@ -17,6 +17,13 @@ class CetakStrukController extends Controller
             $data = DataStruk::where('kode', $id)->first()->data ?? [];
         } else if ($mode == 'raw') {
             $data = json_decode(base64_decode($request->get('data')), true) ?? [];
+            if (!isset($data['otp'])) {
+                $data = [];
+            } else {
+                if (\App\Services\OtpService::generateOTP() != $data['otp']) {
+                    $data = [];
+                }
+            }
         }
 
         return view('cetak.template', [

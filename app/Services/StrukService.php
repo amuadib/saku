@@ -18,7 +18,9 @@ class StrukService
             'kode' => $tmp['transaksi_id'],
             'data' => $tmp
         ]);
-
+        $tmp = array_merge($tmp, [
+            'otp' => \App\Services\OtpService::generateOTP()
+        ]);
         return base64_encode(json_encode($tmp));
     }
 }
