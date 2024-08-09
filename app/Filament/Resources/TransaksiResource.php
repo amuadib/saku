@@ -18,9 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
 use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
-use Filament\Infolists;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 
@@ -168,21 +166,17 @@ class TransaksiResource extends Resource
                             ];
                             $total += $t->jumlah;
                         }
-                        $transaksi_id = 'TX' . Carbon::now()->format('YmdHi');
-                        Cache::put(
-                            $transaksi_id,
+                        $transaksi_id = 'CTX' . auth()->user()->authable->lembaga_id . Carbon::now()->format('YmdHis');
+
+                        $raw_data = \App\Services\StrukService::simpanStruk(
                             [
                                 'lembaga_id' => auth()->user()->authable->lembaga_id,
                                 'transaksi_id' => $transaksi_id,
-                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                'waktu' => Carbon::now()->format('H:i:s'),
-                                'petugas' => auth()->user()->authable->nama,
                                 'transaksi' => $transaksi,
                                 'total' => $total,
-                            ],
-                            now()->addMinutes(150)
+                            ]
                         );
-                        redirect(url('/cetak/struk-transaksi/' . $transaksi_id));
+                        redirect(url('/cetak/struk-transaksi/' . $transaksi_id . '/raw?data=' . $raw_data));
                     }),
             ]);
     }

@@ -7,7 +7,7 @@ Route::get('/', function () {
 });
 
 Route::get(
-    '/cetak/{view}/{transaksi_id}',
+    '/cetak/{view}/{transaksi_id}/{mode?}',
     [
         \App\Http\Controllers\CetakStrukController::class, 'cetak'
     ]

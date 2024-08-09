@@ -31,7 +31,6 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -449,23 +448,18 @@ class SiswaResource extends Resource
                                                 keterangan: $t['keterangan'] != '' ? 'Pembayaran tagihan ' . $t['kas'] . ' '  . $t['keterangan'] . ' ' . $siswa->nama : ''
                                             );
                                         }
-                                        $transaksi_id = 'BMTG' . Carbon::now()->format('YmdHi');
-                                        Cache::put(
-                                            $transaksi_id,
+                                        $transaksi_id = 'MTG' . $siswa->lembaga_id . 'S' . Carbon::now()->format('YmdHis');
+                                        $raw_data = \App\Services\StrukService::simpanStruk(
                                             [
                                                 'lembaga_id' => $siswa->lembaga_id,
                                                 'transaksi_id' => $transaksi_id,
-                                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                                'waktu' => Carbon::now()->format('H:i:s'),
-                                                'petugas' => auth()->user()->authable->nama,
                                                 'siswa' => $siswa->nama,
                                                 'tagihan' => $tagihan,
                                                 'total' => $total_tagihan,
                                                 'jumlah' => $total_tagihan,
-                                            ],
-                                            now()->addMinutes(150)
+                                            ]
                                         );
-                                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
                                     }),
                                 Action::make('cetak_tagihan')
                                     ->label('Cetak Tagihan')
@@ -496,21 +490,17 @@ class SiswaResource extends Resource
                                                     ->send();
                                                 return;
                                             }
-                                            Cache::put(
-                                                $siswa->id,
+
+                                            $raw_data = \App\Services\StrukService::simpanStruk(
                                                 [
                                                     'lembaga_id' => $siswa->lembaga_id,
-                                                    'transaksi_id' => 'TG' . Carbon::now()->format('Ymd'),
-                                                    'tanggal' => Carbon::now()->format('d-m-Y'),
-                                                    'waktu' => Carbon::now()->format('H:i:s'),
-                                                    'petugas' => auth()->user()->authable->nama,
+                                                    'transaksi_id' => 'CTG' . $siswa->lembaga_id . Carbon::now()->format('Ymd'),
                                                     'siswa' => $siswa->nama,
                                                     'tagihan' => $tagihan,
                                                     'total' => $total_tagihan,
-                                                ],
-                                                now()->addMinutes(150)
+                                                ]
                                             );
-                                            redirect()->to(url('/cetak/tagihan/' . $siswa->id));
+                                            redirect()->to(url('/cetak/tagihan/' . $siswa->id . '/raw?data=' . $raw_data));
                                         }
                                     ),
                             ])
@@ -577,21 +567,17 @@ class SiswaResource extends Resource
                                             jumlah: $data['jumlah'],
                                             keterangan: $keterangan
                                         );
-                                        Cache::put(
-                                            $transaksi_id,
+
+                                        $raw_data = \App\Services\StrukService::simpanStruk(
                                             [
                                                 'lembaga_id' => $siswa->lembaga_id,
                                                 'transaksi_id' => $transaksi_id,
-                                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                                'waktu' => Carbon::now()->format('H:i:s'),
-                                                'petugas' => auth()->user()->authable->nama,
                                                 'siswa' => $siswa->nama,
                                                 'keterangan' => $keterangan,
                                                 'jumlah' => $data['jumlah'],
-                                            ],
-                                            now()->addMinutes(150)
+                                            ]
                                         );
-                                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id));
+                                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id . '/raw?data=' . $raw_data));
                                     }),
                             ])
                             ->columnSpan(1),

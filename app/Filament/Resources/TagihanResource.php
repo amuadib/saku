@@ -3,10 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagihanResource\Pages;
+use App\Models\DataStruk;
 use App\Models\Kas;
 use App\Models\Kelas;
 use App\Models\Siswa;
-// use App\Models\Tabungan;
 use App\Models\Tagihan;
 use Filament\Forms;
 use Filament\Forms\Components\Radio;
@@ -213,21 +213,27 @@ class TagihanResource extends Resource
                                 ->color('success')
                                 ->action(
                                     function (Tagihan $record) {
-                                        Cache::put(
-                                            $record->id,
-                                            [
-                                                'lembaga_id' => $record->siswa->lembaga_id,
-                                                'transaksi_id' => $record->kode,
-                                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                                'waktu' => Carbon::now()->format('H:i:s'),
-                                                'petugas' => auth()->user()->authable->nama,
-                                                'siswa' => $record->siswa->nama,
-                                                'keterangan' => $record->transaksi->keterangan,
-                                                'jumlah' => $record->transaksi->jumlah,
-                                            ],
-                                            now()->addMinutes(150)
-                                        );
-                                        redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->id));
+                                        $struk = DataStruk::where('kode', $record->transaksi->kode);
+                                        if ($struk->exists()) {
+                                            $raw_data = base64_encode(json_encode($struk->first()->data));
+                                            redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->transaksi->kode . '/raw?data=' . $raw_data));
+                                        } else {
+                                            Cache::put(
+                                                $record->id,
+                                                [
+                                                    'lembaga_id' => $record->siswa->lembaga_id,
+                                                    'transaksi_id' => $record->kode,
+                                                    'tanggal' => Carbon::now()->format('d-m-Y'),
+                                                    'waktu' => Carbon::now()->format('H:i:s'),
+                                                    'petugas' => auth()->user()->authable->nama,
+                                                    'siswa' => $record->siswa->nama,
+                                                    'keterangan' => $record->transaksi->keterangan,
+                                                    'jumlah' => $record->transaksi->jumlah,
+                                                ],
+                                                now()->addMinutes(150)
+                                            );
+                                            redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->id));
+                                        }
                                     }
                                 )
                         ])
@@ -270,22 +276,16 @@ class TagihanResource extends Resource
                                         jumlah: $jumlah,
                                         keterangan: $keterangan
                                     );
-                                    Cache::put(
-                                        $transaksi_id,
+                                    $raw_data = \App\Services\StrukService::simpanStruk(
                                         [
                                             'lembaga_id' => $record->siswa->lembaga_id,
                                             'transaksi_id' => $transaksi_id,
-                                            'tanggal' => Carbon::now()->format('d-m-Y'),
-                                            'waktu' => Carbon::now()->format('H:i:s'),
-                                            'petugas' => auth()->user()->authable->nama,
                                             'siswa' => $record->siswa->nama,
                                             'keterangan' => $keterangan,
                                             'jumlah' => $jumlah,
-                                        ],
-                                        now()->addMinutes(150)
+                                        ]
                                     );
-
-                                    redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                                    redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->transaksi->kode . '/raw?data=' . $raw_data));
                                 })
                                 ->successNotificationTitle('Pembayaran berhasil!')
                         ])

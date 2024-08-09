@@ -16,8 +16,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class TabelTabunganSiswa extends Component implements HasTable, HasForms
 {
@@ -81,21 +79,17 @@ class TabelTabunganSiswa extends Component implements HasTable, HasForms
                             jumlah: $data['jumlah'],
                             keterangan: $keterangan
                         );
-                        Cache::put(
-                            $transaksi_id,
+
+                        $raw_data = \App\Services\StrukService::simpanStruk(
                             [
                                 'lembaga_id' => $record->siswa->lembaga_id,
                                 'transaksi_id' => $transaksi_id,
-                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                'waktu' => Carbon::now()->format('H:i:s'),
-                                'petugas' => auth()->user()->authable->nama,
                                 'siswa' => $record->siswa->nama,
                                 'keterangan' => $keterangan,
                                 'jumlah' => $data['jumlah'],
-                            ],
-                            now()->addMinutes(150)
+                            ]
                         );
-                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id));
+                        redirect()->to(url('/cetak/struk-setoran-tabungan/' . $transaksi_id . '/raw?data=' . $raw_data));
                     }),
                 Action::make('tarik')
                     ->button()
@@ -134,21 +128,16 @@ class TabelTabunganSiswa extends Component implements HasTable, HasForms
                                 jumlah: $data['jumlah'],
                                 keterangan: $keterangan
                             );
-                            Cache::put(
-                                $transaksi_id,
+                            $raw_data = \App\Services\StrukService::simpanStruk(
                                 [
                                     'lembaga_id' => $record->siswa->lembaga_id,
                                     'transaksi_id' => $transaksi_id,
-                                    'tanggal' => Carbon::now()->format('d-m-Y'),
-                                    'waktu' => Carbon::now()->format('H:i:s'),
-                                    'petugas' => auth()->user()->authable->nama,
                                     'siswa' => $record->siswa->nama,
                                     'keterangan' => $keterangan,
                                     'jumlah' => $data['jumlah'],
-                                ],
-                                now()->addMinutes(150)
+                                ]
                             );
-                            redirect()->to(url('/cetak/struk-penarikan-tabungan/' . $transaksi_id));
+                            redirect()->to(url('/cetak/struk-penarikan-tabungan/' . $transaksi_id . '/raw?data=' . $raw_data));
                         }
                     }),
             ]);

@@ -14,7 +14,6 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -103,23 +102,18 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                 keterangan: $t['keterangan'] != '' ? 'Pembayaran tagihan ' . $t['kas'] . ' '  . $t['keterangan'] . ' ' . $this->siswa->nama : ''
                             );
                         }
-                        $transaksi_id = 'BMTG' . Carbon::now()->format('YmdHi');
-                        Cache::put(
-                            $transaksi_id,
+                        $transaksi_id = 'MTG' . $this->siswa->lembaga_id .  'T' . Carbon::now()->format('YmdHis');
+                        $raw_data = \App\Services\StrukService::simpanStruk(
                             [
                                 'lembaga_id' => $this->siswa->lembaga_id,
                                 'transaksi_id' => $transaksi_id,
-                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                'waktu' => Carbon::now()->format('H:i:s'),
-                                'petugas' => auth()->user()->authable->nama,
                                 'siswa' => $this->siswa->nama,
                                 'tagihan' => $tagihan,
                                 'total' => $total_tagihan,
                                 'jumlah' => $total_tagihan,
-                            ],
-                            now()->addMinutes(150)
+                            ]
                         );
-                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
                     })
             ])
             ->actions([
@@ -163,22 +157,17 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                             jumlah: $jumlah,
                             keterangan: $keterangan
                         );
-                        Cache::put(
-                            $transaksi_id,
+
+                        $raw_data = \App\Services\StrukService::simpanStruk(
                             [
                                 'lembaga_id' => $this->siswa->lembaga_id,
                                 'transaksi_id' => $transaksi_id,
-                                'tanggal' => Carbon::now()->format('d-m-Y'),
-                                'waktu' => Carbon::now()->format('H:i:s'),
-                                'petugas' => auth()->user()->authable->nama,
                                 'siswa' => $this->siswa->nama,
                                 'keterangan' => $keterangan,
                                 'jumlah' => $jumlah,
-                            ],
-                            now()->addMinutes(150)
+                            ]
                         );
-
-                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id));
+                        redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
                     })
                     ->successNotificationTitle('Pembayaran berhasil!'),
             ]);
