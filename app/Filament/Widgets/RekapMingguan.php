@@ -11,19 +11,25 @@ class RekapMingguan extends Widget
     protected static ?int $sort = 4;
     public $data = [];
     public $masuk, $keluar;
+    public $data_per_tanggal = [];
     public function mount()
     {
         $saldo = 0;
         foreach (RekapTransaksiHarian::rekapMingguan()->get() as $r) {
+            if (isset($this->data_per_tanggal[$r->tanggal])) {
+                $this->data_per_tanggal[$r->tanggal]++;
+            } else {
+                $this->data_per_tanggal[$r->tanggal] = 1;
+            }
             if ($r->masuk > 0) {
                 $saldo += $r->masuk;
                 $this->masuk += $r->masuk;
                 $this->data[] = [
                     'tanggal' => $r->tanggal,
                     'kas' => $r->kas,
-                    'masuk' => 'Rp ' . number_format(intval($r->masuk), thousands_separator: '.'),
-                    'keluar' => '-',
-                    'saldo' => 'Rp ' . number_format(intval($saldo), thousands_separator: '.'),
+                    'masuk' => number_format(intval($r->masuk), thousands_separator: '.'),
+                    'keluar' => 0,
+                    'saldo' => number_format(intval($saldo), thousands_separator: '.'),
                 ];
             }
             if ($r->keluar > 0) {
@@ -32,9 +38,9 @@ class RekapMingguan extends Widget
                 $this->data[] = [
                     'tanggal' => $r->tanggal,
                     'kas' => $r->kas,
-                    'masuk' => '-',
-                    'keluar' => 'Rp ' . number_format(intval($r->keluar), thousands_separator: '.'),
-                    'saldo' => 'Rp ' . number_format(intval($saldo), thousands_separator: '.'),
+                    'masuk' => 0,
+                    'keluar' => number_format(intval($r->keluar), thousands_separator: '.'),
+                    'saldo' => number_format(intval($saldo), thousands_separator: '.'),
                 ];
             }
         }

@@ -16,35 +16,35 @@
                         <thead class="divide-y divide-gray-200 dark:divide-white/5">
                             <tr class="bg-gray-50 dark:bg-white/5">
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Tanggal
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Kas
                                     </span>
                                 </th>
                                 <th colspan="2"
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Masuk
                                     </span>
                                 </th>
                                 <th colspan="2"
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Keluar
                                     </span>
                                 </th>
                                 <th colspan="2"
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Saldo
@@ -53,68 +53,69 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
-                            {{-- @dd($data_per_tanggal) --}}
+                            @php
+                                $tgl_active = '';
+                            @endphp
                             @foreach ($data as $t)
                                 <tr
                                     class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-start text-start disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                {{ $t['tanggal'] }}
+                                    @if ($t['tanggal'] != $tgl_active)
+                                        <td rowspan="{{ $data_per_tanggal[$t['tanggal']] }}"
+                                            class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div
+                                                class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    {{ $t['tanggal'] }}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                        </td>
+                                    @endif
+                                    @php
+                                        $tgl_active = $t['tanggal'];
+                                    @endphp
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['kas'] }}
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 Rp
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-end text-end disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['masuk'] }}
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 Rp
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-end text-end disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['keluar'] }}
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 Rp
                                             </div>
                                         </div>
                                     </td>
-                                    <td
-                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-end text-end disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['saldo'] }}
@@ -127,47 +128,47 @@
                         <tfoot>
                             <tr class="bg-gray-50 dark:bg-white/5">
                                 <th colspan="2"
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Total
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Rp
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
                                         {{ number_format(intval($masuk), thousands_separator: '.') }}
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Rp
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
                                         {{ number_format(intval($keluar), thousands_separator: '.') }}
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Rp
                                     </span>
                                 </th>
                                 <th
-                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
                                         {{ $t['saldo'] }}
                                     </span>
