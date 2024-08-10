@@ -13,8 +13,8 @@ class RekapTransaksiHarian extends Model
 
     public function scopeRekapMingguan($query)
     {
-        $start = (date('D') != 'Sun') ? date('Y-m-d', strtotime('last Sunday')) : date('Y-m-d');
-        $finish = (date('D') != 'Sat') ? date('Y-m-d', strtotime('next Saturday')) : date('Y-m-d');
+        $start = (date('D') != 'Sun') ? date('Y-m-d', strtotime('last Sunday')) . ' 00:00:01' : date('Y-m-d') . ' 00:00:01';
+        $finish = (date('D') != 'Sat') ? date('Y-m-d', strtotime('next Saturday')) . ' 23:59:59' : date('Y-m-d') . ' 23:59:59';
         $query
             ->join('kas', 'kas_id', '=', 'kas.id')
             ->when(
