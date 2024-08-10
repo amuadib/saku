@@ -60,7 +60,7 @@
                                 <tr
                                     class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
                                     @if ($t['tanggal'] != $tgl_active)
-                                        <td rowspan="{{ $data_per_tanggal[$t['tanggal']] }}"
+                                        <td {{-- rowspan="{{ $data_per_tanggal[$t['tanggal']] }}" --}}
                                             class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                             <div
                                                 class="flex w-full justify-start text-start disabled:pointer-events-none">
@@ -70,9 +70,9 @@
                                             </div>
                                         </td>
                                     @endif
-                                    @php
+                                    {{-- @php
                                         $tgl_active = $t['tanggal'];
-                                    @endphp
+                                    @endphp --}}
                                     <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">

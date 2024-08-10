@@ -11,16 +11,16 @@ class RekapMingguan extends Widget
     protected static ?int $sort = 4;
     public $data = [];
     public $masuk, $keluar;
-    public $data_per_tanggal = [];
+    // public $data_per_tanggal = [];
     public function mount()
     {
         $saldo = 0;
         foreach (RekapTransaksiHarian::rekapMingguan()->get() as $r) {
-            if (isset($this->data_per_tanggal[$r->tanggal])) {
-                $this->data_per_tanggal[$r->tanggal]++;
-            } else {
-                $this->data_per_tanggal[$r->tanggal] = 1;
-            }
+            // if (isset($this->data_per_tanggal[$r->tanggal])) {
+            //     $this->data_per_tanggal[$r->tanggal]++;
+            // } else {
+            //     $this->data_per_tanggal[$r->tanggal] = 1;
+            // }
             if ($r->masuk > 0) {
                 $saldo += $r->masuk;
                 $this->masuk += $r->masuk;

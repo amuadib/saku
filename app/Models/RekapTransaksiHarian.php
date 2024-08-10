@@ -25,7 +25,7 @@ class RekapTransaksiHarian extends Model
                 }
             )
             ->whereBetween('tanggal', [$start, $finish])
-            ->orderBy('tanggal')
+            ->orderBy('created_at')
             ->selectRaw('`kas_id`,`kas`.`nama` as `kas`, `tanggal`, `masuk`, `keluar`');
     }
     public function kas(): BelongsTo
