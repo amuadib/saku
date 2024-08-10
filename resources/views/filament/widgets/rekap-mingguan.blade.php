@@ -29,21 +29,21 @@
                                         Kas
                                     </span>
                                 </th>
-                                <th
+                                <th colspan="2"
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Masuk
                                     </span>
                                 </th>
-                                <th
+                                <th colspan="2"
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                                         Keluar
                                     </span>
                                 </th>
-                                <th
+                                <th colspan="2"
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
@@ -53,6 +53,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
+                            {{-- @dd($data_per_tanggal) --}}
                             @foreach ($data as $t)
                                 <tr
                                     class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
@@ -76,6 +77,14 @@
                                         class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                Rp
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
+                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['masuk'] }}
                                             </div>
                                         </div>
@@ -84,6 +93,14 @@
                                         class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                Rp
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
+                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['keluar'] }}
                                             </div>
                                         </div>
@@ -91,6 +108,14 @@
                                     <td
                                         class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
                                         <div class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                Rp
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
+                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
                                             <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
                                                 {{ $t['saldo'] }}
                                             </div>
@@ -112,20 +137,38 @@
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
-                                        Rp {{ number_format(intval($masuk), thousands_separator: '.') }}
+                                        Rp
+                                    </span>
+                                </th>
+                                <th
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
+                                        {{ number_format(intval($masuk), thousands_separator: '.') }}
                                     </span>
                                 </th>
                                 <th
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
-                                        Rp {{ number_format(intval($keluar), thousands_separator: '.') }}
+                                        Rp
+                                    </span>
+                                </th>
+                                <th
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
+                                        {{ number_format(intval($keluar), thousands_separator: '.') }}
                                     </span>
                                 </th>
                                 <th
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                                     <span
                                         class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
+                                        Rp
+                                    </span>
+                                </th>
+                                <th
+                                    class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                                    <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
                                         {{ $t['saldo'] }}
                                     </span>
                                 </th>
