@@ -20,7 +20,7 @@ class TransaksiChart extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Transaksi 7 hari terakhir';
+    protected static ?string $heading = 'Grafik Transaksi Mingguan';
     protected static ?string $pollingInterval = '30s';
     protected static ?int $sort = 3;
     /**
@@ -32,6 +32,10 @@ class TransaksiChart extends ApexChartWidget
     protected function getOptions(): array
     {
         $masuk = $keluar = $labels = [];
+
+        $start = (date('D') != 'Sun') ? date('Y-m-d', strtotime('last Sunday')) : date('Y-m-d');
+        $finish = (date('D') != 'Sat') ? date('Y-m-d', strtotime('next Saturday')) : date('Y-m-d');
+
         foreach (Transaksi::when(
             !auth()->user()->isAdmin(),
             function ($w) {
@@ -39,6 +43,7 @@ class TransaksiChart extends ApexChartWidget
                     ->whereRaw('SUBSTR(`kode`,4,1) = ' . auth()->user()->authable->lembaga_id);
             }
         )
+            ->whereBetween('created_at', [$start, $finish])
             ->groupByRaw('substr(created_at,1,10)')
             ->orderBy('created_at')
             ->selectRaw("
