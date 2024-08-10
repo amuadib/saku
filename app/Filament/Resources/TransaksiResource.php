@@ -21,6 +21,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 
 class TransaksiResource extends Resource
 {
@@ -114,7 +117,37 @@ class TransaksiResource extends Resource
                     ->numeric(0),
             ])
             ->filters([
-                //
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('awal'),
+                        DatePicker::make('akhir'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['awal'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['akhir'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['awal'] ?? null) {
+                            $indicators[] = Indicator::make('Tanggal awal Transaksi ' . Carbon::parse($data['awal'])->format('d/m/Y'))
+                                ->removeField('awal');
+                        }
+
+                        if ($data['akhir'] ?? null) {
+                            $indicators[] = Indicator::make('Tanggal akhir Transaksi ' . Carbon::parse($data['akhir'])->format('d/m/Y'))
+                                ->removeField('akhir');
+                        }
+
+                        return $indicators;
+                    })
             ])
             ->actions([
                 // Tables\Actions\ViewAction::make(),
