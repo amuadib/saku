@@ -56,74 +56,89 @@
                             @php
                                 $tgl_active = '';
                             @endphp
-                            @foreach ($data as $t)
-                                <tr
-                                    class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
-                                    @if ($t['tanggal'] != $tgl_active)
-                                        <td {{-- rowspan="{{ $data_per_tanggal[$t['tanggal']] }}" --}}
-                                            class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                            @if (count($data))
+                                @foreach ($data as $t)
+                                    <tr
+                                        class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
+                                        @if ($t['tanggal'] != $tgl_active)
+                                            <td {{-- rowspan="{{ $data_per_tanggal[$t['tanggal']] }}" --}}
+                                                class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                                <div
+                                                    class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                                    <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                        {{ $t['tanggal'] }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        @endif
+                                        {{-- @php
+                                        $tgl_active = $t['tanggal'];
+                                    @endphp --}}
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
                                             <div
                                                 class="flex w-full justify-start text-start disabled:pointer-events-none">
                                                 <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                    {{ $t['tanggal'] }}
+                                                    {{ $t['kas'] }}
                                                 </div>
                                             </div>
                                         </td>
-                                    @endif
-                                    {{-- @php
-                                        $tgl_active = $t['tanggal'];
-                                    @endphp --}}
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-start text-start disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                {{ $t['kas'] }}
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div
+                                                class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    Rp
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-start text-start disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                Rp
+                                        </td>
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div class="flex w-full justify-end text-end disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    {{ $t['masuk'] }}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                {{ $t['masuk'] }}
+                                        </td>
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div
+                                                class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    Rp
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-start text-start disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                Rp
+                                        </td>
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div class="flex w-full justify-end text-end disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    {{ $t['keluar'] }}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                {{ $t['keluar'] }}
+                                        </td>
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div
+                                                class="flex w-full justify-start text-start disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    Rp
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-start text-start disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                Rp
+                                        </td>
+                                        <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                            <div class="flex w-full justify-end text-end disabled:pointer-events-none">
+                                                <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                                    {{ $t['saldo'] }}
+                                                </div>
                                             </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <td colspan="8"
+                                    class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
+                                    <div class="flex w-full justify-center text-center disabled:pointer-events-none">
+                                        <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
+                                            Belum ada data
                                         </div>
-                                    </td>
-                                    <td class="fi-ta-cell p-0 ps-1 last-of-type:pe-1 sm:ps-3 sm:last-of-type:pe-3">
-                                        <div class="flex w-full justify-end text-end disabled:pointer-events-none">
-                                            <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4 text-sm">
-                                                {{ $t['saldo'] }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                    </div>
+                                </td>
+                            @endif
                         </tbody>
                         <tfoot>
                             <tr class="bg-gray-50 dark:bg-white/5">
@@ -170,7 +185,7 @@
                                 <th
                                     class="fi-ta-header-cell px-3 py-3.5 text-sm font-semibold sm:ps-6 sm:last-of-type:pe-6">
                                     <span class="group flex w-full items-center justify-end gap-x-1 whitespace-nowrap">
-                                        {{ $t['saldo'] }}
+                                        {{ $t['saldo'] ?? 0 }}
                                     </span>
                                 </th>
                             </tr>
