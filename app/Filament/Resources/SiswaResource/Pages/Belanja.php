@@ -180,7 +180,7 @@ class Belanja extends Page implements
                 'siswa_id' => $this->record->id,
                 'kas_id' => $kas->id,
                 'jumlah' => $this->total,
-                'keterangan' => 'Pembelian barang',
+                'keterangan' => 'Pembelian barang ' . $this->record->nama . '.',
                 'user_id' => auth()->user()->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -230,9 +230,9 @@ class Belanja extends Page implements
                         TextEntry::make('nama')
                             ->label('Nama Siswa'),
                         TextEntry::make('tanggal')
-                            ->state(fn (): string => date('d/m/Y')),
+                            ->state(fn(): string => date('d/m/Y')),
                         TextEntry::make('petugas')
-                            ->state(fn (): string => auth()->user()->authable->nama)
+                            ->state(fn(): string => auth()->user()->authable->nama)
                         // ...
                     ])
                     ->columns(3)
@@ -259,7 +259,7 @@ class Belanja extends Page implements
         // }
         return $table
             ->query(Keranjang::query())
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('siswa_id', $this->record->id))
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('siswa_id', $this->record->id))
             ->headerActions([
                 Action::make('tambah_barang')
                     ->icon('heroicon-o-plus')
@@ -337,7 +337,8 @@ class Belanja extends Page implements
                         ]);
                         $this->reset([
                             'transaksi_selesai',
-                            'jenis', 'kembali',
+                            'jenis',
+                            'kembali',
                             'pembayaran',
                         ]);
                     })
@@ -350,9 +351,9 @@ class Belanja extends Page implements
                     ->prefix('Rp ')
                     ->numeric(thousandsSeparator: '.'),
                 TextColumn::make('')
-                    ->state(fn (): string => 'X'),
+                    ->state(fn(): string => 'X'),
                 TextColumn::make('jumlah')
-                    ->formatStateUsing(fn (Keranjang $k): string => $k->jumlah . ' ' . $k->barang->satuan),
+                    ->formatStateUsing(fn(Keranjang $k): string => $k->jumlah . ' ' . $k->barang->satuan),
                 TextColumn::make('total')
                     ->prefix('Rp ')
                     ->numeric(thousandsSeparator: '.')
