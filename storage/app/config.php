@@ -3,7 +3,7 @@ $config = [
     'app' => [
         'nama' => 'Sistem Administrasi Keuangan',
         'singkatan' => 'SAKU',
-        'keterangan' => 'Aplikasi pengelolaan keuangan SDI & SMPI Miftahul Ulum Klemunan.'
+        'keterangan' => 'Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum'
     ],
     'roles' => [
         1 => 'Admin',
@@ -73,5 +73,24 @@ $config = [
         'tun' => 'Tunai',
         'tag' => 'Tagihan',
         'tab' => 'Tabungan',
+    ],
+    'template' => [
+        'tagihan' => [
+            'bayar' => 'Assalamu\'alaikum Wr. Wb.
+Bapak/Ibu Wali siswa *{siswa.nama}*. Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima. Terima kasih.
+Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).
+Wassalamu\'alaikum Wr. Wb.',
+            'daftar' =>
+            'Assalamu\'alaikum Wr. Wb.
+Bapak/Ibu Wali siswa *{siswa.nama}*. Berikut kami informasikan rincian tagihan Ananda:
+{tagihan.rincian}Total tagihan *{tagihan.total}*.
+Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).
+Terima Kasih.
+
+Wassalamu\'alaikum Wr. Wb.'
+        ],
+        'footer' => '
+...
+_Pesan ini dikirim secara otomatis dari Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum. Mohon tidak membalas pesan ke Nomor ini_'
     ]
 ];
