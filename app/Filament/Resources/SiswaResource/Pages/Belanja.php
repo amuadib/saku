@@ -32,7 +32,6 @@ use Filament\Tables\Actions;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Validate;
 
 class Belanja extends Page implements
@@ -192,23 +191,19 @@ class Belanja extends Page implements
             $this->id = $kode;
         }
 
-        Cache::put(
-            $this->id,
+        \App\Services\StrukService::simpanStruk(
             [
                 'lembaga_id' => $this->record->lembaga_id,
                 'transaksi_id' => $this->id,
-                'tanggal' => Carbon::now()->format('d-m-Y'),
-                'waktu' => Carbon::now()->format('H:i:s'),
-                'petugas' => auth()->user()->authable->nama,
                 'siswa' => $this->record->nama,
                 'barang' => $daftar_barang,
                 'total' => $this->total,
                 'bayar' => $bayar,
                 'kembali' => $this->kembali,
                 'pembayaran' => $this->pembayaran,
-            ],
-            now()->addMinutes(150)
+            ]
         );
+
         $this->transaksi_selesai = true;
         //Hapus keranjang
         Keranjang::where('siswa_id', $this->record->id)
@@ -222,7 +217,7 @@ class Belanja extends Page implements
 
     public function cetak(string $id)
     {
-        return redirect()->to(url('/cetak/' . $this->views[$this->pembayaran] . '/' . $id));
+        return redirect()->to(url('/cetak/' . $this->views[$this->pembayaran] . '/' . $id . '/db'));
     }
     public function infolist(Infolist $infolist): Infolist
     {

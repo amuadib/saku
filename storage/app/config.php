@@ -79,8 +79,7 @@ $config = [
 Bapak/Ibu Wali siswa *{siswa.nama}*. ',
         'akhir' => '
 
-Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).
-Terima Kasih.
+Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).Terima Kasih.
 Wassalamu\'alaikum Wr. Wb.',
         'tagihan' => [
             'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
