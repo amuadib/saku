@@ -75,19 +75,17 @@ $config = [
         'tab' => 'Tabungan',
     ],
     'template' => [
-        'tagihan' => [
-            'bayar' => 'Assalamu\'alaikum Wr. Wb.
-Bapak/Ibu Wali siswa *{siswa.nama}*. Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima. Terima kasih.
-Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).
-Wassalamu\'alaikum Wr. Wb.',
-            'daftar' =>
-            'Assalamu\'alaikum Wr. Wb.
-Bapak/Ibu Wali siswa *{siswa.nama}*. Berikut kami informasikan rincian tagihan Ananda:
-{tagihan.rincian}Total tagihan *{tagihan.total}*.
+        'awal' => 'Assalamu\'alaikum Wr. Wb.
+Bapak/Ibu Wali siswa *{siswa.nama}*. ',
+        'akhir' => '
+
 Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).
 Terima Kasih.
-
-Wassalamu\'alaikum Wr. Wb.'
+Wassalamu\'alaikum Wr. Wb.',
+        'tagihan' => [
+            'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
+            'daftar' => 'Berikut kami informasikan rincian tagihan Ananda:
+{tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '
 ...

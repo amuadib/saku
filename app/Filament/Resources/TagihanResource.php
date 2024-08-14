@@ -296,15 +296,13 @@ class TagihanResource extends Resource
                                     if (env('WHATSAPP_NOTIFICATION')) {
                                         if ($record->siswa->telepon != '') {
                                             $nomor = $record->siswa->telepon;
-                                            $pesan = \App\Services\WhatsappService::prosesTemplate(
+                                            $pesan = \App\Services\WhatsappService::prosesPesan(
+                                                $record->siswa,
                                                 [
-                                                    'siswa.nama' => $record->siswa->nama,
                                                     'tagihan.keterangan' => $record->kas->nama . ' '  . $record->keterangan,
                                                     'tagihan.jumlah' => 'Rp ' . number_format($jumlah, thousands_separator: '.'),
-                                                    'kontak.nama' => config('custom.kontak_lembaga.' . $record->siswa->lembaga_id . '.kontak'),
-                                                    'kontak.telp' => config('custom.kontak_lembaga.' . $record->siswa->lembaga_id . '.telp'),
                                                 ],
-                                                config('custom.template.tagihan.bayar')
+                                                'tagihan.bayar'
                                             );
                                             \App\Services\WhatsappService::kirimWa($nomor, $pesan);
                                         }

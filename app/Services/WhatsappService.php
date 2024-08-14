@@ -2,10 +2,46 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Arr;
+
 class WhatsappService
 {
+
+    public static function prosesPesan(mixed $siswa, array $data, string $jenis): string
+    {
+        $template = config('custom.template');
+        $awal = \App\Services\WhatsappService::prosesTemplate(
+            ['siswa.nama' => $siswa->nama],
+            $template['awal']
+        );
+        $isi = \App\Services\WhatsappService::prosesTemplate(
+            $data,
+            Arr::get($template, $jenis, 'Pesan WA')
+        );
+        $akhir = \App\Services\WhatsappService::prosesTemplate(
+            [
+                'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
+                'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
+            ],
+            $template['akhir']
+        );
+        return $awal . $isi . $akhir . $template['footer'];
+    }
+
+    public static function prosesTemplate(array $data, string $template): string
+    {
+        // https://stackoverflow.com/a/48981341
+        if (preg_match_all("/{(.*?)}/", $template, $m)) {
+            foreach ($m[1] as $i => $varname) {
+                $template = str_replace($m[0][$i], sprintf('%s', $data[$varname]), $template);
+            }
+        }
+        return $template;
+    }
+
     public static function kirimWa(string|null $nomor = '', string|null $pesan = '', array|null $kumpulan_pesan = [])
     {
+        $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $nomor;
         $client = new \GuzzleHttp\Client([
             'base_uri' => env('WA_API_URL'),
             'verify' => false,
@@ -23,7 +59,7 @@ class WhatsappService
         } else {
             $body = array_merge($body, [
                 'number' => $nomor,
-                'message' => $pesan . config('custom.template.footer')
+                'message' => $pesan
             ]);
         }
 

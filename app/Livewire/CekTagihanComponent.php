@@ -41,8 +41,7 @@ class CekTagihanComponent extends Component
             if ($siswa->telepon != '') {
                 if (!$siswa->tagihan->count()) {
                 } else {
-                    // $nomor = $siswa->telepon;
-                    $nomor = '0895368840628';
+                    $nomor = $siswa->telepon;
 
                     $this->tagihan = true;
                     $this->send = true;
@@ -50,25 +49,20 @@ class CekTagihanComponent extends Component
                     $no = 1;
                     $total = 0;
                     foreach ($siswa->tagihan as $t) {
-                        $rincian .= $no . '. ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                        $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
                         $total += $t->jumlah;
                         $no++;
                     }
-                    $template = config('custom.template.tagihan.daftar');
-                    $data = [
-                        'siswa.nama' => $siswa->nama,
-                        'tagihan.rincian' => $rincian,
-                        'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
-                        'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
-                        'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
-                    ];
-                    // https://stackoverflow.com/a/48981341
-                    if (preg_match_all("/{(.*?)}/", $template, $m)) {
-                        foreach ($m[1] as $i => $varname) {
-                            $template = str_replace($m[0][$i], sprintf('%s', $data[$varname]), $template);
-                        }
-                    }
-                    $response = \App\Services\WhatsappService::kirimWa($nomor, $template);
+
+                    $pesan = \App\Services\WhatsappService::prosesPesan(
+                        $siswa,
+                        [
+                            'tagihan.rincian' => $rincian,
+                            'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
+                        ],
+                        'tagihan.daftar'
+                    );
+                    $response = \App\Services\WhatsappService::kirimWa($nomor, $pesan);
                     if ($response['status'] == 'success') {
                         $this->success = true;
                         $this->pesan = 'Tagihan telah dikirimkan ke ' . substr($nomor, 0, 4) . '*****' . substr($nomor, -3);
