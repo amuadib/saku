@@ -103,11 +103,12 @@ class Belanja extends Page implements
         $stok_keluar = [];
 
         //Penjualan
+        $kode_pj = \App\Traits\PenjualanTrait::getKode();
         $penjualan = Penjualan::create([
             'siswa_id' => $this->record->id,
             'total' => $this->total,
             'pembayaran' => $this->pembayaran,
-            'kode' => \App\Traits\PenjualanTrait::getKode(),
+            'kode' => $kode_pj,
             'user_id' => auth()->user()->id
         ]);
 
@@ -181,7 +182,7 @@ class Belanja extends Page implements
                 'siswa_id' => $this->record->id,
                 'kas_id' => $kas->id,
                 'jumlah' => $this->total,
-                'keterangan' => 'Tagihan pembelian barang ',
+                'keterangan' => 'Tagihan pembelian barang. Nomor nota ' . $kode_pj,
                 'user_id' => auth()->user()->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
