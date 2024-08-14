@@ -43,7 +43,7 @@ class TagihanResource extends Resource
                     ->inlineLabel(false)
                     ->options(Arr::except($lembaga, [99]))
                     ->live()
-                    ->visible(fn (): bool => (auth()->user()->isAdmin())),
+                    ->visible(fn(): bool => (auth()->user()->isAdmin())),
                 Select::make('kas_id')
                     ->label('Jenis Tagihan')
                     ->options(
@@ -70,7 +70,9 @@ class TagihanResource extends Resource
                 Forms\Components\Textarea::make('keterangan'),
                 Radio::make('peserta')
                     ->options([
-                        'Semua siswa', 'Kelas', 'Hanya Siswa'
+                        'Semua siswa',
+                        'Kelas',
+                        'Hanya Siswa'
                     ])
                     ->inline()
                     ->inlineLabel(false)
@@ -89,7 +91,7 @@ class TagihanResource extends Resource
                     )
                     ->noSearchResultsMessage('Data siswa tidak ditemukan.')
                     ->searchable()
-                    ->visible(fn (Get $get): bool => ($get('peserta') == 2)),
+                    ->visible(fn(Get $get): bool => ($get('peserta') == 2)),
                 Select::make('kelas_id')
                     ->label('Kelas')
                     ->options(
@@ -102,7 +104,7 @@ class TagihanResource extends Resource
                             return $data;
                         }
                     )
-                    ->visible(fn (Get $get): bool => ($get('peserta') == 1)),
+                    ->visible(fn(Get $get): bool => ($get('peserta') == 1)),
             ])
             ->columns(1);
     }
@@ -143,7 +145,7 @@ class TagihanResource extends Resource
                         }
                         return 'Belum';
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'Lunas' => 'success',
                         'Belum' => 'danger',
                     }),
@@ -155,13 +157,19 @@ class TagihanResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('penjualan')
+                    ->label('')
+                    ->url(function (Tagihan $t) {
+                        return PenjualanResource::getUrl('view', [$t->tagihanable->id]);
+                    })
+                    ->icon('heroicon-o-shopping-cart')
+                    ->visible(fn(Tagihan $t): bool => $t->tagihanable !== null),
                 Tables\Actions\ViewAction::make(),
-                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -174,7 +182,7 @@ class TagihanResource extends Resource
                         TextEntry::make('siswa.nama')
                             ->label('Nama'),
                         TextEntry::make('kelas')
-                            ->state(fn (Tagihan $record): string => "{$record->siswa->kelas->nama} " . config('custom.lembaga')[$record->siswa->lembaga_id]),
+                            ->state(fn(Tagihan $record): string => "{$record->siswa->kelas->nama} " . config('custom.lembaga')[$record->siswa->lembaga_id]),
                         TextEntry::make('created_at')
                             ->label('Tanggal')
                             ->date('d/m/Y'),
@@ -194,19 +202,19 @@ class TagihanResource extends Resource
                                 }
                                 return 'Belum dibayar';
                             })
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn(string $state): string => match ($state) {
                                 'Lunas' => 'success',
                                 'Belum dibayar' => 'danger',
                             }),
                         TextEntry::make('transaksi.kode')
-                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                            ->visible(fn(Tagihan $record): bool => $record->isLunas()),
                         TextEntry::make('transaksi.created_at')
                             ->label('Tanggal Bayar')
                             ->date('d/m/Y')
-                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                            ->visible(fn(Tagihan $record): bool => $record->isLunas()),
                         TextEntry::make('transaksi.petugas.authable.nama')
                             ->label('Petugas')
-                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                            ->visible(fn(Tagihan $record): bool => $record->isLunas()),
                         Actions::make([
                             Action::make('cetak_struk')
                                 ->icon('heroicon-o-printer')
@@ -237,7 +245,7 @@ class TagihanResource extends Resource
                                     }
                                 )
                         ])
-                            ->visible(fn (Tagihan $record): bool => $record->isLunas()),
+                            ->visible(fn(Tagihan $record): bool => $record->isLunas()),
                         Actions::make([
                             Action::make('bayar_tagihan')
                                 ->icon('heroicon-o-banknotes')
@@ -285,11 +293,28 @@ class TagihanResource extends Resource
                                             'jumlah' => $jumlah,
                                         ]
                                     );
+                                    if (env('WHATSAPP_NOTIFICATION')) {
+                                        if ($record->siswa->telepon != '') {
+                                            $nomor = $record->siswa->telepon;
+                                            $pesan = \App\Services\WhatsappService::prosesTemplate(
+                                                [
+                                                    'siswa.nama' => $record->siswa->nama,
+                                                    'tagihan.keterangan' => $record->kas->nama . ' '  . $record->keterangan,
+                                                    'tagihan.jumlah' => 'Rp ' . number_format($jumlah, thousands_separator: '.'),
+                                                    'kontak.nama' => config('custom.kontak_lembaga.' . $record->siswa->lembaga_id . '.kontak'),
+                                                    'kontak.telp' => config('custom.kontak_lembaga.' . $record->siswa->lembaga_id . '.telp'),
+                                                ],
+                                                config('custom.template.tagihan.bayar')
+                                            );
+                                            \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                                        }
+                                    }
+
                                     redirect()->to(url('/cetak/struk-pembayaran-tagihan/' . $record->transaksi->kode . '/raw?data=' . $raw_data));
                                 })
                                 ->successNotificationTitle('Pembayaran berhasil!')
                         ])
-                            ->hidden(fn (Tagihan $record): bool => $record->isLunas())
+                            ->hidden(fn(Tagihan $record): bool => $record->isLunas())
                     ])
                     ->columns(3),
             ]);

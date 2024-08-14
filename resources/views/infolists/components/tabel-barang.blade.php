@@ -1,5 +1,6 @@
 <div>
     @php
+        $total = 0;
         function format_angka($num)
         {
             return number_format(num: $num, thousands_separator: '.');
@@ -7,34 +8,29 @@
     @endphp
     <table class="fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5">
         <thead class="divide-y divide-gray-200 dark:divide-white/5">
-
             <tr class="bg-gray-50 dark:bg-white/5">
-                <th class="fi-ta-header-cell fi-table-header-cell-keterangan px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
-                    style=";">
+                <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                     <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                         <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                             Nama
                         </span>
                     </span>
                 </th>
-                <th class="fi-ta-header-cell fi-table-header-cell-keterangan px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
-                    style=";">
+                <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                     <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                         <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                             Jumlah
                         </span>
                     </span>
                 </th>
-                <th class="fi-ta-header-cell fi-table-header-cell-keterangan px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
-                    style=";">
+                <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                     <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                         <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                             Harga
                         </span>
                     </span>
                 </th>
-                <th class="fi-ta-header-cell fi-table-header-cell-keterangan px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6"
-                    style=";">
+                <th class="fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6">
                     <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
                         <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
                             Total
@@ -46,6 +42,9 @@
 
         <tbody class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5">
             @foreach ($getState() as $b)
+                @php
+                    $total += $b->harga;
+                @endphp
                 <tr class="fi-ta-row [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75">
                     <td
                         class="fi-ta-cell fi-table-cell-created-at p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3">
@@ -131,6 +130,24 @@
                     </td>
                 </tr>
             @endforeach
+            <tr class="bg-gray-50 dark:bg-white/5">
+                <th colspan="3"
+                    class="fi-ta-header-cell px-3 py-3.5 text-right sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                    <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
+                        <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
+                            Total
+                        </span>
+                    </span>
+                </th>
+                <th class="fi-ta-header-cell px-3 py-3.5 text-left sm:first-of-type:ps-6 sm:last-of-type:pe-6">
+                    <span class="group flex w-full items-center justify-start gap-x-1 whitespace-nowrap">
+                        <span class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white">
+                            Rp
+                            {{ format_angka($total) }}
+                        </span>
+                    </span>
+                </th>
+            </tr>
         </tbody>
     </table>
 </div>

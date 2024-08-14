@@ -17,6 +17,10 @@ class Penjualan extends Model
     {
         return $this->morphOne(Transaksi::class, 'transable');
     }
+    public function tagihan(): MorphOne
+    {
+        return $this->morphOne(Tagihan::class, 'tagihanable');
+    }
     public function petugas(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

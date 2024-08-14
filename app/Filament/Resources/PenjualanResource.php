@@ -43,7 +43,7 @@ class PenjualanResource extends Resource
             ->schema([
                 IS::make()
                     ->schema([
-                        TextEntry::make('transaksi.kode')
+                        TextEntry::make('kode')
                             ->label('Kode Transaksi')
                             ->weight('bold'),
                         TextEntry::make('created_at')
@@ -53,7 +53,7 @@ class PenjualanResource extends Resource
                         TextEntry::make('siswa.nama')
                             ->label('Siswa')
                             ->weight('bold'),
-                        TextEntry::make('transaksi.petugas.authable.nama')
+                        TextEntry::make('petugas.authable.nama')
                             ->label('Petugas')
                             ->weight('bold'),
                     ])
@@ -75,7 +75,7 @@ class PenjualanResource extends Resource
                     ->label('Waktu')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                TextColumn::make('transaksi.kode')
+                TextColumn::make('kode')
                     ->label('Kode'),
                 TextColumn::make('siswa.nama')
                     ->searchable(),
@@ -84,8 +84,8 @@ class PenjualanResource extends Resource
                     ->numeric(0),
                 TextColumn::make('pembayaran')
                     ->badge()
-                    ->formatStateUsing(fn ($state): string => config('custom.pembayaran')[$state])
-                    ->color(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn($state): string => config('custom.pembayaran')[$state])
+                    ->color(fn(string $state): string => match ($state) {
                         'tun' => 'success',
                         'tag' => 'danger',
                         'tab' => 'info',

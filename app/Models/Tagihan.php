@@ -17,6 +17,10 @@ class Tagihan extends Model
     {
         return $this->morphOne(Transaksi::class, 'transable');
     }
+    public function tagihanable()
+    {
+        return $this->morphTo();
+    }
     public function siswa(): BelongsTo
     {
         return $this->belongsTo(Siswa::class);

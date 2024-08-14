@@ -108,6 +108,8 @@ class Belanja extends Page implements
             'siswa_id' => $this->record->id,
             'total' => $this->total,
             'pembayaran' => $this->pembayaran,
+            'kode' => \App\Traits\PenjualanTrait::getKode(),
+            'user_id' => auth()->user()->id
         ]);
 
         //Detail Penjualan
@@ -180,10 +182,12 @@ class Belanja extends Page implements
                 'siswa_id' => $this->record->id,
                 'kas_id' => $kas->id,
                 'jumlah' => $this->total,
-                'keterangan' => 'Pembelian barang ' . $this->record->nama . '.',
+                'keterangan' => 'Tagihan pembelian barang ',
                 'user_id' => auth()->user()->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'tagihanable_type' => 'App\\Models\\Penjualan',
+                'tagihanable_id' => $penjualan->id,
             ]);
             $this->id = $kode;
         }
