@@ -98,6 +98,12 @@ class PenjualanResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('tagihan')
+                    ->icon('heroicon-o-banknotes')
+                    ->url(function (Penjualan $p) {
+                        return TagihanResource::getUrl('view', [$p->tagihan->id]);
+                    })
+                    ->visible(fn(Penjualan $p): bool => $p->tagihan !== null),
                 Tables\Actions\ViewAction::make(),
             ]);
     }
