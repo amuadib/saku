@@ -58,14 +58,14 @@ class SiswaResource extends Resource
                     ->options(Arr::except(config('custom.lembaga'), [99]))
                     ->required()
                     ->live()
-                    ->visible(fn (): bool => (auth()->user()->isAdmin())),
+                    ->visible(fn(): bool => (auth()->user()->isAdmin())),
 
                 Forms\Components\ViewField::make('lembaga_id')
                     ->view('filament.form.components.view_only', [
                         'label' => 'Lembaga',
                         'value' => config('custom.lembaga')[auth()->user()->authable->lembaga_id],
                     ])
-                    ->hidden(fn (): bool => (auth()->user()->isAdmin())),
+                    ->hidden(fn(): bool => (auth()->user()->isAdmin())),
 
                 Forms\Components\Select::make('kelas_id')
                     ->label('Kelas')
@@ -142,8 +142,8 @@ class SiswaResource extends Resource
                 TextColumn::make('telepon'),
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])
-                    ->color(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn(string $state): string => config('custom.siswa.status')[$state])
+                    ->color(fn(string $state): string => match ($state) {
                         '1' => 'success',
                         '2' => 'warning',
                         '3' => 'info',
@@ -158,7 +158,7 @@ class SiswaResource extends Resource
                             ->gridDirection('row')
                             ->options(config('custom.siswa.label'))
                     ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label'])),
+                    ->query(fn(Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label'])),
                 SelectFilter::make('lembaga_id')
                     ->label('Lembaga')
                     ->options(Arr::except(config('custom.lembaga'), [99])),
@@ -190,7 +190,7 @@ class SiswaResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('belanja')
                     ->label('')
-                    ->url(fn (Siswa $s): string => SiswaResource::getUrl('belanja', ['record' => $s]))
+                    ->url(fn(Siswa $s): string => SiswaResource::getUrl('belanja', ['record' => $s]))
                     ->color('success')
                     ->icon('heroicon-o-shopping-cart'),
                 Tables\Actions\ViewAction::make()
@@ -202,6 +202,8 @@ class SiswaResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ExportBulkAction::make()
+                    ->exporter(\App\Filament\Exports\SiswaExporter::class),
                 Tables\Actions\BulkAction::make('ubah_data_siswa')
                     ->color('warning')
                     ->icon('heroicon-o-pencil')
@@ -261,7 +263,7 @@ class SiswaResource extends Resource
                                     ->weight('bold'),
                                 TextEntry::make('kelas.nama')
                                     ->label('Kelas')
-                                    ->state(fn (Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id])
+                                    ->state(fn(Siswa $record): string => $record->kelas->nama . ' ' . config('custom.lembaga')[$record->lembaga_id])
                                     ->weight('bold'),
                                 TextEntry::make('nis')
                                     ->label('NIS')
@@ -272,7 +274,7 @@ class SiswaResource extends Resource
                                     ->weight('bold')
                                     ->placeholder('NISN belum diisi'),
                                 TextEntry::make('jenis_kelamin')
-                                    ->formatStateUsing(fn (string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state])
+                                    ->formatStateUsing(fn(string $state): string => ['l' => 'Laki-laki', 'p' => 'Perempuan'][$state])
                                     ->weight('bold'),
                                 TextEntry::make('nik')
                                     ->label('NIK')
@@ -297,8 +299,8 @@ class SiswaResource extends Resource
                                     ->weight('bold'),
                                 TextEntry::make('status')
                                     ->badge()
-                                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.status')[$state])
-                                    ->color(fn (string $state): string => match ($state) {
+                                    ->formatStateUsing(fn(string $state): string => config('custom.siswa.status')[$state])
+                                    ->color(fn(string $state): string => match ($state) {
                                         '1' => 'success',
                                         '2' => 'warning',
                                         '3' => 'info',
@@ -307,8 +309,8 @@ class SiswaResource extends Resource
                                 TextEntry::make('label')
                                     ->placeholder('Belum ada Label')
                                     ->badge()
-                                    ->formatStateUsing(fn (string $state): string => config('custom.siswa.label')[$state])
-                                    ->color(fn (string $state): string => match ($state) {
+                                    ->formatStateUsing(fn(string $state): string => config('custom.siswa.label')[$state])
+                                    ->color(fn(string $state): string => match ($state) {
                                         '1' => 'warning',
                                         '2' => 'warning',
                                         '3' => 'danger',
