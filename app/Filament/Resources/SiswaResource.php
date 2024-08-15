@@ -256,7 +256,8 @@ class SiswaResource extends Resource
                                     ->send();
                             }
                         }
-                    ),
+                    )
+                    ->visible(fn(): bool => env('WHATSAPP_NOTIFICATION')),
                 Tables\Actions\ExportBulkAction::make()
                     ->label('Ekspor')
                     ->exporter(\App\Filament\Exports\SiswaExporter::class)
