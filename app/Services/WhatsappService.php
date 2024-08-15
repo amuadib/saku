@@ -9,6 +9,7 @@ class WhatsappService
 
     public static function prosesPesan(mixed $siswa, array $data, string $jenis): string
     {
+        $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' : '';
         $template = config('custom.template');
         $awal = \App\Services\WhatsappService::prosesTemplate(
             ['siswa.nama' => $siswa->nama],
@@ -26,7 +27,7 @@ class WhatsappService
         //     $template['akhir']
         // );
 
-        return $awal . $isi . $template['akhir'] . $template['footer'];
+        return $test_message . $awal . $isi . $template['akhir'] . $template['footer'];
     }
 
     public static function prosesTemplate(array $data, string $template): string
@@ -55,7 +56,7 @@ class WhatsappService
         ];
         if (count($kumpulan_pesan) > 0) {
             $body = array_merge($body, [
-                'data' => $kumpulan_pesan
+                'data' => json_encode($kumpulan_pesan)
             ]);
         } else {
             $body = array_merge($body, [

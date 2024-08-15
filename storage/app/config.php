@@ -84,7 +84,7 @@ Wassalamu\'alaikum Wr. Wb.',
             'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
             'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
 Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
-Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz  dan Mobil).
+Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '
