@@ -222,6 +222,9 @@ class SiswaResource extends Resource
                                     $total += $t->jumlah;
                                     $no++;
                                 }
+                                if ($total == 0) {
+                                    continue;
+                                }
                                 $pesan[] = [
                                     'number' => $nomor,
                                     'message' => \App\Services\WhatsappService::prosesPesan(
