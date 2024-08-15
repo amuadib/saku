@@ -82,6 +82,7 @@ Bapak/Ibu Wali siswa *{siswa.nama}*. ',
 Wassalamu\'alaikum Wr. Wb.',
         'tagihan' => [
             'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
+            'bayar_banyak' => 'Pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}* telah kami terima.',
             'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
 Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
 Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).

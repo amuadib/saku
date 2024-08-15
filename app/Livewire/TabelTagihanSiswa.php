@@ -89,6 +89,7 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                     'keterangan' => $t->keterangan,
                                 ];
                                 $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                $no++;
                             }
                         }
                         Tagihan::whereIn('id', Arr::pluck($tagihan, 'id'))
@@ -123,10 +124,10 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                 $pesan = \App\Services\WhatsappService::prosesPesan(
                                     $this->siswa,
                                     [
-                                        'tagihan.keterangan' => $rincian,
-                                        'tagihan.jumlah' => 'Rp ' . number_format($total_tagihan, thousands_separator: '.'),
+                                        'tagihan.rincian' => $rincian,
+                                        'tagihan.total' => 'Rp ' . number_format($total_tagihan, thousands_separator: '.'),
                                     ],
-                                    'tagihan.bayar'
+                                    'tagihan.bayar_banyak'
                                 );
                                 \App\Services\WhatsappService::kirimWa($nomor, $pesan);
                             }
