@@ -187,6 +187,7 @@ class SiswaResource extends Resource
                 SelectFilter::make('status')
                     ->options(config('custom.siswa.status')),
             ])
+            ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\Action::make('belanja')
                     ->label('')
