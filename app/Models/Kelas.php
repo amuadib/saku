@@ -11,11 +11,13 @@ class Kelas extends Model
 {
     use HasUuids;
     protected $table = 'kelas';
-    public function scopeGetDaftarKelas($query, $lembaga_id)
+    public function scopeGetDaftarKelas($query, $lembaga_id, $operation)
     {
         $query
             ->join('periode', 'periode.id', '=', 'periode_id')
-            ->where('periode.aktif', true)
+            ->when($operation == 'create', function ($w) {
+                $w->where('periode.aktif', true);
+            })
             ->when($lembaga_id != 99, function ($w) use ($lembaga_id) {
                 $w->where('lembaga_id', $lembaga_id);
             })

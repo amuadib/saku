@@ -70,10 +70,10 @@ class SiswaResource extends Resource
                 Forms\Components\Select::make('kelas_id')
                     ->label('Kelas')
                     ->options(
-                        function (Get $get): array {
+                        function (Get $get, string $operation): array {
                             $data = [];
                             $lembaga_id = auth()->user()->isAdmin() ? $get('lembaga_id') : auth()->user()->authable->lembaga_id;
-                            foreach (Kelas::getDaftarKelas($lembaga_id)->get() as $k) {
+                            foreach (Kelas::getDaftarKelas($lembaga_id, $operation)->get() as $k) {
                                 $data[$k->id] = $k->nama . ' - ' . $k->nama_periode;
                             }
                             return $data;
