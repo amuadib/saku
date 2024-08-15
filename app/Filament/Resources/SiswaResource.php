@@ -16,6 +16,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -202,12 +203,59 @@ class SiswaResource extends Resource
                     ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                BulkAction::make('kirim_tagihan')
+                    ->color('info')
+                    ->icon('heroicon-o-banknotes')
+                    ->action(
+                        function (Collection $records) {
+                            $pesan = [];
+                            foreach ($records as $s) {
+                                if ($s->telepon == '') {
+                                    continue;
+                                }
+                                $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $s->telepon;
+                                $rincian = '';
+                                $no = 1;
+                                $total = 0;
+                                foreach ($s->tagihan as $t) {
+                                    $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                    $total += $t->jumlah;
+                                    $no++;
+                                }
+                                $pesan[] = [
+                                    'number' => $nomor,
+                                    'message' => \App\Services\WhatsappService::prosesPesan(
+                                        $s,
+                                        [
+                                            'lembaga' => config('custom.lembaga.' . $s->lembaga_id),
+                                            'kontak.nama' => config('custom.kontak_lembaga.' . $s->lembaga_id . '.kontak'),
+                                            'tagihan.rincian' => $rincian,
+                                            'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
+                                        ],
+                                        'tagihan.daftar'
+                                    )
+                                ];
+                            }
+
+                            \App\Services\WhatsappService::kirimWa(
+                                kumpulan_pesan: $pesan
+                            );
+                            Notification::make()
+                                ->title('Data Tagihan siswa terpilih telah dikirimkan')
+                                ->icon('heroicon-o-check-circle')
+                                ->iconColor('success')
+                                ->send();
+                        }
+                    ),
                 Tables\Actions\ExportBulkAction::make()
-                    ->exporter(\App\Filament\Exports\SiswaExporter::class),
-                Tables\Actions\BulkAction::make('ubah_data_siswa')
+                    ->label('Ekspor')
+                    ->exporter(\App\Filament\Exports\SiswaExporter::class)
+                    ->color('success')
+                    ->icon('heroicon-o-document-arrow-up'),
+                BulkAction::make('ubah_data_siswa')
+                    ->label('Ubah Data')
                     ->color('warning')
-                    ->icon('heroicon-o-pencil')
+                    ->icon('heroicon-o-pencil-square')
                     ->form([
                         Forms\Components\Select::make('kelas_id')
                             ->label('Kelas')
@@ -237,6 +285,8 @@ class SiswaResource extends Resource
                             ->iconColor('success')
                             ->send();
                     }),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->label('Hapus'),
             ]);
     }
 
@@ -418,6 +468,8 @@ class SiswaResource extends Resource
                                     ->action(function (Siswa $siswa, array $data) {
                                         $total_tagihan = 0;
                                         $tagihan = [];
+                                        $rincian = '' . PHP_EOL;
+                                        $no = 1;
                                         foreach ($siswa->tagihan as $t) {
                                             if (!$t->isLunas()) {
                                                 $total_tagihan += $t->jumlah;
@@ -428,6 +480,7 @@ class SiswaResource extends Resource
                                                     'jumlah' => $t->jumlah,
                                                     'keterangan' => $t->keterangan,
                                                 ];
+                                                $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
                                             }
                                         }
                                         //tabungan
@@ -462,6 +515,21 @@ class SiswaResource extends Resource
                                                 'jumlah' => $total_tagihan,
                                             ]
                                         );
+
+                                        if (env('WHATSAPP_NOTIFICATION')) {
+                                            if ($siswa->telepon != '') {
+                                                $nomor = $siswa->telepon;
+                                                $pesan = \App\Services\WhatsappService::prosesPesan(
+                                                    $siswa,
+                                                    [
+                                                        'tagihan.keterangan' => $rincian,
+                                                        'tagihan.jumlah' => 'Rp ' . number_format($total_tagihan, thousands_separator: '.'),
+                                                    ],
+                                                    'tagihan.bayar'
+                                                );
+                                                \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                                            }
+                                        }
                                         redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
                                     }),
                                 Action::make('cetak_tagihan')

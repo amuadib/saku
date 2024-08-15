@@ -39,7 +39,7 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
     {
         return $table->query(Tagihan::query())
             ->modifyQueryUsing(
-                fn (Builder $query) => $query
+                fn(Builder $query) => $query
                     ->where('siswa_id', $this->siswa->id)
                     ->whereNull('bayar')
             )
@@ -62,7 +62,7 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                         }
                         return 'Belum';
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'Lunas' => 'success',
                         'Belum' => 'warning',
                     }),
@@ -76,6 +76,8 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                     ->action(function (Collection $records) {
                         $total_tagihan = 0;
                         $tagihan = [];
+                        $rincian = '' . PHP_EOL;
+                        $no = 1;
                         foreach ($records as $t) {
                             if (!$t->isLunas()) {
                                 $total_tagihan += $t->jumlah;
@@ -86,6 +88,7 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                     'jumlah' => $t->jumlah,
                                     'keterangan' => $t->keterangan,
                                 ];
+                                $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
                             }
                         }
                         Tagihan::whereIn('id', Arr::pluck($tagihan, 'id'))
@@ -113,6 +116,21 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                 'jumlah' => $total_tagihan,
                             ]
                         );
+
+                        if (env('WHATSAPP_NOTIFICATION')) {
+                            if ($this->siswa->telepon != '') {
+                                $nomor = $this->siswa->telepon;
+                                $pesan = \App\Services\WhatsappService::prosesPesan(
+                                    $this->siswa,
+                                    [
+                                        'tagihan.keterangan' => $rincian,
+                                        'tagihan.jumlah' => 'Rp ' . number_format($total_tagihan, thousands_separator: '.'),
+                                    ],
+                                    'tagihan.bayar'
+                                );
+                                \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                            }
+                        }
                         redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
                     })
             ])
