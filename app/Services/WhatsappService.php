@@ -18,14 +18,15 @@ class WhatsappService
             $data,
             Arr::get($template, $jenis, 'Pesan WA')
         );
-        $akhir = \App\Services\WhatsappService::prosesTemplate(
-            [
-                'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
-                'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
-            ],
-            $template['akhir']
-        );
-        return $awal . $isi . $akhir . $template['footer'];
+        // $akhir = \App\Services\WhatsappService::prosesTemplate(
+        //     [
+        //         'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
+        //         'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
+        //     ],
+        //     $template['akhir']
+        // );
+
+        return $awal . $isi . $template['akhir'] . $template['footer'];
     }
 
     public static function prosesTemplate(array $data, string $template): string

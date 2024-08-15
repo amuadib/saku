@@ -57,6 +57,8 @@ class CekTagihanComponent extends Component
                     $pesan = \App\Services\WhatsappService::prosesPesan(
                         $siswa,
                         [
+                            'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id),
+                            'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
                             'tagihan.rincian' => $rincian,
                             'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
                         ],

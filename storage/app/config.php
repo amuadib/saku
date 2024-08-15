@@ -79,11 +79,12 @@ $config = [
 Bapak/Ibu Wali siswa *{siswa.nama}*. ',
         'akhir' => '
 
-Untuk Informasi lebih lanjut, Hubungi {kontak.telp} ({kontak.nama}).Terima Kasih.
 Wassalamu\'alaikum Wr. Wb.',
         'tagihan' => [
             'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
-            'daftar' => 'Berikut kami informasikan rincian tagihan Ananda:
+            'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
+Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
+Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz  dan Mobil).
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '
