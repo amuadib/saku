@@ -40,7 +40,7 @@ class TransaksiResource extends Resource
                     ->inline()
                     ->inlineLabel(false)
                     ->options(Arr::except($lembaga, [99]))
-                    ->visible(fn (): bool => (auth()->user()->isAdmin()))
+                    ->visible(fn(): bool => (auth()->user()->isAdmin()))
                     ->live(),
                 Radio::make('kas_id')
                     ->label('Kas')
@@ -126,11 +126,11 @@ class TransaksiResource extends Resource
                         return $query
                             ->when(
                                 $data['awal'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             )
                             ->when(
                                 $data['akhir'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
@@ -187,7 +187,7 @@ class TransaksiResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('cetak_data_terpilih')
-                    ->label('Cetak')
+                    ->label('Cetak Struk')
                     ->icon('heroicon-o-printer')
                     ->action(function (Collection $records) {
                         $total = 0;
@@ -211,6 +211,12 @@ class TransaksiResource extends Resource
                         );
                         redirect(url('/cetak/struk-transaksi/' . $transaksi_id . '/raw?data=' . $raw_data));
                     }),
+
+                Tables\Actions\ExportBulkAction::make()
+                    ->label('Ekspor')
+                    ->exporter(\App\Filament\Exports\TransaksiExporter::class)
+                    ->color('success')
+                    ->icon('heroicon-o-document-arrow-up'),
             ]);
     }
 
