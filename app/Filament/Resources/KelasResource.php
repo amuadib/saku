@@ -46,24 +46,29 @@ class KelasResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->isAdmin()) {
+                    return $query->where('lembaga_id', auth()->user()->authable->lembaga_id);
+                }
+            })
             ->columns([
-                // TextColumn::make('no')
-                //     ->rowIndex(),
                 TextColumn::make('nama')
                     ->sortable()
                     ->label('Kelas'),
                 TextColumn::make('periode.nama')
                     ->sortable(),
                 TextColumn::make('lembaga_id')
+                    ->label('Lembaga')
                     ->sortable()
-                    ->formatStateUsing(fn (string $state): string => config('custom.lembaga')[$state]),
+                    ->formatStateUsing(fn(string $state): string => config('custom.lembaga')[$state]),
             ])
             ->filters([
                 Filter::make('aktif')
                     ->label('Periode Aktif')
                     ->default()
                     ->toggle()
-                    ->query(fn (Builder $query): Builder => $query->whereHas('periode', fn ($query) => $query->where('aktif', true)))
+                    ->query(fn(Builder $query): Builder => $query->whereHas('periode', fn($query) => $query->where('aktif', true)))
                 // ->query(fn (Builder $query): Builder => $query->where('periode.aktif', true))
                 // ->query(function ($query) {
                 //     $query->join('periode', function (JoinClause $join) {
@@ -72,7 +77,7 @@ class KelasResource extends Resource
                 // })
             ])
             ->actions([
-                // Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

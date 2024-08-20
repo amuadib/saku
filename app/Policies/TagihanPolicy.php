@@ -13,7 +13,7 @@ class TagihanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isTataUsaha();
+        return $user->isPetugas();
     }
 
     /**
@@ -21,11 +21,7 @@ class TagihanPolicy
      */
     public function view(User $user, Tagihan $tagihan): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return $user->isTataUsaha() and $tagihan->siswa->lembaga_id == $user->authable->lembaga_id;
+        return $user->isAdmin() or ($user->isPetugas() and $user->authable->lembaga_id == $tagihan->siswa->lembaga_id);
     }
 
     /**

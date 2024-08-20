@@ -37,7 +37,7 @@ class BarangResource extends Resource
                     ->inlineLabel(false)
                     ->options(Arr::except($lembaga, [99]))
                     ->columnSpan(6)
-                    ->visible(fn (): bool => (auth()->user()->isAdmin())),
+                    ->visible(fn(): bool => (auth()->user()->isAdmin())),
                 Forms\Components\Radio::make('jenis')
                     ->label('Jenis')
                     ->options(config('custom.barang.jenis'))
@@ -107,7 +107,7 @@ class BarangResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('jenis')
-                    ->formatStateUsing(fn (string $state): string => config('custom.barang.jenis')[$state]),
+                    ->formatStateUsing(fn(string $state): string => config('custom.barang.jenis')[$state]),
                 TextColumn::make('nama')
                     ->sortable()
                     ->searchable()
@@ -124,9 +124,9 @@ class BarangResource extends Resource
                     ->numeric(thousandsSeparator: '.'),
                 TextColumn::make('stok')
                     ->sortable()
-                    ->state(fn (Barang $b): string => $b->stok . ' ' . config('custom.barang.satuan')[$b->satuan])
-                    ->color(fn (Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'danger' : null)
-                    ->description(fn (Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'Stok kurang dari stok minimal' : null),
+                    ->state(fn(Barang $b): string => $b->stok . ' ' . config('custom.barang.satuan')[$b->satuan])
+                    ->color(fn(Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'danger' : null)
+                    ->description(fn(Barang $b): string|null => $b->stok <= $b->stok_minimal ? 'Stok kurang dari stok minimal' : null),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('jenis')
@@ -139,21 +139,22 @@ class BarangResource extends Resource
                     ->form([
                         TextInput::make('nama')
                             ->required()
-                            ->default(fn (Barang $b): string => $b->nama)
+                            ->default(fn(Barang $b): string => $b->nama)
                             ->columnSpan(6),
                         TextInput::make('harga')
                             ->required()
-                            ->default(fn (Barang $b): string => $b->harga)
+                            ->default(fn(Barang $b): string => $b->harga)
                             ->prefix('Rp ')
                             ->currencyMask('.', ',', 0)
                             ->columnSpan(6),
                         TextInput::make('stok')
                             ->required()
-                            ->default(fn (Barang $b): string => $b->stok)
+                            ->default(fn(Barang $b): string => $b->stok)
                             ->numeric()
                             ->minValue(0)
                             ->columnSpan(3),
                     ])
+                    ->visible(fn(Barang $b): bool => auth()->user()->can('update', $b))
                     ->action(function (Barang $b, array $data) {
                         if (Barang::create([
                             'jenis' => $b->jenis,
@@ -177,9 +178,8 @@ class BarangResource extends Resource
                     ->color('warning'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->visible(fn(Barang $b): bool => auth()->user()->can('update', $b)),
             ]);
     }
 

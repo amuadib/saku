@@ -29,6 +29,9 @@ class BarangPolicy
      */
     public function create(User $user): bool
     {
+        if ($user->isKepala()) {
+            return false;
+        }
         return $user->isPetugas();
     }
 
@@ -37,6 +40,9 @@ class BarangPolicy
      */
     public function update(User $user, Barang $barang): bool
     {
+        if ($user->isKepala()) {
+            return false;
+        }
         return $user->isAdmin() or ($user->isPetugas() and $user->authable->lembaga_id == $barang->lembaga_id);
     }
 
@@ -45,6 +51,9 @@ class BarangPolicy
      */
     public function delete(User $user, Barang $barang): bool
     {
+        if ($user->isKepala()) {
+            return false;
+        }
         return $user->isAdmin();
     }
 

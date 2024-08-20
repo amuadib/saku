@@ -13,7 +13,7 @@ class KelasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or $user->isKepala();
     }
 
     /**
@@ -21,7 +21,7 @@ class KelasPolicy
      */
     public function view(User $user, Kelas $kelas): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or ($user->isKepala() and $user->authable->lembaga_id == $kelas->lembaga_id);
     }
 
     /**
@@ -37,7 +37,7 @@ class KelasPolicy
      */
     public function update(User $user, Kelas $kelas): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() or ($user->isKepala() and $user->authable->lembaga_id == $kelas->lembaga_id);
     }
 
     /**

@@ -70,6 +70,10 @@ class User extends Authenticatable implements HasName, HasAvatar, FilamentUser
     {
         return $this->role_id === 1;
     }
+    public function isKepala(): bool
+    {
+        return $this->role_id === 3;
+    }
     public function isPetugas(): bool
     {
         return $this->role_id <= 4;

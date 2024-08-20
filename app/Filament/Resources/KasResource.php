@@ -14,6 +14,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Arr;
 
 class KasResource extends Resource
 {
@@ -29,10 +30,21 @@ class KasResource extends Resource
             ->schema([
                 TextInput::make('nama')
                     ->required(),
-                Forms\Components\Select::make('lembaga_id')
+                Forms\Components\Radio::make('lembaga_id')
                     ->label('Lembaga')
-                    ->options(config('custom.lembaga'))
-                    ->required(),
+                    ->inline()
+                    ->inlineLabel(false)
+                    ->options(Arr::except(config('custom.lembaga'), [99]))
+                    ->required()
+                    ->live()
+                    ->visible(fn(): bool => (auth()->user()->isAdmin())),
+
+                Forms\Components\ViewField::make('lembaga_id')
+                    ->view('filament.forms.components.view_only', [
+                        'label' => 'Lembaga',
+                        'value' => config('custom.lembaga')[auth()->user()->authable->lembaga_id],
+                    ])
+                    ->hidden(fn(): bool => (auth()->user()->isAdmin())),
                 Forms\Components\Textarea::make('keterangan')
                     ->columnSpanFull()
             ]);
@@ -58,7 +70,7 @@ class KasResource extends Resource
                     ->prefix('Rp '),
                 TextColumn::make('lembaga_id')
                     ->label('Lembaga')
-                    ->formatStateUsing(fn (string $state): string => config('custom.lembaga')[$state]),
+                    ->formatStateUsing(fn(string $state): string => config('custom.lembaga')[$state]),
                 ToggleColumn::make('ada_tagihan')
                     ->label('Ada tagihan ?'),
                 ToggleColumn::make('tabungan'),
@@ -99,7 +111,8 @@ class KasResource extends Resource
                             ->body('Dana Kas ' . $kas->nama . ' sebesar Rp ' . number_format($saldo, thousands_separator: '.') . ' berhasil disetorkan')
                             ->success()
                             ->send();
-                    }),
+                    })
+                    ->visible(fn(): bool => auth()->user()->isAdmin()),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->color('warning'),

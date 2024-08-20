@@ -62,7 +62,7 @@ class SiswaResource extends Resource
                     ->visible(fn(): bool => (auth()->user()->isAdmin())),
 
                 Forms\Components\ViewField::make('lembaga_id')
-                    ->view('filament.form.components.view_only', [
+                    ->view('filament.forms.components.view_only', [
                         'label' => 'Lembaga',
                         'value' => config('custom.lembaga')[auth()->user()->authable->lembaga_id],
                     ])
