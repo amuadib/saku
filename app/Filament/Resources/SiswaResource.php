@@ -108,7 +108,7 @@ class SiswaResource extends Resource
                 TextInput::make('nama_ayah'),
                 TextInput::make('nama_ibu'),
                 TextInput::make('telepon')
-                    ->helperText(new HtmlString('Nomer Whatsapp. Gunakan Format: <strong>081234567891</strong>. Untuk nomor luar negeri, tambahkan <strong><i>+[Kode Negara]</i></strong>: <strong>+8581234567891</strong>')),
+                    ->helperText(new HtmlString('Nomor Whatsapp. Gunakan Format: <strong>081234567891</strong>. Untuk nomor luar negeri, tambahkan <strong><i>+[Kode Negara]</i></strong>: <strong>+8581234567891</strong>')),
                 TextInput::make('email')
                     ->email(),
                 Radio::make('status')
@@ -227,12 +227,14 @@ class SiswaResource extends Resource
                                         $no++;
                                     }
                                 }
-                                // if ($total == 0) {
-                                //     continue;
-                                // }
-                                if ($rincian == '') {
-                                    $rincian = PHP_EOL . 'Semua tagihan Ananda sudah *LUNAS*' . PHP_EOL;
+
+                                //Lewati untuk tagihan sudah lunas / belum ada tagihan
+                                if ($total == 0) {
+                                    continue;
                                 }
+                                // if ($rincian == '') {
+                                //     $rincian = PHP_EOL . 'Semua tagihan Ananda sudah *LUNAS*' . PHP_EOL;
+                                // }
                                 $pesan[] = [
                                     'number' => $nomor,
                                     'message' => \App\Services\WhatsappService::prosesPesan(
