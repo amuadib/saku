@@ -34,6 +34,7 @@ use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\HtmlString;
 
 class SiswaResource extends Resource
 {
@@ -106,7 +107,8 @@ class SiswaResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('nama_ayah'),
                 TextInput::make('nama_ibu'),
-                TextInput::make('telepon'),
+                TextInput::make('telepon')
+                    ->helperText(new HtmlString('Nomer Whatsapp. Gunakan Format: <strong>081234567891</strong>. Untuk nomor luar negeri, tambahkan <strong><i>+[Kode Negara]</i></strong>: <strong>+8581234567891</strong>')),
                 TextInput::make('email')
                     ->email(),
                 Radio::make('status')
