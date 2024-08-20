@@ -194,7 +194,8 @@ class SiswaResource extends Resource
                     ->label('')
                     ->url(fn(Siswa $s): string => SiswaResource::getUrl('belanja', ['record' => $s]))
                     ->color('success')
-                    ->icon('heroicon-o-shopping-cart'),
+                    ->icon('heroicon-o-shopping-cart')
+                    ->visible(fn(): bool => auth()->user()->isTataUsaha() or auth()->user()->isAdmin()),
                 Tables\Actions\ViewAction::make()
                     ->label('')
                     ->color('info'),
@@ -213,17 +214,22 @@ class SiswaResource extends Resource
                                 if ($s->telepon == '') {
                                     continue;
                                 }
-                                $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $s->telepon;
+                                $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : '' . $s->telepon;
                                 $rincian = '';
                                 $no = 1;
                                 $total = 0;
                                 foreach ($s->tagihan as $t) {
-                                    $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
-                                    $total += $t->jumlah;
-                                    $no++;
+                                    if (!$t->isLunas()) {
+                                        $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                        $total += $t->jumlah;
+                                        $no++;
+                                    }
                                 }
-                                if ($total == 0) {
-                                    continue;
+                                // if ($total == 0) {
+                                //     continue;
+                                // }
+                                if ($rincian == '') {
+                                    $rincian = PHP_EOL . 'Semua tagihan Ananda sudah *LUNAS*' . PHP_EOL;
                                 }
                                 $pesan[] = [
                                     'number' => $nomor,
@@ -239,7 +245,7 @@ class SiswaResource extends Resource
                                     )
                                 ];
                             }
-                            if (count($pesan) > 1) {
+                            if (count($pesan) > 0) {
                                 \App\Services\WhatsappService::kirimWa(
                                     kumpulan_pesan: $pesan
                                 );
