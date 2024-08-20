@@ -103,7 +103,7 @@ class Belanja extends Page implements
         $stok_keluar = [];
 
         //Penjualan
-        $kode_pj = \App\Traits\PenjualanTrait::getKode();
+        $kode_pj = \App\Traits\PenjualanTrait::getKode($this->record->lembaga_id);
         $penjualan = Penjualan::create([
             'siswa_id' => $this->record->id,
             'total' => $this->total,

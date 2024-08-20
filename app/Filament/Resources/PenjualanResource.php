@@ -4,29 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PenjualanResource\Pages;
 use App\Filament\Resources\PenjualanResource\RelationManagers;
-use App\Models\Barang;
-use App\Models\Keranjang;
 use App\Models\Penjualan;
-use App\Models\Siswa;
-use Filament\Forms;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Set;
-use Filament\Forms\Get;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-
 use Filament\Infolists;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -69,6 +53,11 @@ class PenjualanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if (!auth()->user()->isAdmin()) {
+                    return $query->whereRaw('substr(kode,4,1) =' . auth()->user()->authable->lembaga_id);
+                }
+            })
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
