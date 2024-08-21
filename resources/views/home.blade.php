@@ -61,8 +61,7 @@
                             class="w-full py-2 text-center font-bold text-pink-500">Login</a>
                     @endauth
                     <a href="#kontak"
-                        class="fold-bold relative inline-block w-full bg-indigo-700 px-5 py-3 text-center text-sm leading-none text-white">Hubungi
-                        Kami</a>
+                        class="fold-bold relative inline-block w-full bg-indigo-700 px-5 py-3 text-center text-sm leading-none text-white">Laporan</a>
                 </div>
             </nav>
 
@@ -77,7 +76,7 @@
                 @endauth
                 <a href="#kontak"
                     class="fold-bold relative z-40 inline-block h-full w-auto rounded bg-indigo-700 px-5 py-3 text-sm font-bold leading-none text-white shadow-md transition transition-all duration-100 duration-300 hover:shadow-xl sm:w-full lg:bg-white lg:text-indigo-700 lg:shadow-none">
-                    Hubungi Kami
+                    Laporan
                 </a>
                 <svg class="absolute left-0 top-0 -ml-12 -mt-64 hidden w-screen max-w-3xl lg:block"
                     viewBox="0 0 818 815" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

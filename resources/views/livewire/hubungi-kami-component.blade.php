@@ -6,16 +6,49 @@
                     Narahubung
                 </p>
                 <h2 class="font-heading text-gray-900sm:text-5xl mb-4 text-3xl font-bold tracking-tight">
-                    Hubungi Kami
+                    Laporkan Kepada Kami
                 </h2>
                 <p class="mx-auto mt-4 max-w-3xl text-xl text-gray-600">
-                    Untuk Informasi lebih lanjut
+                    Jika terdapat Kesalahan tentang Tagihan atau Pembayaran
                 </p>
             </div>
         </div>
         <div class="flex items-stretch justify-center">
             <div class="grid md:grid-cols-2">
-                <div class="h-full pr-6">
+                <div class="card h-fit max-w-6xl p-5" id="form">
+                    <h2 class="text-2xl font-bold">Ada kesalahan tagihan atau pembayaran?</h2>
+                    <p class="mb-4">Silahkan laporkan disini</p>
+                    <form id="contactForm" wire:submit="kirim">
+                        <div class="mb-6">
+                            <div class="mx-0 mb-1 sm:mb-4">
+                                <div class="mx-0 mb-1 sm:mb-4">
+                                    <label for="name" class="pb-1 text-xs uppercase tracking-wider"></label><input
+                                        type="text" wire:model="nama" name="nama" autocomplete="nama-lengkap"
+                                        placeholder="Nama Siswa" required
+                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0">
+                                </div>
+                                <div class="mx-0 mb-1 sm:mb-4">
+                                    <label for="nis" class="pb-1 text-xs uppercase tracking-wider"></label><input
+                                        type="text" wire:model="nis" autocomplete="nis" placeholder="NIS/NISN"
+                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"
+                                        name="nis">
+                                </div>
+                            </div>
+                            <div class="mx-0 mb-1 sm:mb-4">
+                                <label for="textarea" class="pb-1 text-xs uppercase tracking-wider"></label>
+                                <textarea wire:model="laporan" name="textarea" cols="30" rows="5" placeholder="Laporan Anda" required
+                                    class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"></textarea>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" disabled
+                                class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
+                                Kirim
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="h-full pl-6">
                     <p class="mb-12 mt-3 text-lg text-gray-600">
                         Untuk mendapatkan Informasi lebih lanjut yang berkaitan dengan SAKU, Silahkan hubungi Kami di
                         Alamat berikut ini:
@@ -35,8 +68,9 @@
                             <div class="mb-4 ml-4">
                                 <h3 class="mb-2 text-lg font-medium leading-6 text-gray-900">Alamat
                                 </h3>
-                                <p class="text-gray-600">Jl. Manggar RT 02 RW 06 Lingk. Jatikeplek Klemunan</p>
-                                <p class="text-gray-600">Wlingi, Blitar</p>
+                                <p class="text-gray-600">
+                                    {{ config('custom.kontak_lembaga.99.alamat') }}
+                                </p>
                             </div>
                         </li>
                         <li class="flex">
@@ -56,8 +90,10 @@
                                     Nomor WhatsApp
                                 </h3>
                                 @foreach (config('custom.kontak_lembaga') as $l)
-                                    <p class="text-gray-600">{{ $l['kontak'] }} ({{ $l['singkatan'] }}):
-                                        {{ $l['telp'] }}</p>
+                                    @if ($l['kontak'] != '')
+                                        <p class="text-gray-600">{{ $l['kontak'] }} ({{ $l['singkatan'] }}):
+                                            {{ $l['telp'] }}</p>
+                                    @endif
                                 @endforeach
                             </div>
                         </li>
@@ -74,45 +110,12 @@
                                 <h3 class="mb-2 text-lg font-medium leading-6 text-gray-900">
                                     Jam Kerja
                                 </h3>
-                                <p class="text-gray-600">Senin - Sabtu: 07:00 - 13:30</p>
-                                <p class="text-gray-600">Jum'at: 07:00 - 10:00</p>
-                                <p class="text-gray-600">Hari Ahad & Libur Nasional Tutup</p>
+                                @foreach (config('custom.jam_kerja') as $j)
+                                    <p class="text-gray-600">{{ $j }}</p>
+                                @endforeach
                             </div>
                         </li>
                     </ul>
-                </div>
-                <div class="card h-fit max-w-6xl p-5 md:p-12" id="form">
-                    <h2 class="text-2xl font-bold">Anda mempunyai pertanyaan?</h2>
-                    <p class="mb-4">Kirimkan pertanyaan Anda disini</p>
-                    <form id="contactForm" wire:submit="kirim">
-                        <div class="mb-6">
-                            <div class="mx-0 mb-1 sm:mb-4">
-                                <div class="mx-0 mb-1 sm:mb-4">
-                                    <label for="name" class="pb-1 text-xs uppercase tracking-wider"></label><input
-                                        type="text" wire:model="nama" name="nama" autocomplete="nama-lengkap"
-                                        placeholder="Nama Anda" required
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0">
-                                </div>
-                                <div class="mx-0 mb-1 sm:mb-4">
-                                    <label for="hp" class="pb-1 text-xs uppercase tracking-wider"></label><input
-                                        type="text" wire:model="hp" autocomplete="hp" placeholder="Nomor HP Anda"
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"
-                                        name="hp">
-                                </div>
-                            </div>
-                            <div class="mx-0 mb-1 sm:mb-4">
-                                <label for="textarea" class="pb-1 text-xs uppercase tracking-wider"></label>
-                                <textarea wire:model="pesan" name="textarea" cols="30" rows="5" placeholder="Pertanyaan Anda" required
-                                    class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"></textarea>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit"
-                                class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
-                                Kirim
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>

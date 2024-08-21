@@ -14,6 +14,11 @@ $config = [
         6 => 'Orang Tua',
         99 => 'Default'
     ],
+    'jam_kerja' => [
+        'Senin - Sabtu: 07:00 - 13:30',
+        'Jum\'at: 07:00 - 10:00',
+        'Hari Ahad & Libur Nasional Tutup'
+    ],
     'lembaga' => [
         1 => 'SDI Miftahul Ulum Klemunan',
         2 => 'SMPI Miftahul Ulum',

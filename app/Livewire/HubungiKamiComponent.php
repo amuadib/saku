@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class HubungiKamiComponent extends Component
 {
-    public $nama, $hp, $pesan;
+    public $nama, $nis, $laporan;
     public function render()
     {
         return view('livewire.hubungi-kami-component');
