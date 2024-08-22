@@ -18,35 +18,48 @@
                 <div class="card h-fit max-w-6xl p-5" id="form">
                     <h2 class="text-2xl font-bold">Ada kesalahan tagihan atau pembayaran?</h2>
                     <p class="mb-4">Silahkan laporkan disini</p>
-                    <form id="contactForm" wire:submit="kirim">
-                        <div class="mb-6">
-                            <div class="mx-0 mb-1 sm:mb-4">
+                    @if ($terkirim)
+                        <x-alert type="success">
+                            Laporan telah kami terima dan akan segera kami tindak lanjuti. Terima kasih
+                            <div class="mt-3 flex">
+                                <button type="button" wire:click="$set('terkirim', false)"
+                                    class="inline-flex w-full justify-center rounded-md border border-transparent bg-green-700 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto sm:text-sm">
+                                    Kembali
+                                </button>
+                            </div>
+                        </x-alert>
+                    @else
+                        <form id="contactForm" wire:submit="kirim">
+                            <div class="mb-6">
                                 <div class="mx-0 mb-1 sm:mb-4">
-                                    <label for="name" class="pb-1 text-xs uppercase tracking-wider"></label><input
-                                        type="text" wire:model="nama" name="nama" autocomplete="nama-lengkap"
-                                        placeholder="Nama Siswa" required
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0">
+                                    <div class="mx-0 mb-1 sm:mb-4">
+                                        <label for="nik" class="pb-1 text-xs uppercase tracking-wider"></label>
+                                        <input type="text" wire:model="nik" autocomplete="nik" required
+                                            placeholder="NIK/NISN Siswa"
+                                            class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"
+                                            name="nik">
+                                        @error('nik')
+                                            <span class="text-xs italic text-red-500">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="mx-0 mb-1 sm:mb-4">
-                                    <label for="nis" class="pb-1 text-xs uppercase tracking-wider"></label><input
-                                        type="text" wire:model="nis" autocomplete="nis" placeholder="NIS/NISN"
-                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"
-                                        name="nis">
+                                    <label for="textarea" class="pb-1 text-xs uppercase tracking-wider"></label>
+                                    <textarea wire:model="laporan" name="textarea" cols="30" rows="5" placeholder="Laporan Anda" required
+                                        class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"></textarea>
+                                    @error('laporan')
+                                        <span class="text-xs italic text-red-500">Laporan belum diisi</span>
+                                    @enderror
                                 </div>
                             </div>
-                            <div class="mx-0 mb-1 sm:mb-4">
-                                <label for="textarea" class="pb-1 text-xs uppercase tracking-wider"></label>
-                                <textarea wire:model="laporan" name="textarea" cols="30" rows="5" placeholder="Laporan Anda" required
-                                    class="mb-2 w-full rounded-md border border-gray-400 py-2 pl-2 pr-4 sm:mb-0"></textarea>
+                            <div class="text-center">
+                                <button type="submit"
+                                    class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
+                                    Kirim
+                                </button>
                             </div>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" disabled
-                                class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
-                                Kirim
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    @endif
                 </div>
                 <div class="h-full pl-6">
                     <p class="mb-12 mt-3 text-lg text-gray-600">

@@ -419,7 +419,7 @@
     <!-- END FEATURES SECTION -->
 
     @livewire('cekTagihanComponent')
-    @livewire('hubungiKamiComponent')
+    @livewire('pengaduanComponent')
 
     <footer class="border-t border-gray-200 bg-white px-4 pb-8 pt-12 text-white">
         <div class="container mx-auto flex max-w-6xl flex-col justify-between overflow-hidden px-4 lg:flex-row">
