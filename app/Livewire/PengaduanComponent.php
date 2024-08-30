@@ -42,6 +42,7 @@ class PengaduanComponent extends Component
         } else {
             Pengaduan::create([
                 'siswa_id' => $siswa->id,
+                'lembaga_id' => $siswa->lembaga_id,
                 'laporan' => $this->laporan
             ]);
 
