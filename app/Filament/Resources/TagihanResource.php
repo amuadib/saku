@@ -133,7 +133,8 @@ class TagihanResource extends Resource
                     ->label('Tanggal')
                     ->date('d/m/Y'),
                 TextColumn::make('siswa.nama')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('siswa.kelas.nama')
                     ->label('Kelas'),
                 TextColumn::make('kas.nama')
@@ -283,9 +284,12 @@ class TagihanResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\ExportBulkAction::make()
+                    ->label('Ekspor')
+                    ->exporter(\App\Filament\Exports\TagihanExporter::class)
+                    ->color('success')
+                    ->icon('heroicon-o-document-arrow-up'),
                 Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ]);
     }
 
