@@ -31,6 +31,7 @@ class TagihanResource extends Resource
 {
     protected static ?string $model = Tagihan::class;
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -154,8 +155,66 @@ class TagihanResource extends Resource
                     ->label('Petugas'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('kas_id')
+                    ->label('Tagihan')
+                    ->options(function () {
+                        $lembaga = config('custom.lembaga');
+                        $kas = [];
+                        foreach (
+                            Kas::where('ada_tagihan', 1)
+                                ->when(
+                                    !auth()->user()->isAdmin(),
+                                    function ($w) {
+                                        $w->where('lembaga_id', auth()->user()->authable->lembaga_id);
+                                    }
+                                )
+                                ->get() as $k
+                        ) {
+                            $kas[$k->id] = $k->nama . ' (' . $lembaga[$k->lembaga_id] . ')';
+                        }
+                        return $kas;
+                    }),
+                Tables\Filters\Filter::make('keterangan')
+                    ->form([
+                        Forms\Components\TextInput::make('keterangan')
+                    ])
+                    ->query(fn(Builder $query, array $data): Builder => $query->where('keterangan', 'like', '%' . $data['keterangan'] . '%'))
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['keterangan']) {
+                            return null;
+                        }
+
+                        return 'Keterangan: ' . $data['keterangan'];
+                    }),
+                Tables\Filters\Filter::make('lunas')
+                    ->form([
+                        Forms\Components\Radio::make('lunas')
+                            ->label('Pembayaran')
+                            ->options([
+                                'Lunas' => 'Lunas',
+                                'Belum' => 'Belum',
+                            ])
+                            ->inline()
+                            ->inlineLabel(false)
+                    ])
+                    ->query(fn(Builder $query, array $data): Builder => $query->when(
+                        $data['lunas'] == 'Lunas',
+                        function ($w) {
+                            $w->whereNotNull('bayar');
+                        },
+                        function ($w) {
+                            $w->whereNull('bayar');
+                        }
+                    ))
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['lunas']) {
+                            return null;
+                        }
+
+                        return 'Pembayaran: ' . $data['lunas'];
+                    }),
             ])
+            ->persistFiltersInSession()
             ->actions([
                 Tables\Actions\Action::make('penjualan')
                     ->label('')
