@@ -456,7 +456,7 @@ class SiswaResource extends Resource
                                             ->iconColor('success')
                                             ->send();
 
-                                        redirect(url('/siswas/' . $siswa->id));
+                                        redirect(SiswaResource::getUrl('view', ['record' => $siswa]));
                                     }),
                                 Action::make('bayar_tagihan')
                                     ->label('Bayar Semua Tagihan')
