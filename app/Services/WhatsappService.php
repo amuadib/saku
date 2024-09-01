@@ -11,23 +11,28 @@ class WhatsappService
     {
         $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' : '';
         $template = config('custom.template');
+
         $awal = \App\Services\WhatsappService::prosesTemplate(
-            ['siswa.nama' => $siswa->nama],
-            $template['awal']
+            [
+                'siswa.nama' => $siswa->nama,
+                'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id)
+            ],
+            $siswa->status == 3 ? $template['awal_alumni'] : $template['awal']
         );
         $isi = \App\Services\WhatsappService::prosesTemplate(
             $data,
             Arr::get($template, $jenis, 'Pesan WA')
         );
-        // $akhir = \App\Services\WhatsappService::prosesTemplate(
-        //     [
-        //         'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
-        //         'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
-        //     ],
-        //     $template['akhir']
-        // );
+        $akhir = \App\Services\WhatsappService::prosesTemplate(
+            [
+                'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
+                'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
+                'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id)
+            ],
+            $siswa->status == 3 ? $template['akhir_alumni'] : $template['akhir']
+        );
 
-        return $test_message . $awal . $isi . $template['akhir'] . $template['footer'];
+        return $test_message . $awal . $isi . $akhir . $template['footer'];
     }
 
     public static function prosesTemplate(array $data, string $template): string

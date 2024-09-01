@@ -80,17 +80,42 @@ $config = [
         'tab' => 'Tabungan',
     ],
     'template' => [
-        'awal' => 'Assalamu\'alaikum Wr. Wb.
+        'awal' => 'Assalaamu\'alaikum Wr. Wb.
 Bapak/Ibu Wali siswa *{siswa.nama}*. ',
         'akhir' => '
 
 Wassalamu\'alaikum Wr. Wb.',
+        'awal_alumni' => '
+Assalaamu\'alaikum Wr. Wb.
+Semoga dalam lindungan Allah SWT serta diberikan kesehatan selalu🤲
+
+🏫Berikut merupakan WA resmi sistem otomatis {lembaga} untuk para alumni.
+
+Kami menginformasikan bahwasanya;
+
+Ananda yang bernama *{siswa.nama}*
+
+📋Memiliki *daftar pembayaran yang belum dilunasi (tanggungan pembayaran)* selama masih bersekolah di {lembaga}.
+',
+        'akhir_alumni' => '
+
+🙏Mohon maaf apabila masih ada tanggungan maka *ijazah masih kami tangguhkan* (belum bisa kami berikan)
+
+🖋️Apabila terdapat kesalahan dalam jumlah ataupun hal² lain bisa segera konfirmasi di kantor {lembaga}*
+
+Atas perhatiannya kami sampaikan terima kasih dan mohon maaf.
+
+Wassalaamu\'alaikum Wr. Wb
+',
         'tagihan' => [
             'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
             'bayar_banyak' => 'Pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}* telah kami terima.',
             'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
 Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
 Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).
+{tagihan.rincian}Total tagihan *{tagihan.total}*.',
+            'daftar_alumni' => '
+Berikut informasi tanggungan ananda.
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '

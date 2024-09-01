@@ -245,10 +245,11 @@ class SiswaResource extends Resource
                                             'tagihan.rincian' => $rincian,
                                             'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
                                         ],
-                                        'tagihan.daftar'
+                                        $s->status == 3 ? 'tagihan.daftar_alumni' : 'tagihan.daftar'
                                     )
                                 ];
                             }
+                            dd($pesan);
                             if (count($pesan) > 0) {
                                 \App\Services\WhatsappService::kirimWa(
                                     kumpulan_pesan: $pesan
