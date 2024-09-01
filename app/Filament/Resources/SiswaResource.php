@@ -164,7 +164,8 @@ class SiswaResource extends Resource
                     ->query(fn(Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label'])),
                 SelectFilter::make('lembaga_id')
                     ->label('Lembaga')
-                    ->options(Arr::except(config('custom.lembaga'), [99])),
+                    ->options(Arr::except(config('custom.lembaga'), [99]))
+                    ->visible(auth()->user()->isAdmin()),
                 SelectFilter::make('kelas_id')
                     ->label('Kelas')
                     ->multiple()
