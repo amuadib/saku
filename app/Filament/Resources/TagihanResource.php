@@ -6,6 +6,7 @@ use App\Filament\Resources\TagihanResource\Pages;
 use App\Models\DataStruk;
 use App\Models\Kas;
 use App\Models\Kelas;
+use App\Models\Periode;
 use App\Models\Siswa;
 use App\Models\Tagihan;
 use Filament\Forms;
@@ -14,6 +15,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -155,7 +158,61 @@ class TagihanResource extends Resource
                     ->label('Petugas'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('kas_id')
+                // SelectFilter::make('siswa.lembaga_id')
+                //     ->label('Lembaga')
+                //     ->options(Arr::except(config('custom.lembaga'), [99]))
+                //     ->visible(auth()->user()->isAdmin()),
+                // SelectFilter::make('siswa.kelas_id')
+                //     ->label('Kelas')
+                //     ->multiple()
+                //     ->preload()
+                //     ->options(
+                //         function (): array {
+                //             $data = [];
+                //             $lembaga = Arr::except(config('custom.lembaga'), [99]);
+                //             $periode = Periode::where('aktif', 1)->first();
+                //             $lembaga_id = auth()->user()->isAdmin() ? null : auth()->user()->authable->lembaga_id;
+
+                //             if ($periode and $periode->kelas->count() > 0) {
+                //                 foreach ($periode->kelas as $k) {
+                //                     if ($lembaga_id !== null and $lembaga_id != $k->lembaga_id) {
+                //                         continue;
+                //                     }
+                //                     $data[$k->id] = $k->nama . ' - ' . $periode->nama . ' - ' . explode(' ', $lembaga[$k->lembaga_id])[0];
+                //                 }
+                //             }
+                //             return $data;
+                //         }
+                //     ),
+                Filter::make('status')
+                    ->form([
+                        Forms\Components\Select::make('status')
+                            ->options(config('custom.siswa.status'))
+                    ])
+                    ->query(
+                        fn(Builder $query, array $data): Builder =>
+                        $query
+                            ->when(
+                                $data['status'],
+                                function (Builder $query) use ($data) {
+                                    $query
+                                        ->whereHas(
+                                            'siswa',
+                                            function (Builder $query) use ($data) {
+                                                $query
+                                                    ->where('status', $data['status']);
+                                            }
+                                        );
+                                }
+                            )
+                    )
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['status']) {
+                            return null;
+                        }
+                        return 'Status: ' . config('custom.siswa.status')[$data['status']];
+                    }),
+                SelectFilter::make('kas_id')
                     ->label('Tagihan')
                     ->options(function () {
                         $lembaga = config('custom.lembaga');
@@ -174,7 +231,7 @@ class TagihanResource extends Resource
                         }
                         return $kas;
                     }),
-                Tables\Filters\Filter::make('keterangan')
+                Filter::make('keterangan')
                     ->form([
                         Forms\Components\TextInput::make('keterangan')
                     ])
@@ -186,7 +243,7 @@ class TagihanResource extends Resource
 
                         return 'Keterangan: ' . $data['keterangan'];
                     }),
-                Tables\Filters\Filter::make('lunas')
+                Filter::make('lunas')
                     ->form([
                         Forms\Components\Radio::make('lunas')
                             ->label('Pembayaran')
