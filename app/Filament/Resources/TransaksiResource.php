@@ -22,13 +22,13 @@ use Carbon\Carbon;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 
 class TransaksiResource extends Resource
 {
     protected static ?string $model = Transaksi::class;
     protected static ?string $navigationIcon = 'heroicon-o-scale';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -115,9 +115,11 @@ class TransaksiResource extends Resource
                     })
                     ->prefix('Rp ')
                     ->numeric(0),
+                TextColumn::make('transable.nama')
+                    ->label('Kas')
             ])
             ->filters([
-                Filter::make('created_at')
+                Tables\Filters\Filter::make('created_at')
                     ->form([
                         DatePicker::make('awal'),
                         DatePicker::make('akhir'),
@@ -147,10 +149,20 @@ class TransaksiResource extends Resource
                         }
 
                         return $indicators;
+                    }),
+                Tables\Filters\SelectFilter::make('kas')
+                    ->options(
+                        fn() => Kas::pluck('nama', 'id')
+                    )
+                    ->query(function (Builder $query, array $data): Builder {
+                        if ($data['value'] != null) {
+                            return $query->where('transable_id', $data);
+                        } else {
+                            return $query;
+                        }
                     })
             ])
             ->actions([
-                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (Transaksi $record) {
 
