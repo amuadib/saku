@@ -40,25 +40,33 @@ class SiswaImporter extends Importer
                         ->first('kelas.id');
                 })
                 ->rules(['required']),
-            ImportColumn::make('nik')
-                ->label('NIK')
-                ->requiredMapping()
-                ->rules(['required']),
-            ImportColumn::make('tempat_lahir')
-                ->castStateUsing(function (string $state): string {
-                    return strtoupper($state);
-                }),
-            ImportColumn::make('tanggal_lahir')
-                ->rules(['date']),
+
+            ImportColumn::make('nis')
+                ->label('NIS/NIPD'),
             ImportColumn::make('jenis_kelamin')
                 ->castStateUsing(function (string $state): string {
                     return strtolower($state);
                 })
                 ->requiredMapping()
                 ->rules(['required']),
+            ImportColumn::make('nisn')
+                ->label('NISN'),
+
+            ImportColumn::make('tempat_lahir')
+                ->castStateUsing(function (string $state): string {
+                    return strtoupper($state);
+                }),
+            ImportColumn::make('tanggal_lahir')
+                ->rules(['date']),
+
+            ImportColumn::make('nik')
+                ->label('NIK')
+                ->requiredMapping()
+                ->rules(['required']),
             ImportColumn::make('alamat')
                 ->requiredMapping()
                 ->rules(['required']),
+            ImportColumn::make('telepon'),
             ImportColumn::make('nama_ayah')
                 ->castStateUsing(function (string $state): string {
                     return strtoupper($state);
@@ -69,7 +77,6 @@ class SiswaImporter extends Importer
                 })
                 ->requiredMapping()
                 ->rules(['required']),
-            ImportColumn::make('telepon'),
         ];
     }
 
