@@ -117,6 +117,17 @@ class TransaksiResource extends Resource
                     ->numeric(0),
                 TextColumn::make('transable.nama')
                     ->label('Kas')
+                    ->state(function (Transaksi $k) {
+                        if (isset($k->transable->kas)) {
+                            return $k->transable->kas->nama;
+                        } elseif (isset($k->transable->nama)) {
+                            return $k->transable->nama;
+                        } else {
+                            return '';
+                        }
+                    })
+                // ->state(fn(Transaksi $t) => $t->transable->nama ?? $t->transable->kas->nama)
+                ,
             ])
             ->filters([
                 Tables\Filters\Filter::make('created_at')
