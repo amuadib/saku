@@ -6,10 +6,26 @@ use Illuminate\Support\Arr;
 
 class WhatsappService
 {
+    public static function getSessionId($siswa): string
+    {
+        switch (substr($siswa->kelas->nama, 0, 1)) {
+            case '1':
+            case '2':
+                $sessionId = 'MU1';
+                break;
+            case '5':
+            case '6':
+                $sessionId = 'MU3';
+                break;
+            default:
+                $sessionId = 'MU2';
+        }
 
+        return $sessionId;
+    }
     public static function prosesPesan(mixed $siswa, array $data, string $jenis): string
     {
-        $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' : '';
+        $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' . PHP_EOL : '';
         $template = config('custom.template');
 
         $awal = \App\Services\WhatsappService::prosesTemplate(
@@ -46,7 +62,7 @@ class WhatsappService
         return $template;
     }
 
-    public static function kirimWa(string|null $nomor = '', string|null $pesan = '', array|null $kumpulan_pesan = [])
+    public static function kirimWa(string|null $nomor = '', string|null $pesan = '', array|null $kumpulan_pesan = [], string|null $sessionId = null)
     {
         $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $nomor;
         $client = new \GuzzleHttp\Client([
@@ -66,7 +82,8 @@ class WhatsappService
         } else {
             $body = array_merge($body, [
                 'number' => $nomor,
-                'message' => $pesan
+                'message' => $pesan,
+                'sessionId' => $sessionId,
             ]);
         }
 
@@ -83,13 +100,13 @@ class WhatsappService
         $response_arr = json_decode($response_json, true);
 
         if ($response_arr == null) {
-            // Log::error('Gagal mengirim pesan ke ' . $nomor);
+            \Log::error('[' . date('Y-m-d H:i:s') . '] Gagal mengirim pesan');
             return [
                 'status' => 'failed',
-                'message' => 'Gagal mengirim pesan ke ' . $nomor
+                'message' => 'Gagal mengirim pesan'
             ];
         } else {
-            // Log::info('Sukses mengirim pesan ke ' . $data['number']);
+            // \Log::info('Sukses mengirim pesan ke ' . $nomor);
             if ($response_arr['error']) {
                 return [
                     'status' => 'failed',

@@ -247,7 +247,8 @@ class SiswaResource extends Resource
                                             'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
                                         ],
                                         $s->status == 3 ? 'tagihan.daftar_alumni' : 'tagihan.daftar'
-                                    )
+                                    ),
+                                    'sessionId' => \App\Services\WhatsappService::getSessionId($s)
                                 ];
                             }
 
@@ -551,7 +552,11 @@ class SiswaResource extends Resource
                                                     ],
                                                     'tagihan.bayar_banyak'
                                                 );
-                                                \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                                                \App\Services\WhatsappService::kirimWa(
+                                                    $nomor,
+                                                    $pesan,
+                                                    sessionId: \App\Services\WhatsappService::getSessionId($siswa)
+                                                );
                                             }
                                         }
                                         redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));

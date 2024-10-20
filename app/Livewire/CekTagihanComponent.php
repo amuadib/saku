@@ -64,7 +64,11 @@ class CekTagihanComponent extends Component
                         ],
                         'tagihan.daftar'
                     );
-                    $response = \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                    $response = \App\Services\WhatsappService::kirimWa(
+                        $nomor,
+                        $pesan,
+                        sessionId: \App\Services\WhatsappService::getSessionId($siswa)
+                    );
                     if ($response['status'] == 'success') {
                         $this->success = true;
                         $this->pesan = 'Tagihan telah dikirimkan ke ' . substr($nomor, 0, 4) . '*****' . substr($nomor, -3);

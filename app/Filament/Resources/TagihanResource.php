@@ -424,7 +424,11 @@ class TagihanResource extends Resource
                                                 ],
                                                 'tagihan.bayar'
                                             );
-                                            \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                                            \App\Services\WhatsappService::kirimWa(
+                                                $nomor,
+                                                $pesan,
+                                                sessionId: \App\Services\WhatsappService::getSessionId($record->siswa)
+                                            );
                                         }
                                     }
 

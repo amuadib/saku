@@ -129,7 +129,11 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                     ],
                                     'tagihan.bayar_banyak'
                                 );
-                                \App\Services\WhatsappService::kirimWa($nomor, $pesan);
+                                \App\Services\WhatsappService::kirimWa(
+                                    $nomor,
+                                    $pesan,
+                                    sessionId: \App\Services\WhatsappService::getSessionId($this->siswa)
+                                );
                             }
                         }
                         redirect(url('/cetak/struk-pembayaran-tagihan/' . $transaksi_id . '/raw?data=' . $raw_data));
