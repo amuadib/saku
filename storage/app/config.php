@@ -80,11 +80,11 @@ $config = [
         'tab' => 'Tabungan',
     ],
     'template' => [
-        'awal' => 'Assalaamu\'alaikum Wr. Wb.
-Bapak/Ibu Wali siswa *{siswa.nama}*. ',
+        'awal' => '*Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum*
+Yth. Bapak/Ibu Wali siswa *{siswa.nama}*. ',
         'akhir' => '
-
-Wassalamu\'alaikum Wr. Wb.',
+Terima Kasih
+        ',
         'awal_alumni' => '
 Assalaamu\'alaikum Wr. Wb.
 Semoga dalam lindungan Allah SWT serta diberikan kesehatan selalu🤲
@@ -112,14 +112,17 @@ Wassalaamu\'alaikum Wr. Wb
             'bayar_banyak' => 'Pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}* telah kami terima.',
             'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
 Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
-Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).
+Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).' . PHP_EOL . '
 {tagihan.rincian}Total tagihan *{tagihan.total}*.',
+            'tabungan' => PHP_EOL . '
+Ananda mempunyai total tabungan sebanyak *{tabungan.total}*' . PHP_EOL,
             'daftar_alumni' => '
 Berikut informasi tanggungan ananda.
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '
-...
-_Pesan ini dikirim secara otomatis dari Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum. Mohon tidak membalas pesan ke Nomor ini_'
+        ...
+         _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini_
+        '
     ]
 ];

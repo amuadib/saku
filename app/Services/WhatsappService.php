@@ -27,6 +27,7 @@ class WhatsappService
     {
         $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' . PHP_EOL : '';
         $template = config('custom.template');
+        $tabungan = '';
 
         $awal = \App\Services\WhatsappService::prosesTemplate(
             [
@@ -39,6 +40,24 @@ class WhatsappService
             $data,
             Arr::get($template, $jenis, 'Pesan WA')
         );
+
+        if ($jenis == 'tagihan.daftar') {
+            $total_tabungan = 0;
+            if ($siswa->tabungan->count()) {
+                foreach ($siswa->tabungan as $t) {
+                    $total_tabungan += $t->saldo;
+                }
+            }
+
+            // if ($total_tabungan > 0) {
+            $tabungan = \App\Services\WhatsappService::prosesTemplate(
+                [
+                    'tabungan.total' => 'Rp ' . number_format($total_tabungan, thousands_separator: '.')
+                ],
+                $template['tagihan']['tabungan']
+            );
+            // }
+        }
         $akhir = \App\Services\WhatsappService::prosesTemplate(
             [
                 'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
@@ -48,7 +67,7 @@ class WhatsappService
             $siswa->status == 3 ? $template['akhir_alumni'] : $template['akhir']
         );
 
-        return $test_message . $awal . $isi . $akhir . $template['footer'];
+        return $test_message . $awal . $isi . $tabungan . $akhir . $template['footer'];
     }
 
     public static function prosesTemplate(array $data, string $template): string

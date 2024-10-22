@@ -233,9 +233,7 @@ class SiswaResource extends Resource
                                 if ($total == 0) {
                                     continue;
                                 }
-                                // if ($rincian == '') {
-                                //     $rincian = PHP_EOL . 'Semua tagihan Ananda sudah *LUNAS*' . PHP_EOL;
-                                // }
+
                                 $pesan[] = [
                                     'number' => $nomor,
                                     'message' => \App\Services\WhatsappService::prosesPesan(
@@ -253,6 +251,7 @@ class SiswaResource extends Resource
                             }
 
                             if (count($pesan) > 0) {
+                                dd($pesan);
                                 \App\Services\WhatsappService::kirimWa(
                                     kumpulan_pesan: $pesan
                                 );
