@@ -142,7 +142,10 @@ class SiswaResource extends Resource
                     ->label('Ibu'),
                 TextColumn::make('alamat')
                     ->wrap(),
-                TextColumn::make('telepon'),
+                TextColumn::make('telepon')
+                    ->hidden(fn(): bool => auth()->user()->isAdmin()),
+                Tables\Columns\TextInputColumn::make('telepon')
+                    ->visible(fn(): bool => auth()->user()->isAdmin()),
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn(string $state): string => config('custom.siswa.status')[$state])
