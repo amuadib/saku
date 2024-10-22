@@ -251,7 +251,6 @@ class SiswaResource extends Resource
                             }
 
                             if (count($pesan) > 0) {
-                                dd($pesan);
                                 \App\Services\WhatsappService::kirimWa(
                                     kumpulan_pesan: $pesan
                                 );
