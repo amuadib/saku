@@ -35,6 +35,21 @@ class TransaksiResource extends Resource
         $lembaga = config('custom.lembaga');
         return $form
             ->schema([
+                Radio::make('jenis')
+                    ->label('Jenis Transaksi')
+                    ->options(['tun' => 'Tunai', 'tf' => 'Transfer antar Kas'])
+                    ->inline()
+                    ->required()
+                    ->default('tun')
+                    ->inlineLabel(false)
+                    ->live(),
+                Radio::make('mutasi')
+                    ->options(['m' => 'Masuk', 'k' => 'Keluar'])
+                    ->inline()
+                    ->inlineLabel(false)
+                    ->visible(fn(Get $get): bool => $get('jenis') != 'tf')
+                    ->required(fn(Get $get): bool => $get('jenis') != 'tf'),
+
                 Radio::make('lembaga_id')
                     ->label('Lembaga')
                     ->inline()
@@ -43,7 +58,7 @@ class TransaksiResource extends Resource
                     ->visible(fn(): bool => (auth()->user()->isAdmin()))
                     ->live(),
                 Radio::make('kas_id')
-                    ->label('Kas')
+                    ->label('Kas Sumber Dana')
                     ->options(
                         function (Get $get) use ($lembaga) {
                             $data = [];
@@ -60,11 +75,27 @@ class TransaksiResource extends Resource
                         }
                     )
                     ->required(),
-                Radio::make('mutasi')
-                    ->options(['m' => 'Uang Masuk', 'k' => 'Uang Keluar'])
-                    ->inline()
-                    ->inlineLabel(false)
-                    ->required(),
+
+                Radio::make('kas_id_tujuan')
+                    ->label('Kas Tujuan')
+                    ->options(
+                        function (Get $get) use ($lembaga) {
+                            $data = [];
+                            $lembaga_id = auth()->user()->isAdmin() ? $get('lembaga_id') : auth()->user()->authable->lembaga_id;
+                            foreach (Kas::getDaftarKas($lembaga_id)->get() as $k) {
+                                $data[$k->id] = $k->nama . ' - ' . $lembaga[$k->lembaga_id];
+                                if (is_array($k->jenis_transaksi)) {
+                                    foreach ($k->jenis_transaksi as $j) {
+                                        $jenis_transaksi[] = $j;
+                                    }
+                                }
+                            }
+                            return $data;
+                        }
+                    )
+                    ->visible(fn(Get $get): bool => $get('jenis') != 'tun')
+                    ->required(fn(Get $get): bool => $get('jenis') != 'tun'),
+
                 Forms\Components\TextInput::make('jumlah')
                     ->prefix('Rp')
                     ->required()
