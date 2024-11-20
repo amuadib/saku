@@ -81,8 +81,18 @@ $config = [
     ],
     'template' => [
         'awal' => '*Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum*
-Yth. Bapak/Ibu Wali siswa *{siswa.nama}*. ',
+
+🗒️ Yth. Bapak/Ibu Wali siswa *{siswa.nama}*. ' . PHP_EOL,
         'akhir' => '
+Terima Kasih
+        ',
+        'akhir_bayar' => '
+Terima kasih kami sampaikan.
+Semoga Bapak/Ibu diberi rizki yang Lancar dan Barokah.
+        ',
+        'akhir_daftar' => '
+Apabila terdapat *kesalahan* mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
+Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfid dan mobil).
 Terima Kasih
         ',
         'awal_alumni' => '
@@ -108,21 +118,21 @@ Atas perhatiannya kami sampaikan terima kasih dan mohon maaf.
 Wassalaamu\'alaikum Wr. Wb
 ',
         'tagihan' => [
-            'bayar' => 'Pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}* telah kami terima.',
-            'bayar_banyak' => 'Pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}* telah kami terima.',
-            'daftar' => 'Berikut informasi resmi terkait tanggungan ananda.
-Apabila terdapat kesalahan mohon konfirmasi ke Bagian TU {lembaga} ({kontak.nama}).
-Selanjutnya tanda bukti pembayaran akan berupa Print Out (Kecuali Tahfidz dan Mobil).' . PHP_EOL . '
-{tagihan.rincian}Total tagihan *{tagihan.total}*.',
+            'bayar' => '
+Telah kami terima & *LUNAS* pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}*.',
+            'bayar_banyak' => '
+Telah kami terima & *LUNAS* pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}*.',
+            'daftar' => '🏫 Berikut informasi resmi terkait tanggungan ananda.' . PHP_EOL . '
+{tagihan.rincian}Dengan total tagihan *{tagihan.total}*.',
             'tabungan' => PHP_EOL . '
-Ananda mempunyai total tabungan sebanyak *{tabungan.total}*' . PHP_EOL,
+🗳️ Ananda mempunyai tabungan sebanyak *{tabungan.total}*' . PHP_EOL,
             'daftar_alumni' => '
 Berikut informasi tanggungan ananda.
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
         'footer' => '
-        ...
-         _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini_
+...
+_Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini_
         '
     ]
 ];
