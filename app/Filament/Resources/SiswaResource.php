@@ -238,16 +238,17 @@ class SiswaResource extends Resource
                                 }
 
                                 $pesan[] = [
+                                    'name' => $s->nama,
                                     'number' => $nomor,
                                     'message' => \App\Services\WhatsappService::prosesPesan(
-                                        $s,
-                                        [
+                                        siswa: $s,
+                                        data: [
                                             'lembaga' => config('custom.lembaga.' . $s->lembaga_id),
                                             'kontak.nama' => config('custom.kontak_lembaga.' . $s->lembaga_id . '.kontak'),
                                             'tagihan.rincian' => $rincian,
                                             'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
                                         ],
-                                        $s->status == 3 ? 'tagihan.daftar_alumni' : 'tagihan.daftar'
+                                        jenis: $s->status == 3 ? 'tagihan.daftar_alumni' : 'tagihan.daftar'
                                     ),
                                     'sessionId' => \App\Services\WhatsappService::getSessionId($s)
                                 ];
@@ -544,7 +545,6 @@ class SiswaResource extends Resource
 
                                         if (env('WHATSAPP_NOTIFICATION')) {
                                             if ($siswa->telepon != '') {
-                                                $nomor = $siswa->telepon;
                                                 $pesan = \App\Services\WhatsappService::prosesPesan(
                                                     $siswa,
                                                     [
@@ -554,8 +554,9 @@ class SiswaResource extends Resource
                                                     'tagihan.bayar_banyak'
                                                 );
                                                 \App\Services\WhatsappService::kirimWa(
-                                                    $nomor,
-                                                    $pesan,
+                                                    nama: $siswa->nama,
+                                                    nomor: $siswa->telepon,
+                                                    pesan: $pesan,
                                                     sessionId: \App\Services\WhatsappService::getSessionId($siswa)
                                                 );
                                             }

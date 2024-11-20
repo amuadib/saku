@@ -415,7 +415,6 @@ class TagihanResource extends Resource
                                     );
                                     if (env('WHATSAPP_NOTIFICATION')) {
                                         if ($record->siswa->telepon != '') {
-                                            $nomor = $record->siswa->telepon;
                                             $pesan = \App\Services\WhatsappService::prosesPesan(
                                                 $record->siswa,
                                                 [
@@ -425,8 +424,9 @@ class TagihanResource extends Resource
                                                 'tagihan.bayar'
                                             );
                                             \App\Services\WhatsappService::kirimWa(
-                                                $nomor,
-                                                $pesan,
+                                                nama: $record->siswa->nama,
+                                                nomor: $record->siswa->telepon,
+                                                pesan: $pesan,
                                                 sessionId: \App\Services\WhatsappService::getSessionId($record->siswa)
                                             );
                                         }

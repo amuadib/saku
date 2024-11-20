@@ -28,6 +28,7 @@ class WhatsappService
         $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' . PHP_EOL : '';
         $template = config('custom.template');
         $tabungan = '';
+        $t3 = $template['akhir'];
 
         $awal = \App\Services\WhatsappService::prosesTemplate(
             [
@@ -58,13 +59,22 @@ class WhatsappService
             );
             // }
         }
+
+        if ($jenis == 'tagihan.daftar') {
+            $t3 = $template['akhir_daftar'];
+        } elseif ($jenis == 'tagihan.bayar') {
+            $t3 = $template['akhir_bayar'];
+        } elseif ($jenis == 'tagihan.daftar_alumni') {
+            $t3 = $template['akhir_alumni'];
+        }
+
         $akhir = \App\Services\WhatsappService::prosesTemplate(
             [
                 'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
                 'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
                 'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id)
             ],
-            $siswa->status == 3 ? $template['akhir_alumni'] : $template['akhir']
+            $t3
         );
 
         return $test_message . $awal . $isi . $tabungan . $akhir . $template['footer'];
@@ -81,8 +91,13 @@ class WhatsappService
         return $template;
     }
 
-    public static function kirimWa(string|null $nomor = '', string|null $pesan = '', array|null $kumpulan_pesan = [], string|null $sessionId = null)
-    {
+    public static function kirimWa(
+        string|null $nomor = '',
+        string|null $pesan = '',
+        array|null $kumpulan_pesan = [],
+        string|null $sessionId = null,
+        string|null $nama = null
+    ) {
         $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $nomor;
         $client = new \GuzzleHttp\Client([
             'base_uri' => env('WA_API_URL'),
@@ -100,6 +115,7 @@ class WhatsappService
             ]);
         } else {
             $body = array_merge($body, [
+                'name' => $nama,
                 'number' => $nomor,
                 'message' => $pesan,
                 'sessionId' => $sessionId,

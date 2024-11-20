@@ -120,7 +120,6 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
 
                         if (env('WHATSAPP_NOTIFICATION')) {
                             if ($this->siswa->telepon != '') {
-                                $nomor = $this->siswa->telepon;
                                 $pesan = \App\Services\WhatsappService::prosesPesan(
                                     $this->siswa,
                                     [
@@ -130,8 +129,9 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
                                     'tagihan.bayar_banyak'
                                 );
                                 \App\Services\WhatsappService::kirimWa(
-                                    $nomor,
-                                    $pesan,
+                                    nama: $this->siswa->nama,
+                                    nomor: $this->siswa->telepon,
+                                    pesan: $pesan,
                                     sessionId: \App\Services\WhatsappService::getSessionId($this->siswa)
                                 );
                             }

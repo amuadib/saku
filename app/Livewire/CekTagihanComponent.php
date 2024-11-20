@@ -65,8 +65,9 @@ class CekTagihanComponent extends Component
                         'tagihan.daftar'
                     );
                     $response = \App\Services\WhatsappService::kirimWa(
-                        $nomor,
-                        $pesan,
+                        nama: $siswa->nama,
+                        nomor: $nomor,
+                        pesan: $pesan,
                         sessionId: \App\Services\WhatsappService::getSessionId($siswa)
                     );
                     if ($response['status'] == 'success') {
