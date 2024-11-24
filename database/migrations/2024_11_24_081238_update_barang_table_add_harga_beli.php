@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembelians', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('barang', function (Blueprint $table) {
+            $table->decimal('harga_beli', 10, 0)
+                ->default(0)
+                ->after('keterangan');
         });
     }
 
@@ -22,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembelians');
+        Schema::table('barang', function (Blueprint $table) {
+            $table->dropColumn('harga_beli');
+        });
     }
 };

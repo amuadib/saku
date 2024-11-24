@@ -48,6 +48,7 @@ class BarangResource extends Resource
                     ->required()
                     ->columnSpan(6),
                 TextInput::make('harga')
+                    ->label('Harga Jual')
                     ->required()
                     ->prefix('Rp ')
                     ->currencyMask('.', ',', 0)

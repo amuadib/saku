@@ -11,7 +11,4 @@ class CreatePenjualan extends CreateRecord
     protected static string $resource = PenjualanResource::class;
     protected static ?string $title = 'Input Penjualan';
     protected static bool $canCreateAnother = false;
-    // protected static string $view = 'filament.resources.penjualan.create';
-
-
 }

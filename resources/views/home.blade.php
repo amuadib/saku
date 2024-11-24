@@ -49,10 +49,12 @@
                 <a href="#fitur"
                     class="transition-color mr-0 font-bold duration-100 hover:text-indigo-600 md:mr-3 lg:mr-8">Fitur</a>
                 <a href="#cek_tagihan"
-                    class="transition-color mr-0 font-bold duration-100 hover:text-indigo-600 md:mr-3 lg:mr-8">Cek
-                    Tagihan</a>
-                {{--   <a href="#cek_resi" class="transition-color font-bold duration-100 hover:text-indigo-600">Cek
-                    Resi</a> --}}
+                    class="transition-color mr-0 font-bold duration-100 hover:text-indigo-600 md:mr-3 lg:mr-8">
+                    Tagihan
+                </a>
+                <a href="#cek_tabungan" class="transition-color font-bold duration-100 hover:text-indigo-600">
+                    Tabungan
+                </a>
                 <div class="block flex w-full flex-col border-t border-gray-200 font-medium md:hidden">
                     @auth
                         <a href="{{ url('/admin') }}" class="w-full py-2 text-center font-bold text-pink-500">Dasbor</a>

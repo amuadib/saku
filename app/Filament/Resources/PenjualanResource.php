@@ -20,6 +20,7 @@ class PenjualanResource extends Resource
 {
     protected static ?string $model = Penjualan::class;
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?int $navigationSort = 3;
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -53,6 +54,7 @@ class PenjualanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->modifyQueryUsing(function (Builder $query) {
                 if (!auth()->user()->isAdmin()) {
                     return $query->whereRaw('substr(kode,4,1) =' . auth()->user()->authable->lembaga_id);
@@ -79,8 +81,8 @@ class PenjualanResource extends Resource
                         'tag' => 'danger',
                         'tab' => 'info',
                     }),
-                Tables\Columns\TextColumn::make('petugas.authable.nama')
-                    ->label('Admin')
+                TextColumn::make('petugas.authable.nama')
+                    ->label('Petugas')
                     ->searchable(),
             ])
             ->filters([

@@ -156,9 +156,7 @@ class TransaksiResource extends Resource
                         } else {
                             return '';
                         }
-                    })
-                // ->state(fn(Transaksi $t) => $t->transable->nama ?? $t->transable->kas->nama)
-                ,
+                    }),
             ])
             ->filters([
                 Tables\Filters\Filter::make('created_at')
