@@ -26,7 +26,7 @@ class PembelianResource extends Resource
 {
     protected static ?string $model = Pembelian::class;
     protected static ?string $navigationIcon = 'heroicon-o-receipt-percent';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function infolist(Infolist $infolist): Infolist
     {

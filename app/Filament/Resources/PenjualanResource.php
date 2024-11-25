@@ -20,7 +20,7 @@ class PenjualanResource extends Resource
 {
     protected static ?string $model = Penjualan::class;
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function infolist(Infolist $infolist): Infolist
     {
