@@ -10,8 +10,8 @@
             </p>
         </div>
         <div class="mx-auto my-20 w-full max-w-lg">
-            @if ($send)
-                @if ($tagihan)
+            @if ($cek)
+                @if ($punya_tagihan)
                     @if ($success)
                         <x-alert type="success">
                             {{ $pesan }}
@@ -51,7 +51,7 @@
                         type="text" wire:model="nik" placeholder="Masukkan NIK / NISN Siswa" aria-label="NIK/NISN"
                         required=""><button
                         class="flex-shrink-0 border border-pink-500 bg-pink-500 px-4 py-2 text-gray-200 hover:bg-gray-800 hover:text-pink-500"
-                        type="button" wire:click="cek()">Cek!</button>
+                        type="button" wire:click="cekTagihan()">Cek!</button>
                 </div>
                 @error('nik')
                     <div class="text-red-800">{{ $message }}</div>
