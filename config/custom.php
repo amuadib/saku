@@ -130,6 +130,10 @@ Telah kami terima & *LUNAS* pembayaran atas tagihan {tagihan.rincian} dengan tot
 Berikut informasi tanggungan ananda.
 {tagihan.rincian}Total tagihan *{tagihan.total}*.'
         ],
+        'tabungan' => [
+            'daftar' => '🏫 Berikut rincian Tabungan ananda.' . PHP_EOL . '
+{tabungan.rincian}Dengan Saldo total *{tabungan.total}*.',
+        ],
         'footer' => '
 ...
 _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini_

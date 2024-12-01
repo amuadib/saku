@@ -420,7 +420,11 @@
     </div>
     <!-- END FEATURES SECTION -->
 
-    @livewire('cekTagihanComponent')
+    <div class="flex min-h-screen w-full flex-col items-center justify-center lg:flex-row xl:bg-gray-800">
+        @livewire('cekTagihanComponent')
+        @livewire('cekTabunganComponent')
+    </div>
+
     @livewire('pengaduanComponent')
 
     <footer class="border-t border-gray-200 bg-white px-4 pb-8 pt-12 text-white">
