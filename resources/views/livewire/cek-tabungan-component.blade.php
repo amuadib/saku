@@ -1,5 +1,5 @@
 <div class="w-full self-center px-4 text-center sm:px-0 lg:w-1/2" id="cek_tabungan">
-    <div class="m-20 rounded-lg bg-gray-800 p-10">
+    <div class="mx-2 my-5 rounded-lg bg-gray-800 p-10 xl:m-20">
         <h2 class="mb-4 text-4xl font-bold tracking-widest text-gray-200">Cek <span
                 class="border-b-8 border-green-500">Tabungan</span></h2>
         <div class="text-xl font-light text-gray-400">

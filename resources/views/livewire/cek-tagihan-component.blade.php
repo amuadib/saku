@@ -1,5 +1,5 @@
 <div class="w-full self-center px-4 text-center sm:px-0 lg:w-1/2" id="cek_tagihan">
-    <div class="m-20 rounded-lg bg-indigo-100 p-10 text-gray-700">
+    <div class="mx-2 my-5 rounded-lg bg-indigo-100 p-10 text-gray-700 xl:m-20">
         <h2 class="mb-4 text-4xl font-bold tracking-widest">Cek <span class="border-b-8 border-red-500">Tagihan</span>
         </h2>
         <div class="text-xl font-light">
