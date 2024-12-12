@@ -2,6 +2,7 @@
 /node_modules
 /public/build
 /public/js
+/public/css
 /public/hot
 /public/storage
 /storage/*.key
