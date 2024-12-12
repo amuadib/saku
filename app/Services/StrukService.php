@@ -14,9 +14,9 @@ class StrukService
             'waktu' => Carbon::now()->format('H:i:s'),
             'petugas' => auth()->user()->authable->nama,
         ]);
-        DataStruk::create([
+        DataStruk::insertOrIgnore([
             'kode' => $tmp['transaksi_id'],
-            'data' => $tmp
+            'data' => json_encode($tmp)
         ]);
         $tmp = array_merge($tmp, [
             'otp' => \App\Services\OtpService::generateOTP()
