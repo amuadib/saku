@@ -258,10 +258,11 @@ class TagihanResource extends Resource
                     ->query(fn(Builder $query, array $data): Builder => $query->when(
                         $data['lunas'] == 'Lunas',
                         function ($w) {
-                            $w->whereNotNull('bayar');
+                            $w->where('bayar', '>', 0);
                         },
                         function ($w) {
-                            $w->whereNull('bayar');
+                            $w->where('bayar', 0)
+                                ->orWhereNull('bayar');
                         }
                     ))
                     ->indicateUsing(function (array $data): ?string {
