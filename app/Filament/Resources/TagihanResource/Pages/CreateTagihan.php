@@ -50,12 +50,27 @@ class CreateTagihan extends CreateRecord
             $prefix = substr($kode, 0, 11);
             $urut = intval(substr($kode, -4));
             foreach ($siswa as $s) {
+
+                //Tagihan Uang Makan untuk Siswa Keluarga Pegawai Yayasan Max. Rp. 50.000
+                $uang_makan = '9c30886f-ecce-4436-a81c-ff406f5675cd';
+                $keluarga_pegawai = 21;
+                $maksimal = 50000;
+
+                $jumlah = $data['jumlah'];
+                if (
+                    $data['kas_id'] == $uang_makan &&
+                    in_array($keluarga_pegawai, $s->label) &&
+                    $data['jumlah'] > $maksimal
+                ) {
+                    $jumlah = $maksimal;
+                }
+
                 $insert[] = [
                     'id' => Str::orderedUuid(),
                     'kode' => $prefix . str_pad($urut, 4, '0', STR_PAD_LEFT),
                     'siswa_id' => $s->id,
                     'kas_id' => $data['kas_id'],
-                    'jumlah' => $data['jumlah'],
+                    'jumlah' => $jumlah,
                     'keterangan' => $data['keterangan'],
                     'user_id' => $data['user_id'],
                     'created_at' => \Carbon\Carbon::now()
