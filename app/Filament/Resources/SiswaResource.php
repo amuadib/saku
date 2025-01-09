@@ -164,7 +164,14 @@ class SiswaResource extends Resource
                             ->gridDirection('row')
                             ->options(config('custom.siswa.label'))
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label'])),
+                    ->query(fn(Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label']))
+                    ->indicateUsing(function (array $data): ?string {
+                        if (! $data['label']) {
+                            return null;
+                        }
+
+                        return 'Siswa termasuk ' . config('custom.siswa.label')[$data['label'][0]];
+                    }),
                 SelectFilter::make('lembaga_id')
                     ->label('Lembaga')
                     ->options(Arr::except(config('custom.lembaga'), [99]))
