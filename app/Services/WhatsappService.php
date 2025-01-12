@@ -98,6 +98,12 @@ class WhatsappService
         string|null $sessionId = null,
         string|null $nama = null
     ) {
+        if (env('WA_API_URL') == '') {
+            return [
+                'status' => 'failed',
+                'message' => 'API Whatsapp belum diaktifkan'
+            ];
+        }
         $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $nomor;
         $client = new \GuzzleHttp\Client([
             'base_uri' => env('WA_API_URL'),
