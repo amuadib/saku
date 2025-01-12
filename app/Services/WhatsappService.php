@@ -42,23 +42,27 @@ class WhatsappService
             Arr::get($template, $jenis, 'Pesan WA')
         );
 
-        if ($jenis == 'tagihan.daftar') {
-            $total_tabungan = 0;
-            if ($siswa->tabungan->count()) {
-                foreach ($siswa->tabungan as $t) {
-                    $total_tabungan += $t->saldo;
-                }
-            }
+        // if ($jenis == 'tagihan.daftar') {
+        //     $total_tabungan = 0;
+        //     $rincian = '';
+        //     if ($siswa->tabungan->count()) {
+        //         $no = 1;
+        //         foreach ($siswa->tabungan as $t) {
+        //             $rincian .= $no . '. ' . $t->kas->nama . '. Saldo Rp ' . number_format($t->saldo, thousands_separator: '.') . PHP_EOL;
+        //             $total_tabungan += $t->saldo;
+        //         }
+        //     }
 
-            // if ($total_tabungan > 0) {
-            $tabungan = \App\Services\WhatsappService::prosesTemplate(
-                [
-                    'tabungan.total' => 'Rp ' . number_format($total_tabungan, thousands_separator: '.')
-                ],
-                $template['tagihan']['tabungan']
-            );
-            // }
-        }
+        //     // if ($total_tabungan > 0) {
+        //     $tabungan = \App\Services\WhatsappService::prosesTemplate(
+        //         [
+        //             'tabungan.rincian' => $rincian,
+        //             'tabungan.total' => 'Rp ' . number_format($total_tabungan, thousands_separator: '.')
+        //         ],
+        //         $template['tabungan']['daftar']
+        //     );
+        //     // }
+        // }
 
         if ($jenis == 'tagihan.daftar') {
             $t3 = $template['akhir_daftar'];

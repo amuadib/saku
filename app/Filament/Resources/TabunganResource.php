@@ -22,32 +22,6 @@ class TabunganResource extends Resource
     protected static ?int $navigationSort = 3;
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
-    // public static function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             Forms\Components\Select::make('siswa_id')
-    //                 ->relationship('siswa', 'id')
-    //                 ->required(),
-    //             Forms\Components\Select::make('kas_id')
-    //                 ->relationship('kas', 'id')
-    //                 ->required(),
-    //             Forms\Components\TextInput::make('saldo')
-    //                 ->required()
-    //                 ->numeric()
-    //                 ->default(0),
-    //         ]);
-    // }
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     return parent::getEloquentQuery()
-    //         ->join('siswa', 'siswa.id', '=', 'siswa_id')
-    //         ->join('kelas', 'kelas.id', '=', 'siswa.kelas_id')
-    //         ->join('kas', 'kas.id', '=', 'tabungan.kas_id')
-    //         ->orderBy('nama', 'asc')
-    //         ->select('tabungan.id', 'tabungan.saldo', 'siswa.nama as nama', 'kelas.nama as kelas', 'kas.nama as kas');
-    // }
-
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -71,12 +45,15 @@ class TabunganResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('siswa.nama')
+                    ->sortable()
                     ->label('Nama')
                     ->searchable(),
                 TextColumn::make('siswa.kelas.nama')
+                    ->sortable()
                     ->label('Kelas'),
                 TextColumn::make('kas.nama'),
                 TextColumn::make('saldo')
+                    ->sortable()
                     ->prefix('Rp ')
                     ->numeric(0),
             ])

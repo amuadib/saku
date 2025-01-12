@@ -14,6 +14,7 @@ trait TransaksiTrait
         string $transable_id,
         int $jumlah,
         string|null $keterangan = null,
+        string $user_id = null
     ): string {
         // Update Kas
         $lembaga_id = \App\Traits\KasTrait::updateSaldoKas(
@@ -29,13 +30,17 @@ trait TransaksiTrait
         );
 
         // Input transaksi
+        if ($user_id === null) {
+            $user_id = auth()->user()->id;
+        }
         return \App\Traits\TransaksiTrait::inputTransaksi(
             lembaga_id: $lembaga_id,
             mutasi: $mutasi,
             jenis: $jenis,
             transable_id: $transable_id,
             jumlah: $jumlah,
-            keterangan: $keterangan
+            keterangan: $keterangan,
+            user_id: $user_id
         );
     }
 
@@ -52,6 +57,7 @@ trait TransaksiTrait
         string $transable_id,
         int $jumlah,
         string|null $keterangan = null,
+        string $user_id = null
     ): string {
         $transaksi = [
             'TG' => 'Tagihan',
@@ -68,7 +74,7 @@ trait TransaksiTrait
             'transable_type' => 'App\\Models\\' . $transaksi[$jenis],
             'transable_id' => $transable_id,
             'keterangan' => $keterangan,
-            'user_id' => auth()->user()->id,
+            'user_id' => $user_id,
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
         ]);
