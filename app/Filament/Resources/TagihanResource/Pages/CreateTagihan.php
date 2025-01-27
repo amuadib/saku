@@ -49,13 +49,23 @@ class CreateTagihan extends CreateRecord
             $kode = \App\Traits\TagihanTrait::getKodeTagihan('MTG');
             $prefix = substr($kode, 0, 11);
             $urut = intval(substr($kode, -4));
+
+            //Tagihan Uang Makan untuk Siswa Keluarga Pegawai Yayasan Max. Rp. 50.000
+            $uang_makan = '9c30886f-ecce-4436-a81c-ff406f5675cd';
+            $keluarga_pegawai = 21;
+            $free_uang_makan = 30;
+            $maksimal = 50000;
             foreach ($siswa as $s) {
 
-                //Tagihan Uang Makan untuk Siswa Keluarga Pegawai Yayasan Max. Rp. 50.000
-                $uang_makan = '9c30886f-ecce-4436-a81c-ff406f5675cd';
-                $keluarga_pegawai = 21;
-                $maksimal = 50000;
+                //Free uang Makan
+                if (
+                    $data['kas_id'] == $uang_makan &&
+                    in_array($free_uang_makan, $s->label)
+                ) {
+                    continue;
+                }
 
+                //Keluarga Pegawai
                 $jumlah = $data['jumlah'];
                 if (
                     $data['kas_id'] == $uang_makan &&
