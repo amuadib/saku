@@ -53,14 +53,14 @@ class CreateTagihan extends CreateRecord
             //Tagihan Uang Makan untuk Siswa Keluarga Pegawai Yayasan Max. Rp. 50.000
             $uang_makan = '9c30886f-ecce-4436-a81c-ff406f5675cd';
             $keluarga_pegawai = 21;
-            $free_uang_makan = 30;
+            $label_free_uang_makan = 30;
             $maksimal = 50000;
             foreach ($siswa as $s) {
 
                 //Free uang Makan
                 if (
                     $data['kas_id'] == $uang_makan &&
-                    in_array($free_uang_makan, $s->label)
+                    in_array($label_free_uang_makan, $s->label)
                 ) {
                     continue;
                 }
