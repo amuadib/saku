@@ -41,8 +41,10 @@ class TabelTagihanSiswa extends Component implements HasTable, HasForms
             ->modifyQueryUsing(
                 fn(Builder $query) => $query
                     ->where('siswa_id', $this->siswa->id)
-                    ->whereNull('bayar')
-                    ->orWhere('bayar', 0)
+                    ->where(function ($w) {
+                        $w->whereNull('bayar')
+                            ->orWhere('bayar', 0);
+                    })
             )
             ->emptyStateHeading('Siswa tidak mempunyai Tagihan.')
             ->paginated(false)
