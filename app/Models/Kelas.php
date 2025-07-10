@@ -11,7 +11,7 @@ class Kelas extends Model
 {
     use HasUuids;
     protected $table = 'kelas';
-    public function scopeGetDaftarKelas($query, $lembaga_id, $operation)
+    public function scopeGetDaftarKelas($query, $lembaga_id, $operation = '')
     {
         $query
             ->join('periode', 'periode.id', '=', 'periode_id')
