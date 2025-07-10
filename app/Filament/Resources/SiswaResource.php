@@ -128,11 +128,17 @@ class SiswaResource extends Resource
         return $table
             ->striped()
             ->modifyQueryUsing(function (Builder $query) {
+                // $query = $query->with('kelas', 'periode');
                 if (!auth()->user()->isAdmin()) {
-                    return $query->where('lembaga_id', auth()->user()->authable->lembaga_id);
+                    $query = $query->where('siswa.lembaga_id', auth()->user()->authable->lembaga_id);
                 }
+                // $query = $query
+                // ->join('kelas', 'kelas.id', '=', 'kelas_id')
+                // ->join('periode', 'periode.id', '=', 'periode_id')
+                // ->where('periode.aktif', 'y');
+                return $query;
             })
-            ->defaultSort('nama')
+            ->defaultSort('siswa.nama')
             ->columns([
                 TextColumn::make('kelas.nama')
                     ->label('Kelas'),

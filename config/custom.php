@@ -24,7 +24,7 @@ $config = [
         2 => 'SMPI Miftahul Ulum',
         99 => 'Yayasan Bastomiyah Rahman',
     ],
-    'kelas' => [
+    'tingkat' => [
         1 => [1, 2, 3, 4, 5, 6],
         2 => [7, 8, 9],
         99 => [],

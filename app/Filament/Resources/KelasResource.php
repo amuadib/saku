@@ -28,18 +28,26 @@ class KelasResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('periode_id')
-                    ->relationship('periode', 'nama')
-                    ->required(),
                 Forms\Components\Radio::make('lembaga_id')
                     ->label('Lembaga')
                     ->inline()
                     ->inlineLabel(false)
                     ->options(Arr::except(config('custom.lembaga'), [99]))
+                    ->live()
                     ->required(),
+                Forms\Components\Select::make('tingkat')
+                    ->options(function (\Filament\Forms\Get $get) {
+                        $tingkat = [];
+                        foreach (config('custom.tingkat')[$get('lembaga_id')] as $t) {
+                            $tingkat[$t] = $t;
+                        }
+                        return $tingkat;
+                    }),
                 Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
+                Forms\Components\Select::make('periode_id')
+                    ->relationship('periode', 'nama')
+                    ->required(),
             ]);
     }
 
@@ -53,9 +61,10 @@ class KelasResource extends Resource
                 }
             })
             ->columns([
+                TextColumn::make('tingkat')
+                    ->sortable(),
                 TextColumn::make('nama')
-                    ->sortable()
-                    ->label('Kelas'),
+                    ->sortable(),
                 TextColumn::make('periode.nama')
                     ->sortable(),
                 TextColumn::make('lembaga_id')
