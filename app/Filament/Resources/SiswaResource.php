@@ -199,6 +199,7 @@ class SiswaResource extends Resource
                         }
                     ),
                 SelectFilter::make('status')
+                    ->default('1')
                     ->options(config('custom.siswa.status')),
             ])
             ->persistFiltersInSession()
