@@ -25,3 +25,4 @@ composer.lock
 .editorconfig
 /_dev
 *.zip
+*.sql
