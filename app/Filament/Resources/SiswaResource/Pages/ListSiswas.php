@@ -15,13 +15,14 @@ class ListSiswas extends ListRecords
     {
         return [
             Actions\CreateAction::make()
+                ->label('Daftarkan Siswa')
                 ->icon('heroicon-o-plus')
                 ->color('info'),
             Actions\ImportAction::make()
                 ->importer(SiswaImporter::class)
                 ->icon('heroicon-o-document-plus')
                 ->color('success')
-                ->visible(fn (): bool => (auth()->user()->isAdmin()))
+                ->visible(fn(): bool => (auth()->user()->isAdmin()))
         ];
     }
 }
