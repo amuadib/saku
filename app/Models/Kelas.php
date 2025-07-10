@@ -30,6 +30,7 @@ class Kelas extends Model
 
     public function periode(): BelongsTo
     {
-        return $this->belongsTo(Periode::class, 'periode_id');
+        return $this->belongsTo(Periode::class, 'periode_id')
+            ->orderBy('nama', 'desc');
     }
 }
