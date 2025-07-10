@@ -48,6 +48,7 @@ class PeriodeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('nama', 'DESC')
             ->columns([
                 TextColumn::make('no')
                     ->rowIndex(),
