@@ -38,8 +38,10 @@ class KelasResource extends Resource
                 Forms\Components\Select::make('tingkat')
                     ->options(function (\Filament\Forms\Get $get) {
                         $tingkat = [];
-                        foreach (config('custom.tingkat')[$get('lembaga_id')] as $t) {
-                            $tingkat[$t] = $t;
+                        if ($get('lembaga_id') != '') {
+                            foreach (config('custom.tingkat')[$get('lembaga_id')] as $t) {
+                                $tingkat[$t] = $t;
+                            }
                         }
                         return $tingkat;
                     }),
