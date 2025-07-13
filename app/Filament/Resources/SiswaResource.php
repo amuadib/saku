@@ -325,6 +325,72 @@ class SiswaResource extends Resource
                             ->iconColor('success')
                             ->send();
                     }),
+                BulkAction::make('kenaikan_kelas')
+                    ->color('danger')
+                    ->icon('heroicon-o-arrow-turn-right-up')
+                    ->action(function (Collection $siswa) {
+                        $data = [];
+                        $kelas = [];
+                        $lulus = [];
+                        $aktif = Periode::where('aktif', true)->first();
+                        if ($aktif) {
+                            $periode_aktif = substr($aktif->nama, 0, 4);
+                        } else {
+                            Notification::make()
+                                ->title('Periode Aktif belum diatur')
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->iconColor('warning')
+                                ->send();
+                            return;
+                        }
+
+                        foreach ($siswa as $s) {
+                            if ($s->status > 1) { // if status != aktif, lewati
+                                continue;
+                            }
+                            //CEK LOGIKA LULUS
+                            if (
+                                $s->kelas->tingkat == max(config('custom.tingkat')[$s->lembaga_id]) and
+                                $s->status != 3 and
+                                $s->kelas->periode->id != $aktif->id
+                            ) { //if Siswa mempunyai kelas tertinggi dan status belum lulus, luluskan
+                                $lulus[] = $s->id;
+                            } else {
+                                if ($periode_aktif - substr($s->kelas->periode->nama, 0, 4) == 1) { // TA kelas Siswa adalah TA kemarin
+                                    $id_kelas = $s->lembaga_id . '-' . $s->kelas->tingkat . '-' . $s->kelas->nama;
+                                    $data[] = ['id' => $s->id, 'kelas_id' => $id_kelas];
+                                    $kelas[$id_kelas] = [
+                                        'lembaga_id' => $s->lembaga_id,
+                                        'tingkat' => $s->kelas->tingkat,
+                                        'nama' => $s->kelas->nama,
+                                    ];
+                                }
+                            }
+                        }
+
+                        if (count($lulus)) { //luluskan siswa
+                            Siswa::whereIn('id', $lulus)
+                                ->update(['status' => 3]);
+                        }
+
+                        if (!count($data)) {
+                            Notification::make()
+                                ->title('Data Siswa terpilih tidak memenuhi syarat untuk Naik Kelas')
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->iconColor('warning')
+                                ->send();
+                            return;
+                        } else {
+                            $result = \App\Services\KelasService::prosesKenaikanKelas($aktif->id, $kelas, $data);
+                            if ($result > 0) {
+                                Notification::make()
+                                    ->title($result . 'Siswa berhasil Naik Kelas')
+                                    ->icon('heroicon-o-check-circle')
+                                    ->iconColor('success')
+                                    ->send();
+                            }
+                        }
+                    }),
                 Tables\Actions\DeleteBulkAction::make()
                     ->label('Hapus'),
             ]);
