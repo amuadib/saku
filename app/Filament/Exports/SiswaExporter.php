@@ -15,6 +15,7 @@ class SiswaExporter extends Exporter
     {
         return [
             ExportColumn::make('nama'),
+            ExportColumn::make('kelas.nama'),
             ExportColumn::make('alamat'),
             ExportColumn::make('telepon'),
         ];
