@@ -240,7 +240,9 @@ class SiswaResource extends Resource
                                 $total = 0;
                                 foreach ($s->tagihan as $t) {
                                     if (!$t->isLunas()) {
-                                        $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                        $tgl = $t->updated_at == null ? $t->created_at->format('d-m-Y') : $t->updated_at->format('d-m-Y');
+                                        // $rincian .= $no . '. ' . $t->kas->nama . ' ' . $t->keterangan . ' Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                        $rincian .= $no . '. ' . ucfirst($t->keterangan) . ' (' . $tgl . '): Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
                                         $total += $t->jumlah;
                                         $no++;
                                     }
