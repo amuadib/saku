@@ -4,7 +4,7 @@
     @foreach ($data['tagihan'] as $b)
         <tr>
             <td>
-                {{ $b['keterangan'] ?? '-' }}
+                {{ $b['keterangan'] ?? '-' }} ({{ $b['tanggal'] ?? '-' }})
             </td>
             <td class="text-right">
                 Rp {{ format_angka($b['sisa']) }}

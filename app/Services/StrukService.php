@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class StrukService
 {
-    public static function simpanStruk(array $data): string
+    public static function simpanStruk(array $data, $encoded = true): string|array
     {
         $tmp = array_merge($data, [
             'tanggal' => Carbon::now()->format('d-m-Y'),
@@ -21,6 +21,10 @@ class StrukService
         $tmp = array_merge($tmp, [
             'otp' => \App\Services\OtpService::generateOTP()
         ]);
-        return base64_encode(json_encode($tmp));
+        if ($encoded) {
+            return base64_encode(json_encode($tmp));
+        } else {
+            return $tmp;
+        }
     }
 }

@@ -35,6 +35,7 @@ use Filament\Notifications\Notification;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\HtmlString;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class SiswaResource extends Resource
 {
@@ -658,7 +659,7 @@ class SiswaResource extends Resource
                                                 if ($sisa > 0) {
                                                     $tagihan[] = [
                                                         'keterangan' => $t->keterangan,
-                                                        'tanggal' => substr($t->created_at, 0, 10),
+                                                        'tanggal' => $t->created_at->format('d-m-Y'),
                                                         'jumlah' => $t->jumlah,
                                                         'bayar' => intval($t->bayar),
                                                         'sisa' => $sisa,
@@ -675,16 +676,36 @@ class SiswaResource extends Resource
                                                 return;
                                             }
 
-                                            $raw_data = \App\Services\StrukService::simpanStruk(
-                                                [
-                                                    'lembaga_id' => $siswa->lembaga_id,
-                                                    'transaksi_id' => 'CTG' . $siswa->lembaga_id . Carbon::now()->format('Ymd'),
-                                                    'siswa' => $siswa->nama,
-                                                    'tagihan' => $tagihan,
-                                                    'total' => $total_tagihan,
-                                                ]
-                                            );
-                                            redirect()->to(url('/cetak/tagihan/' . $siswa->id . '/raw?data=' . $raw_data));
+                                            if (env('MODE_CETAK_STRUK') == 'raw') { //RAW
+                                                $raw_data = \App\Services\StrukService::simpanStruk(
+                                                    [
+                                                        'lembaga_id' => $siswa->lembaga_id,
+                                                        'transaksi_id' => 'CTG' . $siswa->lembaga_id . Carbon::now()->format('Ymd'),
+                                                        'siswa' => $siswa->nama,
+                                                        'tagihan' => $tagihan,
+                                                        'total' => $total_tagihan,
+                                                    ]
+                                                );
+                                                redirect()->to(url('/cetak/tagihan/' . $siswa->id . '/raw?data=' . $raw_data));
+                                            } else {
+                                                //CACHE
+                                                \Illuminate\Support\Facades\Cache::forget($siswa->id);
+                                                \Illuminate\Support\Facades\Cache::put(
+                                                    $siswa->id,
+                                                    \App\Services\StrukService::simpanStruk(
+                                                        [
+                                                            'lembaga_id' => $siswa->lembaga_id,
+                                                            'transaksi_id' => 'CTG' . $siswa->lembaga_id . Carbon::now()->format('Ymd'),
+                                                            'siswa' => $siswa->nama,
+                                                            'tagihan' => $tagihan,
+                                                            'total' => $total_tagihan,
+                                                        ],
+                                                        false
+                                                    ),
+                                                    now()->addMinutes(5)
+                                                );
+                                                redirect()->to(url('/cetak/tagihan/' . $siswa->id . '/cache'));
+                                            }
                                         }
                                     ),
                             ])
