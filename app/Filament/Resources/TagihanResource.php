@@ -233,6 +233,7 @@ class TagihanResource extends Resource
                         }
                         return $kas;
                     }),
+
                 Filter::make('keterangan')
                     ->form([
                         Forms\Components\TextInput::make('keterangan')
@@ -262,8 +263,10 @@ class TagihanResource extends Resource
                             $w->where('bayar', '>', 0);
                         },
                         function ($w) {
-                            $w->where('bayar', 0)
-                                ->orWhereNull('bayar');
+                            $w->where(function ($w) {
+                                $w->where('bayar', 0)
+                                    ->orWhereNull('bayar');
+                            });
                         }
                     ))
                     ->indicateUsing(function (array $data): ?string {
@@ -449,8 +452,8 @@ class TagihanResource extends Resource
         return [
             'index' => Pages\ListTagihans::route('/'),
             'create' => Pages\CreateTagihan::route('/create'),
+            'rekap' => Pages\RekapTagihan::route('/rekap'),
             'view' => Pages\ViewTagihan::route('/{record}'),
-            // 'edit' => Pages\EditTagihan::route('/{record}/edit'),
         ];
     }
 }

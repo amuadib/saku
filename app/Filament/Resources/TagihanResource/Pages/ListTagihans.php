@@ -13,6 +13,11 @@ class ListTagihans extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('rekap')
+                ->label('Rekap Tagihan')
+                ->icon('heroicon-o-document-text')
+                ->color('warning')
+                ->url(TagihanResource::getUrl('rekap')),
             Actions\CreateAction::make()
                 ->label('Tagihan Baru')
                 ->icon('heroicon-o-plus')
