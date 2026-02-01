@@ -53,14 +53,15 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button type="submit"
-                                    class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
-                                    Kirim
-                                </button>
                                 <div style="display:none !important">
                                     <input type="text" wire:model.defer="website" autocomplete="off">
                                     <input type="file" wire:model.defer="lampiran">
                                 </div>
+                                <button type="submit"
+                                    class="font-xl w-full rounded-md bg-indigo-600 px-6 py-3 text-white sm:mb-0">
+                                    Kirim
+                                </button>
+
                             </div>
                         </form>
                     @endif

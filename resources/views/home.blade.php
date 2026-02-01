@@ -420,10 +420,10 @@
     </div>
     <!-- END FEATURES SECTION -->
 
-    {{-- <div class="flex min-h-screen w-full flex-col items-center justify-center lg:flex-row xl:bg-gray-800">
+    <div class="flex min-h-screen w-full flex-col items-center justify-center lg:flex-row xl:bg-gray-800">
         @livewire('cekTagihanComponent')
         @livewire('cekTabunganComponent')
-    </div> --}}
+    </div>
 
     @livewire('pengaduanComponent')
 

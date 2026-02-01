@@ -11,6 +11,10 @@
             </p>
         </div>
         <div class="mx-auto my-20 w-full max-w-lg">
+            <div style="display:none !important">
+                <input type="text" wire:model.defer="website" autocomplete="off">
+                <input type="file" wire:model.defer="lampiran">
+            </div>
             @if ($cek)
                 @if ($punya_tabungan)
                     @if ($success)
