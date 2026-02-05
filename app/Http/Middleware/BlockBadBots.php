@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use App\Helpers\Telegram;
+use Symfony\Component\HttpFoundation\Response;
+
+class BlockBadBots
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $forbiddenAgents = ['python-requests', 'curl', 'Go-http-client'];
+
+        foreach ($forbiddenAgents as $agent) {
+            if (str_contains($request->userAgent(), $agent) && $request->is('livewire/update')) {
+                Telegram::send(
+                    "⚠️ *SECURITY ALERT: BOT DETECTED* ⚠️\n\n"
+                        . "*Time:* `{now()->format('Y-m-d H:i:s')}`\n"
+                        . "*IP Address:* `{$request->ip()}`\n"
+                        . "*Target:* `{$request->fullUrl()}`\n"
+                        . "*User Agent:* `{$request->userAgent()}`\n\n"
+                        . "🛡️ _Request has been replied with dummy JSON response._"
+                );
+                // abort(403, 'Unauthorized Bot Activity');
+                usleep(rand(50000, 200000)); // random delay
+                return response()->json([
+                    'components' => [
+                        [
+                            'snapshot' => json_encode([
+                                'memo' => [
+                                    'id' => $request->input('components.0.snapshot.memo.id') ?? 'x-component-id',
+                                    'name' => $request->input('components.0.snapshot.memo.name') ?? 'x-component-name',
+                                ],
+                            ]),
+                            'effects' => [
+                                'html' => null, // Kita tidak kirim HTML agar tidak memproses apapun
+                                'returns' => [],
+                            ],
+                        ]
+                    ],
+                    'assets' => []
+                ], 200);
+            }
+        }
+
+        return $next($request);
+    }
+}
