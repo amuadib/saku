@@ -24,6 +24,19 @@ class ContentSecurityPolicy
 
         $response->headers->set('Content-Security-Policy', $csp);
 
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+        // 3. X-Content-Type-Options
+        // Mencegah MIME-sniffing
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+
+        // 4. Referrer-Policy
+        // Hanya mengirim informasi referrer jika ke sesama HTTPS
+        $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+        // 5. Permissions-Policy
+        // Membatasi akses API browser (Kamera, Mic, Geolocation) jika tidak dibutuhkan
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
         return $response;
     }
 }
