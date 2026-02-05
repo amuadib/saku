@@ -17,10 +17,10 @@ class BlockBadBots
             if (str_contains($request->userAgent(), $agent) && $request->is('livewire/update')) {
                 Telegram::send(
                     "⚠️ <b>SECURITY ALERT: BOT DETECTED</b> ⚠️\n\n"
-                        . "<b>Time:</b> `" . now()->format('Y-m-d H:i:s') . "`\n"
-                        . "<b>IP Address:</b> `{$request->ip()}`\n"
-                        . "<b>Target:</b> `{$request->fullUrl()}`\n"
-                        . "<b>User Agent:</b> `{$request->userAgent()}`\n\n"
+                        . "<b>Time:</b> " . now()->format('Y-m-d H:i:s') . "\n"
+                        . "<b>IP Address:</b> {$request->ip()}\n"
+                        . "<b>Target:</b> {$request->fullUrl()}\n"
+                        . "<b>User Agent:</b> {$request->userAgent()}\n\n"
                         . "🛡️ _Request has been replied with dummy JSON response._"
                 );
                 // abort(403, 'Unauthorized Bot Activity');
