@@ -17,6 +17,7 @@ class BlockBadBots
         foreach ($forbiddenAgents as $agent) {
             if (str_contains($request->userAgent(), $agent) && $request->is('livewire/update')) {
                 $ua = is_array($request->userAgent()) ? implode(',', $request->userAgent()) : $request->userAgent();
+
                 Log::channel('attacks')->warning('Bot Attack Detected', [
                     'ip'         => $request->ip(),
                     'user_agent' => $ua,
@@ -30,7 +31,7 @@ class BlockBadBots
                         . "<b>IP Address:</b> {$request->ip()}\n"
                         . "<b>Target:</b> {$request->fullUrl()}\n"
                         . "<b>User Agent:</b> {$ua}\n\n"
-                        . "<b>Payload:</b> {$request->all()}\n\n"
+                        . "<b>Payload:</b> " . json_encode($request->all()) . "\n\n"
                         . "🛡️ _Request has been replied with dummy JSON response._"
                 );
                 // abort(403, 'Unauthorized Bot Activity');
