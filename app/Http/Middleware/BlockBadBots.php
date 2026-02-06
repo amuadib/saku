@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use App\Helpers\Telegram;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class BlockBadBots
 {
@@ -15,12 +16,20 @@ class BlockBadBots
 
         foreach ($forbiddenAgents as $agent) {
             if (str_contains($request->userAgent(), $agent) && $request->is('livewire/update')) {
+                Log::channel('attacks')->warning('Bot Attack Detected', [
+                    'ip'         => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'url'        => $request->fullUrl(),
+                    'payload'    => $request->all(), // Mengambil semua data POST/JSON
+                    'headers'    => $request->headers->all(),
+                ]);
                 Telegram::send(
                     "⚠️ <b>SECURITY ALERT: BOT DETECTED</b> ⚠️\n\n"
                         . "<b>Time:</b> " . now()->format('Y-m-d H:i:s') . "\n"
                         . "<b>IP Address:</b> {$request->ip()}\n"
                         . "<b>Target:</b> {$request->fullUrl()}\n"
                         . "<b>User Agent:</b> {$request->userAgent()}\n\n"
+                        . "<b>Payload:</b> {$request->all()}\n\n"
                         . "🛡️ _Request has been replied with dummy JSON response._"
                 );
                 // abort(403, 'Unauthorized Bot Activity');
