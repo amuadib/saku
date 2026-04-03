@@ -14,9 +14,9 @@ class ContentSecurityPolicy
 
         $csp = "default-src 'self'; " .
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://cdn.tailwindcss.com https://static.cloudflareinsights.com; " .
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net; " .
             "img-src 'self' data: https://*; " . // Mengizinkan gambar dari URL manapun (penting jika ada avatar luar)
-            "font-src 'self' https://fonts.gstatic.com; " .
+            "font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net;" .
             "connect-src 'self'; " .
             "frame-ancestors 'none'; " . // Mencegah Clickjacking
             "object-src 'none'; " .
