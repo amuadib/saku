@@ -47,7 +47,8 @@ class TagihanResource extends Resource
                     ->inlineLabel(false)
                     ->options(Arr::except($lembaga, [99]))
                     ->live()
-                    ->visible(fn(): bool => (auth()->user()->isAdmin())),
+                    ->visible(fn(): bool => (auth()->user()->isAdmin()))
+                    ->columnSpanFull(),
                 Select::make('kas_id')
                     ->label('Jenis Tagihan')
                     ->options(
@@ -71,7 +72,9 @@ class TagihanResource extends Resource
                     ->prefix('Rp ')
                     ->required()
                     ->currencyMask('.', ',', 0),
-                Forms\Components\Textarea::make('keterangan'),
+                Forms\Components\Textarea::make('keterangan')
+                    ->required()
+                    ->columnSpanFull(),
                 Radio::make('peserta')
                     ->options([
                         'Semua siswa',
@@ -109,8 +112,13 @@ class TagihanResource extends Resource
                         }
                     )
                     ->visible(fn(Get $get): bool => ($get('peserta') == 1)),
+                Forms\Components\DatePicker::make('tanggal_kadaluarsa')
+                    ->label('Tanggal Kadaluarsa')
+                    ->nullable()
+                    ->columnSpan(1)
+                    ->helperText('Tanggal kadaluarsa tagihan. Tagihan yang BELUM dibayar akan otomatis dihapus pada Tanggal ini'),
             ])
-            ->columns(1);
+            ->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -313,6 +321,9 @@ class TagihanResource extends Resource
                             ->date('d/m/Y'),
                         TextEntry::make('kas.nama')
                             ->label('Tagihan'),
+                        TextEntry::make('tanggal_kadaluarsa')
+                            ->label('Tanggal Kadaluarsa')
+                            ->date('d/m/Y'),
                         TextEntry::make('keterangan'),
                         TextEntry::make('jumlah')
                             ->money('IDR'),

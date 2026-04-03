@@ -50,29 +50,32 @@ class CreateTagihan extends CreateRecord
             $prefix = substr($kode, 0, 11);
             $urut = intval(substr($kode, -4));
 
-            //Tagihan Uang Makan untuk Siswa Keluarga Pegawai Yayasan Max. Rp. 50.000
-            $uang_makan = '9c30886f-ecce-4436-a81c-ff406f5675cd';
-            $keluarga_pegawai = 21;
-            $label_free_uang_makan = 30;
-            $maksimal = 50000;
+            // Ambil data detail Kas untuk membaca aturan tagihan khusus (gratis/maksimal)
+            $kas = \App\Models\Kas::find($data['kas_id']);
+            $aturanKas = is_array($kas?->aturan_tagihan) ? $kas->aturan_tagihan : [];
             foreach ($siswa as $s) {
+                $label_siswa = $s->label ?? [];
+                
+                $isFree = false;
+                $jumlah = $data['jumlah'];
 
-                //Free uang Makan
-                if (
-                    $data['kas_id'] == $uang_makan &&
-                    in_array($label_free_uang_makan, $s->label)
-                ) {
-                    continue;
+                // Terapkan semua aturan khusus dari database
+                foreach ($aturanKas as $aturan) {
+                    if (in_array((int)$aturan['label_id'], $label_siswa)) {
+                        if ($aturan['jenis'] === 'gratis') {
+                            $isFree = true;
+                            break; // Siswa ini gratis, berhentikan pengecekan!
+                        } elseif ($aturan['jenis'] === 'maksimal') {
+                            $batas = (int) $aturan['nominal'];
+                            if ($jumlah > $batas) {
+                                $jumlah = $batas;
+                            }
+                        }
+                    }
                 }
 
-                //Keluarga Pegawai
-                $jumlah = $data['jumlah'];
-                if (
-                    $data['kas_id'] == $uang_makan &&
-                    in_array($keluarga_pegawai, $s->label) &&
-                    $data['jumlah'] > $maksimal
-                ) {
-                    $jumlah = $maksimal;
+                if ($isFree) {
+                    continue; // Lewati pembuatan tagihan karena digratiskan
                 }
 
                 $insert[] = [
@@ -83,11 +86,11 @@ class CreateTagihan extends CreateRecord
                     'jumlah' => $jumlah,
                     'keterangan' => $data['keterangan'],
                     'user_id' => $data['user_id'],
+                    'tanggal_kadaluarsa' => $data['tanggal_kadaluarsa'],
                     'created_at' => \Carbon\Carbon::now()
                 ];
                 $urut++;
             }
-
             $siswa_first = Arr::pull($insert, 0);
             $data['siswa_id'] = $siswa_first['siswa_id'];
             $data['kode'] = $prefix . str_pad($urut++, 4, '0', STR_PAD_LEFT);

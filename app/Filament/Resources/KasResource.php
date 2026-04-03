@@ -46,7 +46,31 @@ class KasResource extends Resource
                     ])
                     ->hidden(fn(): bool => (auth()->user()->isAdmin())),
                 Forms\Components\Textarea::make('keterangan')
+                    ->columnSpanFull(),
+                Forms\Components\Repeater::make('aturan_tagihan')
+                    ->label('Aturan Tagihan Khusus')
+                    ->schema([
+                        Forms\Components\Select::make('label_id')
+                            ->label('Label Siswa')
+                            ->options(config('custom.siswa.label'))
+                            ->required(),
+                        Forms\Components\Select::make('jenis')
+                            ->label('Jenis Aturan')
+                            ->options([
+                                'gratis' => 'Gratis (Nominal menjadi Rp 0)',
+                                'maksimal' => 'Batasi Nominal Maksimal',
+                            ])
+                            ->required()
+                            ->live(),
+                        Forms\Components\TextInput::make('nominal')
+                            ->label('Batas Nominal (Rp)')
+                            ->numeric()
+                            ->required(fn(Forms\Get $get) => $get('jenis') === 'maksimal')
+                            ->visible(fn(Forms\Get $get) => $get('jenis') === 'maksimal'),
+                    ])
+                    ->columns(3)
                     ->columnSpanFull()
+                    ->helperText('Anda dapat menentukan pengecualian biaya khusus untuk kas ini berdasarkan Label Siswa.'),
             ]);
     }
 
