@@ -90,7 +90,9 @@ implements HasTable
             ) AS total
         ");
 
-        return Tagihan::join('siswa', 'siswa.id', '=', 'tagihan.siswa_id')
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
+        $query = Tagihan::query()
+            ->join('siswa', 'siswa.id', '=', 'tagihan.siswa_id')
             ->join('kas', 'kas.id', '=', 'tagihan.kas_id')
             ->select($selects)
             ->where(function ($q) {
@@ -99,6 +101,8 @@ implements HasTable
             })
             ->groupBy('siswa.id')
             ->orderByDesc('total');
+
+        return $query;
     }
 
     protected function getTableColumns(): array
@@ -136,59 +140,59 @@ implements HasTable
                     ->icon('heroicon-o-chat-bubble-oval-left-ellipsis')
                     ->button()
                     ->modal(false)
-                    ->action(function () {
-                        // \Log::info('Kirim WA untuk siswa ID: ' . $record->id);
-                        dd('record');
+                    ->action(function ($record) {
+                        $siswa = \App\Models\Siswa::find($record->id);
+                        $rincian = '';
+                        $total = 0;
+                        $no = 1;
+                        foreach ($siswa->tagihan as $t) {
+                            if (!$t->isLunas()) {
+                                $tgl = $t->updated_at == null ? $t->created_at->format('d-m-Y') : $t->updated_at->format('d-m-Y');
+                                $rincian .= $no . '. ' . ucfirst($t->keterangan) . ' (' . $tgl . '): Rp ' . number_format($t->jumlah, thousands_separator: '.') . PHP_EOL;
+                                $total += $t->jumlah;
+                                $no++;
+                            }
+                        }
+                        if ($total == 0) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Tidak ada tagihan')
+                                ->body('Siswa ' . $siswa->nama . ' tidak memiliki tagihan')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+                        $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : '' . $siswa->telepon;
+                        $pesan = \App\Services\WhatsappService::prosesPesan(
+                            siswa: $siswa,
+                            data: [
+                                'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id),
+                                'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
+                                'tagihan.rincian' => $rincian,
+                                'tagihan.total' => 'Rp ' . number_format($total, thousands_separator: '.'),
+                            ],
+                            jenis: $siswa->status == 3 ? 'tagihan.daftar_alumni' : 'tagihan.daftar'
+                        );
+                        \App\Services\WhatsappService::kirimWa(
+                            nomor: $nomor,
+                            pesan: $pesan,
+                            sessionId: \App\Services\WhatsappService::getSessionId($siswa),
+                            nama: $siswa->nama
+                        );
+                        \Filament\Notifications\Notification::make()
+                            ->title('Tagihan dikirim')
+                            ->body('Tagihan siswa ' . $siswa->nama . ' berhasil dikirim ke nomor ' . $nomor)
+                            ->success()
+                            ->send();
                     }),
             ]);
     }
-    // protected function getTableActions(): array
-    // {
-    //     return [
-    //         Tables\Actions\Action::make('send_wa')
-    //             ->label('Kirim Tagihan')
-    //             ->button()
-    //             ->modal(false)
-    //             ->action(fn($record) => dd($record))
 
-    //         // Tables\Actions\Action::make('send_wa')
-    //         //     ->label('Kirim Tagihan')
-    //         //     ->button()
-    //         //     ->icon('heroicon-o-chat-bubble-left-right')
-    //         //     ->color('success')
-    //         //     // ->requiresConfirmation()
-    //         //     ->action(function ($record) {
-    //         //         dd($record);
-    //         //         $tagihans = Tagihan::with('kas')
-    //         //             ->where('siswa_id', $record->id)
-    //         //             ->where(
-    //         //                 fn($q) =>
-    //         //                 $q->whereNull('bayar')->orWhere('bayar', 0)
-    //         //             )
-    //         //             ->get();
-    //         //         // logic kirim WA
-    //         //     }),
-    //     ];
-    // }
-    // protected function getTableFilters(): array
-    // {
-    //     return [
-    //         Tables\Filters\SelectFilter::make('lembaga_id')
-    //             ->label('Lembaga')
-    //             ->options(config('custom.lembaga'))
-    //             ->query(function (Builder $query, array $data) {
-    //                 if (! filled($data['value'] ?? null)) {
-    //                     return;
-    //                 }
+    public function resolveTableRecord(?string $key): ?\Illuminate\Database\Eloquent\Model
+    {
+        if ($key === null) {
+            return null;
+        }
 
-    //                 $query->where('kas.lembaga_id', $data['value']);
-    //             })
-    //             ->default(1)
-    //             ->native(false),
-    //     ];
-    // }
-    // public function updatedTableFilters(): void
-    // {
-    //     $this->resetTable();
-    // }
+        return $this->getTableQuery()->where('siswa.id', $key)->first();
+    }
 }
