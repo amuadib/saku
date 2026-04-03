@@ -240,15 +240,25 @@ class TagihanResource extends Resource
                             $kas[$k->id] = $k->nama . ' (' . $lembaga[$k->lembaga_id] . ')';
                         }
                         return $kas;
+                    })
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->where('tagihan.kas_id', $data['value']);
+                        }
                     }),
 
                 Filter::make('keterangan')
                     ->form([
                         Forms\Components\TextInput::make('keterangan')
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query->where('keterangan', 'like', '%' . $data['keterangan'] . '%'))
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['keterangan'])) {
+                            return $query;
+                        }
+                        return $query->where('keterangan', 'like', '%' . $data['keterangan'] . '%');
+                    })
                     ->indicateUsing(function (array $data): ?string {
-                        if (! $data['keterangan']) {
+                        if (empty($data['keterangan'])) {
                             return null;
                         }
 
@@ -265,18 +275,23 @@ class TagihanResource extends Resource
                             ->inline()
                             ->inlineLabel(false)
                     ])
-                    ->query(fn(Builder $query, array $data): Builder => $query->when(
-                        $data['lunas'] == 'Lunas',
-                        function ($w) {
-                            $w->where('bayar', '>', 0);
-                        },
-                        function ($w) {
-                            $w->where(function ($w) {
-                                $w->where('bayar', 0)
-                                    ->orWhereNull('bayar');
-                            });
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['lunas'])) {
+                            return $query;
                         }
-                    ))
+                        
+                        return $query->where(function ($w) use ($data) {
+                            if ($data['lunas'] == 'Lunas') {
+                                $w->where('bayar', '>', 0);
+                            } else {
+                                $w->where(function ($w2) {
+                                    $w2->where('bayar', 0)
+                                        ->orWhereNull('bayar')
+                                        ->orWhere('bayar', '');
+                                });
+                            }
+                        });
+                    })
                     ->indicateUsing(function (array $data): ?string {
                         if (! $data['lunas']) {
                             return null;
