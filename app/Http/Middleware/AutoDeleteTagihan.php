@@ -20,7 +20,7 @@ class AutoDeleteTagihan
         }
         cache()->put('auto_delete_tagihan', true, now()->addHours(12));
         Tagihan::whereNotNull('tanggal_kadaluarsa')
-        ->where('tanggal_kadaluarsa', '<', now())
+        ->where('tanggal_kadaluarsa', '<', date('Y-m-d'))
         ->where(function($query){
             $query->where('bayar','')
             ->orWhere('bayar',0)
