@@ -161,7 +161,18 @@ _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini
             'tanggal' => '2024-01-01'
         ]
     ],
-
+    'whatsapp' => [
+        'enabled' => true,
+        'url' => env('WA_API_URL'),
+        'token' => env('WA_API_TOKEN'),
+        'test_number' => env('WHATSAPP_TEST_NUMBER'),
+        'token_12' => env('WA_API_TOKEN_12'),
+        'token_34' => env('WA_API_TOKEN_34'),
+        'token_56' => env('WA_API_TOKEN_56'),
+    ],
+    'cetak_struk' => [
+        'mode' => env('MODE_CETAK_STRUK'),
+    ],
 ];
 $local_config = [];
 @include storage_path() . '/app/local_config.php';

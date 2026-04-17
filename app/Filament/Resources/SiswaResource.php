@@ -235,7 +235,7 @@ class SiswaResource extends Resource
                                 if ($s->telepon == '') {
                                     continue;
                                 }
-                                $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : '' . $s->telepon;
+                                $nomor = env('APP_ENV') == 'local' ? config('custom.whatsapp.test_number') : '' . $s->telepon;
                                 $rincian = '';
                                 $no = 1;
                                 $total = 0;
@@ -289,7 +289,7 @@ class SiswaResource extends Resource
                             }
                         }
                     )
-                    ->visible(fn(): bool => env('WHATSAPP_NOTIFICATION')),
+                    ->visible(fn(): bool => config('custom.whatsapp.enabled')),
                 Tables\Actions\ExportBulkAction::make()
                     ->label('Ekspor')
                     ->exporter(\App\Filament\Exports\SiswaExporter::class)
@@ -626,7 +626,7 @@ class SiswaResource extends Resource
                                             ]
                                         );
 
-                                        if (env('WHATSAPP_NOTIFICATION')) {
+                                        if (config('custom.whatsapp.enabled')) {
                                             if ($siswa->telepon != '') {
                                                 $pesan = \App\Services\WhatsappService::prosesPesan(
                                                     $siswa,
@@ -676,7 +676,7 @@ class SiswaResource extends Resource
                                                 return;
                                             }
 
-                                            if (env('MODE_CETAK_STRUK') == 'raw') { //RAW
+                                            if (config('custom.cetak_struk.mode') == 'raw') { //RAW
                                                 $raw_data = \App\Services\StrukService::simpanStruk(
                                                     [
                                                         'lembaga_id' => $siswa->lembaga_id,
