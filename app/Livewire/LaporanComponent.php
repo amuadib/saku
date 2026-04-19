@@ -25,6 +25,14 @@ class LaporanComponent extends Component
         )
             ->pluck('nama', 'id')
             ->toArray();
+
+        if (empty($this->awal)) {
+            $this->awal = (date('D') != 'Sun') ? date('Y-m-d', strtotime('last Sunday')) : date('Y-m-d');
+        }
+        if (empty($this->akhir)) {
+            $this->akhir = (date('D') != 'Sat') ? date('Y-m-d', strtotime('next Saturday')) : date('Y-m-d');
+        }
+
         $this->getData();
     }
 
@@ -46,40 +54,66 @@ class LaporanComponent extends Component
 
     private function getData()
     {
-        $saldo = 0;
-        foreach (RekapTransaksiHarian::rekapMingguan($this->kas_id, $this->awal, $this->akhir)->get() as $r) {
+        $this->masuk = 0;
+        $this->keluar = 0;
+        $this->data = [];
+        $this->data_per_tanggal = [];
 
+        // 1. Hitung Saldo Awal (sebelum tanggal awal)
+        $saldo = RekapTransaksiHarian::getSaldoAwal($this->kas_id, $this->awal);
+        
+        // 2. Tambahkan baris Saldo Awal ke data jika ada saldo awal
+        $this->data[] = [
+            'tanggal' => date('Y-m-d', strtotime($this->awal . ' -1 day')),
+            'kas' => 'Saldo Awal',
+            'masuk' => 0,
+            'keluar' => 0,
+            'saldo' => number_format(intval($saldo), 0, ',', '.'),
+        ];
+        
+        // Tandai baris saldo awal agar dihitung di rowspan jika tanggalnya sama (meskipun pakai label 'Saldo Awal')
+        $prev_date = date('Y-m-d', strtotime($this->awal . ' -1 day'));
+        $this->data_per_tanggal[$prev_date] = 1;
+
+        // 3. Ambil data transaksi periode terpilih
+        $transactions = RekapTransaksiHarian::periode($this->kas_id, $this->awal, $this->akhir)->get();
+
+        foreach ($transactions as $r) {
             if ($r->masuk > 0) {
-                if (isset($this->data_per_tanggal[$r->tanggal])) {
-                    $this->data_per_tanggal[$r->tanggal]++;
-                } else {
-                    $this->data_per_tanggal[$r->tanggal] = 1;
-                }
                 $saldo += $r->masuk;
                 $this->masuk += $r->masuk;
                 $this->data[] = [
                     'tanggal' => $r->tanggal,
                     'kas' => $r->kas,
-                    'masuk' => number_format(intval($r->masuk), thousands_separator: '.'),
+                    'masuk' => number_format(intval($r->masuk), 0, ',', '.'),
                     'keluar' => 0,
-                    'saldo' => number_format(intval($saldo), thousands_separator: '.'),
+                    'saldo' => number_format(intval($saldo), 0, ',', '.'),
                 ];
-            }
-            if ($r->keluar > 0) {
+                
+                // Hitung rowspan per tanggal
                 if (isset($this->data_per_tanggal[$r->tanggal])) {
                     $this->data_per_tanggal[$r->tanggal]++;
                 } else {
                     $this->data_per_tanggal[$r->tanggal] = 1;
                 }
+            }
+            if ($r->keluar > 0) {
                 $saldo -= $r->keluar;
                 $this->keluar += $r->keluar;
                 $this->data[] = [
                     'tanggal' => $r->tanggal,
                     'kas' => $r->kas,
                     'masuk' => 0,
-                    'keluar' => number_format(intval($r->keluar), thousands_separator: '.'),
-                    'saldo' => number_format(intval($saldo), thousands_separator: '.'),
+                    'keluar' => number_format(intval($r->keluar), 0, ',', '.'),
+                    'saldo' => number_format(intval($saldo), 0, ',', '.'),
                 ];
+
+                // Hitung rowspan per tanggal
+                if (isset($this->data_per_tanggal[$r->tanggal])) {
+                    $this->data_per_tanggal[$r->tanggal]++;
+                } else {
+                    $this->data_per_tanggal[$r->tanggal] = 1;
+                }
             }
         }
     }
