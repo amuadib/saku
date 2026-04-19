@@ -17,12 +17,46 @@ class ListSiswas extends ListRecords
             Actions\CreateAction::make()
                 ->label('Daftarkan Siswa')
                 ->icon('heroicon-o-plus')
-                ->color('info'),
+                ->color('info')
+                ->disabled(),
             Actions\ImportAction::make()
                 ->importer(SiswaImporter::class)
                 ->icon('heroicon-o-document-plus')
                 ->color('success')
                 ->visible(fn(): bool => (auth()->user()->isAdmin()))
+                ->disabled(),
+            Actions\Action::make('sync_from_master')
+                ->label('Sinkron dari Master Data')
+                ->icon('heroicon-o-cloud-arrow-down')
+                ->color('warning')
+                ->visible(fn(): bool => (auth()->user()->isAdmin()))
+                ->action(function () {
+                    try {
+                        $service = app(\App\Services\MasterDataService::class);
+                        $result = $service->syncSiswaFromApi();
+
+                        $body = $result['message'];
+                        if ($result['error_count'] > 0) {
+                            $body .= "\n\nDetail Error:";
+                            foreach ($result['errors'] as $error) {
+                                $body .= "\n- " . $error['nama'] . ": " . $error['error'];
+                            }
+                        }
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Sinkronisasi Master Data')
+                            ->body($body)
+                            ->icon('heroicon-o-check-circle')
+                            ->iconColor($result['error_count'] > 0 ? 'warning' : 'success')
+                            ->send();
+                    } catch (\Exception $e) {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Gagal Sinkron dari Master Data')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
         ];
     }
 }

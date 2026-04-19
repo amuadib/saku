@@ -53,7 +53,8 @@ class SiswaResource extends Resource
                     ->nullable()
                     ->image()
                     ->imageEditor()
-                    ->directory('foto'),
+                    ->directory('foto')
+                    ->disabled(),
                 Radio::make('lembaga_id')
                     ->label('Lembaga')
                     ->inline()
@@ -84,32 +85,39 @@ class SiswaResource extends Resource
                     )
                     ->required(),
                 TextInput::make('nama')
-                    ->required(),
+                    ->readOnly(),
                 Radio::make('jenis_kelamin')
                     ->options(['l' => 'Laki-laki', 'p' => 'Perempuan'])
                     ->inline()
                     ->inlineLabel(false)
-                    ->required(),
+                    ->required()
+                    ->disabled(),
                 TextInput::make('nis')
                     ->label('NIS')
                     ->placeholder('Nomor Induk Siswa'),
                 TextInput::make('nisn')
                     ->label('NISN')
-                    ->placeholder('Nomor Induk Siswa Nasional'),
+                    ->placeholder('Nomor Induk Siswa Nasional')
+                    ->readOnly(),
                 TextInput::make('nik')
                     ->label('NIK')
-                    ->required(),
-                TextInput::make('tempat_lahir'),
+                    ->readOnly(),
+                TextInput::make('tempat_lahir')
+                    ->readOnly(),
                 Forms\Components\DatePicker::make('tanggal_lahir')
                     ->native(false)
-                    ->displayFormat('d/m/Y'),
+                    ->displayFormat('d/m/Y')
+                    ->readOnly(),
                 Forms\Components\Textarea::make('alamat')
-                    ->required()
-                    ->columnSpanFull(),
-                TextInput::make('nama_ayah'),
-                TextInput::make('nama_ibu'),
+                    ->columnSpanFull()
+                    ->readOnly(),
+                TextInput::make('nama_ayah')
+                    ->readOnly(),
+                TextInput::make('nama_ibu')
+                    ->readOnly(),
                 TextInput::make('telepon')
-                    ->helperText(new HtmlString('Nomor Whatsapp. Gunakan Format: <strong>081234567891</strong>. Untuk nomor luar negeri, tambahkan <strong><i>+[Kode Negara]</i></strong>: <strong>+8581234567891</strong>')),
+                    ->helperText(new HtmlString('Nomor Whatsapp. Gunakan Format: <strong>081234567891</strong>. Untuk nomor luar negeri, tambahkan <strong><i>+[Kode Negara]</i></strong>: <strong>+8581234567891</strong>'))
+                    ->readOnly(),
                 TextInput::make('email')
                     ->email(),
                 Radio::make('status')
@@ -129,14 +137,9 @@ class SiswaResource extends Resource
         return $table
             ->striped()
             ->modifyQueryUsing(function (Builder $query) {
-                // $query = $query->with('kelas', 'periode');
                 if (!auth()->user()->isAdmin()) {
                     $query = $query->where('siswa.lembaga_id', auth()->user()->authable->lembaga_id);
                 }
-                // $query = $query
-                // ->join('kelas', 'kelas.id', '=', 'kelas_id')
-                // ->join('periode', 'periode.id', '=', 'periode_id')
-                // ->where('periode.aktif', 'y');
                 return $query;
             })
             ->defaultSort('siswa.nama')
