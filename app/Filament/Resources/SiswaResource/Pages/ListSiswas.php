@@ -18,13 +18,13 @@ class ListSiswas extends ListRecords
                 ->label('Daftarkan Siswa')
                 ->icon('heroicon-o-plus')
                 ->color('info')
-                ->disabled(),
+                ->disabled(env('TAMBAH_SISWA_ENABLED', false)),
             Actions\ImportAction::make()
                 ->importer(SiswaImporter::class)
                 ->icon('heroicon-o-document-plus')
                 ->color('success')
                 ->visible(fn(): bool => (auth()->user()->isAdmin()))
-                ->disabled(),
+                ->disabled(env('IMPOR_SISWA_ENABLED', false)),
             Actions\Action::make('sync_from_master')
                 ->label('Sinkron dari Master Data')
                 ->icon('heroicon-o-cloud-arrow-down')
@@ -37,6 +37,7 @@ class ListSiswas extends ListRecords
 
                         $body = $result['message'];
                         if ($result['error_count'] > 0) {
+                            \Illuminate\Support\Facades\Log::info($result['errors']);
                             $body .= "\n\nDetail Error:";
                             foreach ($result['errors'] as $error) {
                                 $body .= "\n- " . $error['nama'] . ": " . $error['error'];
