@@ -52,6 +52,9 @@ class KasChart extends ApexChartWidget
                 'type' => 'pie',
                 'height' => 300,
             ],
+            'tooltip' => [
+                'enabled' => $isAdmin,
+            ],
             'series' => $series,
             'labels' => $labels,
             'legend' => [
