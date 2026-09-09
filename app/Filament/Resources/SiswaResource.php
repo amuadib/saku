@@ -275,14 +275,24 @@ class SiswaResource extends Resource
                             }
 
                             if (count($pesan) > 0) {
-                                \App\Services\WhatsappService::kirimWa(
+                                $response = \App\Services\WhatsappService::kirimWa(
                                     kumpulan_pesan: $pesan
                                 );
-                                Notification::make()
-                                    ->title('Data Tagihan siswa terpilih telah dikirimkan')
-                                    ->icon('heroicon-o-check-circle')
-                                    ->iconColor('success')
-                                    ->send();
+
+                                if ($response['status'] == 'success') {
+                                    Notification::make()
+                                        ->title('Data Tagihan siswa terpilih telah dikirimkan')
+                                        ->icon('heroicon-o-check-circle')
+                                        ->iconColor('success')
+                                        ->send();
+                                } else {
+                                    \Illuminate\Support\Facades\Log::error('Gagal mengirim pesan. Response: ' . json_encode($response));
+                                    Notification::make()
+                                        ->title('Gagal mengirim pesan. ' . $response['message'])
+                                        ->icon('heroicon-o-x-circle')
+                                        ->iconColor('danger')
+                                        ->send();
+                                }
                             } else {
                                 Notification::make()
                                     ->title('Tagihan untuk siswa tidak ditemukan')
