@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class WhatsappService
 {
@@ -103,22 +104,22 @@ class WhatsappService
         string|null $sessionId = null,
         string|null $nama = null
     ) {
-        if (env('WA_API_URL') == '') {
+        if (config('whatsapp.WA_API_URL') == '') {
             return [
                 'status' => 'failed',
                 'message' => 'API Whatsapp belum diaktifkan'
             ];
         }
-        $nomor = env('APP_ENV') == 'local' ? env('WHATSAPP_TEST_NUMBER') : $nomor;
+        $nomor = env('APP_ENV') == 'local' ? config('whatsapp.WHATSAPP_TEST_NUMBER') : $nomor;
         $client = new \GuzzleHttp\Client([
-            'base_uri' => env('WA_API_URL'),
+            'base_uri' => config('whatsapp.WA_API_URL'),
             'verify' => false,
             'headers' => [
                 'Content-Type' => 'application/json'
             ]
         ]);
         $body = [
-            'token' => env('WA_API_TOKEN'),
+            'token' => config('whatsapp.WA_API_TOKEN'),
         ];
         if (count($kumpulan_pesan) > 0) {
             $body = array_merge($body, [
@@ -138,13 +139,13 @@ class WhatsappService
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             return [
                 'status' => 'failed',
-                'message' => 'Gangguan koneksi ke WA API'
+                'message' => 'Error: ' . $e->getMessage()
             ];
         }
 
         $response_json = $response->getBody()->getContents();
         $response_arr = json_decode($response_json, true);
-
+        Log::info('[' . date('Y-m-d H:i:s') . '] Mengirim pesan ke ' . $nomor . ' dengan sessionId ' . $sessionId . '. Response: ' . $response_json);
         if ($response_arr == null) {
             \Log::error('[' . date('Y-m-d H:i:s') . '] Gagal mengirim pesan');
             return [
