@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ContentSecurityPolicy::class,
             \App\Http\Middleware\AutoDeleteTagihan::class
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'admin/login'
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

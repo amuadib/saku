@@ -13,3 +13,7 @@ Route::get(
         'cetak'
     ]
 );
+
+Route::post('/admin/login', function () {
+    return back()->with('error', 'Gagal memproses login. Pastikan Javascript aktif di browser Anda atau tunggu halaman selesai dimuat lalu coba lagi.');
+})->name('filament.admin.auth.login.post');
