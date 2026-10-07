@@ -15,7 +15,6 @@ class Siswa extends Model
 
     protected $table = 'siswa';
     protected $casts = [
-        'label' => 'array',
     ];
 
     public function getActivitylogOptions(): LogOptions

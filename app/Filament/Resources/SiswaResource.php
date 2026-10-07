@@ -125,10 +125,6 @@ class SiswaResource extends Resource
                     ->inline()
                     ->inlineLabel(false)
                     ->default(99),
-                Forms\Components\CheckboxList::make('label')
-                    ->options(config('custom.siswa.label'))
-                    ->columns(2)
-                    ->gridDirection('row'),
             ]);
     }
 
@@ -167,21 +163,6 @@ class SiswaResource extends Resource
                     }),
             ])
             ->filters([
-                Tables\Filters\Filter::make('label_filter')
-                    ->form([
-                        Forms\Components\CheckboxList::make('label')
-                            ->columns(2)
-                            ->gridDirection('row')
-                            ->options(config('custom.siswa.label'))
-                    ])
-                    ->query(fn(Builder $query, array $data): Builder => $query->whereJsonContains('label', $data['label']))
-                    ->indicateUsing(function (array $data): ?string {
-                        if (! $data['label']) {
-                            return null;
-                        }
-
-                        return 'Siswa termasuk ' . config('custom.siswa.label')[$data['label'][0]];
-                    }),
                 SelectFilter::make('lembaga_id')
                     ->label('Lembaga')
                     ->options(Arr::except(config('custom.lembaga'), [99]))
@@ -478,17 +459,6 @@ class SiswaResource extends Resource
                                         '2' => 'warning',
                                         '3' => 'info',
                                         default => 'gray',
-                                    }),
-                                TextEntry::make('label')
-                                    ->placeholder('Belum ada Label')
-                                    ->badge()
-                                    ->formatStateUsing(fn(string $state): string => config('custom.siswa.label')[$state])
-                                    ->color(fn(string $state): string => match ($state) {
-                                        '1' => 'warning',
-                                        '2' => 'warning',
-                                        '3' => 'danger',
-                                        '11' => 'info',
-                                        default => 'gray'
                                     }),
                             ])
                             ->columns(2)
