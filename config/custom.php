@@ -1,9 +1,10 @@
 <?php
+
 $config = [
     'app' => [
         'nama' => 'Sistem Administrasi Keuangan',
         'singkatan' => 'SAKU',
-        'keterangan' => 'Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum'
+        'keterangan' => 'Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum',
     ],
     'roles' => [
         1 => 'Admin',
@@ -12,12 +13,12 @@ $config = [
         4 => 'Bendahara',
         5 => 'Siswa',
         6 => 'Orang Tua',
-        99 => 'Default'
+        99 => 'Default',
     ],
     'jam_kerja' => [
         'Senin - Sabtu: 07:00 - 13:30',
         'Jum\'at: 07:00 - 10:00',
-        'Hari Ahad & Libur Nasional Tutup'
+        'Hari Ahad & Libur Nasional Tutup',
     ],
     'lembaga' => [
         1 => 'SDI Miftahul Ulum Klemunan',
@@ -53,7 +54,7 @@ $config = [
             'telp' => '',
             'lat' => 0,
             'lon' => 0,
-        ]
+        ],
     ],
     'siswa' => [
         'status' => [
@@ -67,8 +68,8 @@ $config = [
             2 => 'Piatu',
             11 => 'Ikut Tahfid',
             12 => 'Pondok',
-            21 => 'Keluarga Pegawai Yayasan'
-        ]
+            21 => 'Keluarga Pegawai Yayasan',
+        ],
     ],
     'barang' => [
         'jenis' => [
@@ -77,14 +78,14 @@ $config = [
             'LKS' => 'Lembar Kerja Siswa',
             'USM' => 'Buku Usmani',
             'BKU' => 'Buku lain',
-            'LLN' => 'Lain-lain'
+            'LLN' => 'Lain-lain',
         ],
         'satuan' => [
             'PCS' => 'Pcs',
             'STL' => 'Setel',
             'PKT' => 'Paket',
             'BKS' => 'Bungkus',
-        ]
+        ],
     ],
     'pembayaran' => [
         'tun' => 'Tunai',
@@ -94,7 +95,7 @@ $config = [
     'template' => [
         'awal' => '*Sistem Administrasi Keuangan (SAKU) SDI & SMPI Miftahul Ulum*
 
-🗒️ Yth. Bapak/Ibu Wali siswa *{siswa.nama}*. ' . PHP_EOL,
+🗒️ Yth. Bapak/Ibu Wali siswa *{siswa.nama}*. '.PHP_EOL,
         'akhir' => '
 Terima Kasih
         ',
@@ -134,32 +135,31 @@ Wassalaamu\'alaikum Wr. Wb
 Telah kami terima & *LUNAS* pembayaran atas tagihan *{tagihan.keterangan}* sejumlah *{tagihan.jumlah}*.',
             'bayar_banyak' => '
 Telah kami terima & *LUNAS* pembayaran atas tagihan {tagihan.rincian} dengan total *{tagihan.total}*.',
-            'daftar' => '🏫 Berikut informasi resmi terkait tanggungan ananda.' . PHP_EOL . '
+            'daftar' => '🏫 Berikut informasi resmi terkait tanggungan ananda.'.PHP_EOL.'
 {tagihan.rincian}Dengan total tagihan *{tagihan.total}*.',
-            'tabungan' => PHP_EOL . '
-🗳️ Ananda mempunyai tabungan sebanyak *{tabungan.total}*' . PHP_EOL,
+            'tabungan' => PHP_EOL.'
+🗳️ Ananda mempunyai tabungan sebanyak *{tabungan.total}*'.PHP_EOL,
             'daftar_alumni' => '
 Berikut informasi tanggungan ananda.
-{tagihan.rincian}Total tagihan *{tagihan.total}*.'
+{tagihan.rincian}Total tagihan *{tagihan.total}*.',
         ],
         'tabungan' => [
-            'daftar' => '🏫 Berikut rincian Tabungan ananda.' . PHP_EOL . '
+            'daftar' => '🏫 Berikut rincian Tabungan ananda.'.PHP_EOL.'
 {tabungan.rincian}Dengan Saldo total *{tabungan.total}*.',
         ],
         'footer' => '
 ...
 _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini_
-        '
+        ',
     ],
     'tabungan' => [
-        'potongan' =>
-        [
+        'potongan' => [
             'lembaga' => [1, 2],
             'kas_admin_id' => '',
             'min_saldo_tidak_kena_admin' => 5000,
             'jumlah_per_tahun' => 1000,
-            'tanggal' => '2024-01-01'
-        ]
+            'tanggal' => '2024-01-01',
+        ],
     ],
     'whatsapp' => [
         'enabled' => true,
@@ -173,7 +173,13 @@ _Pesan ini dikirim otomatis oleh sistem, mohon tidak membalas pesan ke nomor ini
     'cetak_struk' => [
         'mode' => env('MODE_CETAK_STRUK'),
     ],
+    'host_qr_magic_link' => env('HOST_QR_MAGIC_LINK', 'https://saku-v2.miftahululum.web.id'),
+    'api_akademik' => [
+        'url' => env('API_AKADEMIK_URL'),
+        'token' => env('API_AKADEMIK_TOKEN'),
+    ],
 ];
 $local_config = [];
-@include storage_path() . '/app/local_config.php';
+@include storage_path().'/app/local_config.php';
+
 return array_merge($config, $local_config);

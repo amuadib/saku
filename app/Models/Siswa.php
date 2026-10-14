@@ -6,16 +6,22 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Siswa extends Model
 {
     use HasUuids, LogsActivity;
 
     protected $table = 'siswa';
+
     protected $casts = [
     ];
+
+    public function auth()
+    {
+        return $this->morphOne(User::class, 'authable');
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -31,6 +37,7 @@ class Siswa extends Model
     {
         return ucwords(strtolower($this->nama));
     }
+
     public function scopeGetDaftarSiswa($query, $lembaga_id = null)
     {
         $lembaga_id == null ? auth()->user()->authable->lembaga_id : $lembaga_id;
@@ -41,18 +48,22 @@ class Siswa extends Model
             ->where('status', 1)
             ->select('id', 'nama');
     }
+
     public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
+
     public function tagihan(): HasMany
     {
         return $this->hasMany(Tagihan::class);
     }
+
     public function tabungan(): HasMany
     {
         return $this->hasMany(Tabungan::class);
     }
+
     public function keranjang(): HasMany
     {
         return $this->hasMany(Keranjang::class);

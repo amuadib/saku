@@ -24,9 +24,10 @@ class WhatsappService
 
         return $sessionId;
     }
+
     public static function prosesPesan(mixed $siswa, array $data, string $jenis): string
     {
-        $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---' . PHP_EOL : '';
+        $test_message = env('APP_ENV') == 'local' ? '---TES PENGIRIMAN WHATSAPP MOHON DIABAIKAN JIKA DITERIMA---'.PHP_EOL : '';
         $template = config('custom.template');
         $tabungan = '';
         $t3 = $template['akhir'];
@@ -34,7 +35,7 @@ class WhatsappService
         $awal = \App\Services\WhatsappService::prosesTemplate(
             [
                 'siswa.nama' => $siswa->nama,
-                'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id)
+                'lembaga' => config('custom.lembaga.'.$siswa->lembaga_id),
             ],
             $siswa->status == 3 ? $template['awal_alumni'] : $template['awal']
         );
@@ -49,7 +50,7 @@ class WhatsappService
             if ($siswa->tabungan->count()) {
                 $no = 1;
                 foreach ($siswa->tabungan as $t) {
-                    $rincian .= $no . '. ' . $t->kas->nama . '. Saldo Rp ' . number_format($t->saldo, thousands_separator: '.') . PHP_EOL;
+                    $rincian .= $no.'. '.$t->kas->nama.'. Saldo Rp '.number_format($t->saldo, thousands_separator: '.').PHP_EOL;
                     $total_tabungan += $t->saldo;
                 }
             }
@@ -58,7 +59,7 @@ class WhatsappService
             $tabungan = \App\Services\WhatsappService::prosesTemplate(
                 [
                     'tabungan.rincian' => $rincian,
-                    'tabungan.total' => 'Rp ' . number_format($total_tabungan, thousands_separator: '.')
+                    'tabungan.total' => 'Rp '.number_format($total_tabungan, thousands_separator: '.'),
                 ],
                 $template['tabungan']['daftar']
             );
@@ -75,39 +76,42 @@ class WhatsappService
 
         $akhir = \App\Services\WhatsappService::prosesTemplate(
             [
-                'kontak.nama' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.kontak'),
-                'kontak.telp' => config('custom.kontak_lembaga.' . $siswa->lembaga_id . '.telp'),
-                'lembaga' => config('custom.lembaga.' . $siswa->lembaga_id)
+                'kontak.nama' => config('custom.kontak_lembaga.'.$siswa->lembaga_id.'.kontak'),
+                'kontak.telp' => config('custom.kontak_lembaga.'.$siswa->lembaga_id.'.telp'),
+                'lembaga' => config('custom.lembaga.'.$siswa->lembaga_id),
             ],
             $t3
         );
 
         $nb = $template['nb'] ?? '';
-        return $test_message . $awal . $isi . $tabungan . $akhir . $nb . $template['footer'];
+        $magic_link = PHP_EOL.'Klik link berikut untuk login ke Aplikasi Siswa: '.$siswa->auth->getMagicLoginUrl().PHP_EOL;
+
+        return $test_message.$awal.$isi.$tabungan.$akhir.$nb.$magic_link.$template['footer'];
     }
 
     public static function prosesTemplate(array $data, string $template): string
     {
         // https://stackoverflow.com/a/48981341
-        if (preg_match_all("/{(.*?)}/", $template, $m)) {
+        if (preg_match_all('/{(.*?)}/', $template, $m)) {
             foreach ($m[1] as $i => $varname) {
                 $template = str_replace($m[0][$i], sprintf('%s', $data[$varname]), $template);
             }
         }
+
         return $template;
     }
 
     public static function kirimWa(
-        string|null $nomor = '',
-        string|null $pesan = '',
-        array|null $kumpulan_pesan = [],
-        string|null $sessionId = null,
-        string|null $nama = null
+        ?string $nomor = '',
+        ?string $pesan = '',
+        ?array $kumpulan_pesan = [],
+        ?string $sessionId = null,
+        ?string $nama = null
     ) {
         if (config('whatsapp.WA_API_URL') == '') {
             return [
                 'status' => 'failed',
-                'message' => 'API Whatsapp belum diaktifkan'
+                'message' => 'API Whatsapp belum diaktifkan',
             ];
         }
         $nomor = env('APP_ENV') == 'local' ? config('whatsapp.WHATSAPP_TEST_NUMBER') : $nomor;
@@ -115,15 +119,15 @@ class WhatsappService
             'base_uri' => config('whatsapp.WA_API_URL'),
             'verify' => false,
             'headers' => [
-                'Content-Type' => 'application/json'
-            ]
+                'Content-Type' => 'application/json',
+            ],
         ]);
         $body = [
             'token' => config('whatsapp.WA_API_TOKEN'),
         ];
         if (count($kumpulan_pesan) > 0) {
             $body = array_merge($body, [
-                'data' => json_encode($kumpulan_pesan)
+                'data' => json_encode($kumpulan_pesan),
             ]);
         } else {
             $body = array_merge($body, [
@@ -139,30 +143,31 @@ class WhatsappService
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             return [
                 'status' => 'failed',
-                'message' => 'Error: ' . $e->getMessage()
+                'message' => 'Error: '.$e->getMessage(),
             ];
         }
 
         $response_json = $response->getBody()->getContents();
         $response_arr = json_decode($response_json, true);
-        Log::info('[' . date('Y-m-d H:i:s') . '] Mengirim pesan ke ' . $nomor . ' dengan sessionId ' . $sessionId . '. Response: ' . $response_json);
+        Log::info('['.date('Y-m-d H:i:s').'] Mengirim pesan ke '.$nomor.' dengan sessionId '.$sessionId.'. Response: '.$response_json);
         if ($response_arr == null) {
-            \Log::error('[' . date('Y-m-d H:i:s') . '] Gagal mengirim pesan');
+            \Log::error('['.date('Y-m-d H:i:s').'] Gagal mengirim pesan');
+
             return [
                 'status' => 'failed',
-                'message' => 'Gagal mengirim pesan'
+                'message' => 'Gagal mengirim pesan',
             ];
         } else {
             // \Log::info('Sukses mengirim pesan ke ' . $nomor);
             if ($response_arr['error']) {
                 return [
                     'status' => 'failed',
-                    'message' => $response_arr['message']
+                    'message' => $response_arr['message'],
                 ];
             } else {
                 return [
                     'status' => 'success',
-                    'message' => 'Sukses mengirim pesan ke ' . $nomor
+                    'message' => 'Sukses mengirim pesan ke '.$nomor,
                 ];
             }
         }
